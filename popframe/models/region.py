@@ -8,12 +8,13 @@ import matplotlib.pyplot as plt
 from popframe.preprocessing.level_filler import LevelFiller
 
 
-DISTRICTS_PLOT_COLOR = '#28486d'
-SETTLEMENTS_PLOT_COLOR = '#ddd'
-TOWNS_PLOT_COLOR = '#333333'
-TERRITORIES_PLOT_COLOR = '#893434'
+DISTRICTS_PLOT_COLOR = "#28486d"
+SETTLEMENTS_PLOT_COLOR = "#ddd"
+TOWNS_PLOT_COLOR = "#333333"
+TERRITORIES_PLOT_COLOR = "#893434"
 
-class Region():
+
+class Region:
     """
     A class representing a geographical region that includes districts, settlements, towns, and optionally territories.
     Provides methods for validating and visualizing spatial data, as well as for calculating accessibility between towns.
@@ -37,13 +38,13 @@ class Region():
     """
 
     def __init__(
-            self, 
-            region : gpd.GeoDataFrame, 
-            towns : gpd.GeoDataFrame, 
-            accessibility_matrix : pd.DataFrame, 
-        ):
+        self,
+        region: gpd.GeoDataFrame,
+        towns: gpd.GeoDataFrame,
+        accessibility_matrix: pd.DataFrame,
+    ):
         """
-        Initializes the Region object with GeoDataFrames for region, districts, settlements, and towns. 
+        Initializes the Region object with GeoDataFrames for region, districts, settlements, and towns.
         Optionally includes territories and an accessibility matrix to model transportation between towns.
 
         Parameters
@@ -70,40 +71,44 @@ class Region():
         towns = self.validate_towns(towns)
         accessibility_matrix = self.validate_accessibility_matrix(accessibility_matrix)
 
-        assert (accessibility_matrix.index == towns.index).all(), "Accessibility matrix indices and towns indices don't match"
-        assert region.crs == towns.crs, 'CRS should match everywhere'
+        assert (
+            accessibility_matrix.index == towns.index
+        ).all(), "Accessibility matrix indices and towns indices don't match"
+        assert region.crs == towns.crs, "CRS should match everywhere"
 
         self.crs = towns.crs
         self.region = region
         self._towns = Town.from_gdf(towns)
-        
+
         self.accessibility_matrix = accessibility_matrix
-    
+
     @staticmethod
-    def validate_towns(gdf : gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    def validate_towns(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """
         Validates the towns GeoDataFrame.
         """
-        assert isinstance(gdf, gpd.GeoDataFrame), 'Towns should be instance of gpd.GeoDataFrame'
+        assert isinstance(gdf, gpd.GeoDataFrame), "Towns should be instance of gpd.GeoDataFrame"
         return gdf
 
     @staticmethod
-    def validate_region(gdf : gpd.GeoDataFrame) -> gpd.GeoDataFrame:
+    def validate_region(gdf: gpd.GeoDataFrame) -> gpd.GeoDataFrame:
         """
         Validates the region GeoDataFrame to ensure it has the correct structure and data types.
         """
-        assert isinstance(gdf, gpd.GeoDataFrame), 'Region should be instance of gpd.GeoDataFrame'
-        assert gdf.geom_type.isin(['Polygon', 'MultiPolygon']).all(), 'District geometry should be Polygon or MultiPolygon'
-        return gdf[['geometry']]
-    
+        assert isinstance(gdf, gpd.GeoDataFrame), "Region should be instance of gpd.GeoDataFrame"
+        assert gdf.geom_type.isin(
+            ["Polygon", "MultiPolygon"]
+        ).all(), "District geometry should be Polygon or MultiPolygon"
+        return gdf[["geometry"]]
+
     @staticmethod
-    def validate_accessibility_matrix(df : pd.DataFrame) -> pd.DataFrame:
+    def validate_accessibility_matrix(df: pd.DataFrame) -> pd.DataFrame:
         """
-        Validates the accessibility matrix, ensuring it has non-negative float values 
+        Validates the accessibility matrix, ensuring it has non-negative float values
         and matching row and column indices.
         """
-        assert pd.api.types.is_float_dtype(df.values), 'Accessibility matrix values should be float'
-        assert (df.values>=0).all(), 'Accessibility matrix values should be greater or equal 0'
+        assert pd.api.types.is_float_dtype(df.values), "Accessibility matrix values should be float"
+        assert (df.values >= 0).all(), "Accessibility matrix values should be greater or equal 0"
         assert (df.index == df.columns).all(), "Accessibility matrix indices and columns don't match"
         return df
 
@@ -118,17 +123,16 @@ class Region():
             List of Town objects.
         """
         return self._towns.values()
-    
+
     def get_update_towns_gdf(self, update_df: pd.DataFrame | None = None):
         gdf = self.get_towns_gdf()
         if update_df is not None:
             # Обновляем значения населения в gdf из update_df
-            gdf.update(update_df[['population']])
-            
+            gdf.update(update_df[["population"]])
+
             level_filler = LevelFiller(towns=gdf)
             gdf = level_filler.fill_levels()
         return gdf
-
 
     def get_towns_gdf(self) -> gpd.GeoDataFrame:
         """
@@ -141,7 +145,7 @@ class Region():
         """
         data = [town.to_dict() for town in self.towns]
         gdf = gpd.GeoDataFrame(data, crs=self.crs)
-        gdf.set_index('id', inplace=True, drop=False)
+        gdf.set_index("id", inplace=True, drop=False)
         gdf = gdf.rename_axis(None)
         return gdf.fillna(0)
 
@@ -149,12 +153,12 @@ class Region():
     def __getitem__(self, arg):
         """
         Overloaded subscript operator to access a town or accessibility data based on the argument type.
-        
+
         Parameters
         ----------
         arg : int or tuple
             Integer to access a town by its ID, or tuple to retrieve accessibility data between two towns.
-        
+
         Raises
         ------
         NotImplementedError
@@ -177,7 +181,7 @@ class Region():
         if isinstance(town_b, Town):
             town_b = town_b.id
         return self.accessibility_matrix.loc[town_a, town_b]
-    
+
     @staticmethod
     def from_pickle(file_path: str):
         """

@@ -5,8 +5,8 @@ import pandas as pd
 
 from .base_method import BaseMethod
 
-class PopulationFrame(BaseMethod):
 
+class PopulationFrame(BaseMethod):
     def _create_circle(self, center, size):
         """
         Create a circular buffer around a point.
@@ -42,10 +42,10 @@ class PopulationFrame(BaseMethod):
             The calculated size for the circle.
         """
         if level in ["Малое сельское поселение", "Среднее сельское поселение", "Большое сельское поселение"]:
-            return 0.0001 * (population ** 0.5)   # Logarithmic scale for small settlements
+            return 0.0001 * (population**0.5)  # Logarithmic scale for small settlements
         elif level == "Сверхкрупный город":
-            return 6e-5 * (population ** 0.5)  # Reduced linear scale for very large cities
-        return 0.0001 * (population ** 0.5)  # Linear scale for large settlements
+            return 6e-5 * (population**0.5)  # Reduced linear scale for very large cities
+        return 0.0001 * (population**0.5)  # Linear scale for large settlements
 
     def _convert_points_to_circles(self, gdf):
         """
@@ -61,10 +61,15 @@ class PopulationFrame(BaseMethod):
         geopandas.GeoDataFrame
             GeoDataFrame with circular geometries.
         """
-        gdf['size'] = gdf.apply(lambda row: self._size_from_population(row['population'], row['level']), axis=1)
-        gdf['size_in_meters'] = gdf['size'] * METERS_PER_DEGREE
-        gdf['geometry'] = gdf.apply(lambda row: self._create_circle(row['geometry'], row['size_in_meters']) if isinstance(row['geometry'], Point) else row['geometry'], axis=1)
-        gdf = gdf.drop(columns=['size', 'size_in_meters'])
+        gdf["size"] = gdf.apply(lambda row: self._size_from_population(row["population"], row["level"]), axis=1)
+        gdf["size_in_meters"] = gdf["size"] * METERS_PER_DEGREE
+        gdf["geometry"] = gdf.apply(
+            lambda row: self._create_circle(row["geometry"], row["size_in_meters"])
+            if isinstance(row["geometry"], Point)
+            else row["geometry"],
+            axis=1,
+        )
+        gdf = gdf.drop(columns=["size", "size_in_meters"])
         return gdf
 
     def build_circle_frame(self, update_df: pd.DataFrame | None = None) -> gpd.GeoDataFrame:

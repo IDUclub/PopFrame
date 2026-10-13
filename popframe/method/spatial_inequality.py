@@ -3,6 +3,7 @@ import re
 from typing import Optional, Tuple, Dict
 from popframe.method.base_method import BaseMethod
 
+
 class SpatialInequalityCalculator(BaseMethod):
     """
     Calculator for spatial inequality metrics.
@@ -11,10 +12,7 @@ class SpatialInequalityCalculator(BaseMethod):
     """
 
     def transfer_inequality_metrics_to_polygons(
-        self,
-        gdf_cities: gpd.GeoDataFrame,
-        gdf_polygons: gpd.GeoDataFrame,
-        inequality_keyword: str = "Неравенство"
+        self, gdf_cities: gpd.GeoDataFrame, gdf_polygons: gpd.GeoDataFrame, inequality_keyword: str = "Неравенство"
     ) -> Tuple[gpd.GeoDataFrame, Dict[str, Dict[str, float]]]:
         """
         Transfer all columns containing inequality metrics from points (cities) to polygons (agglomerations)
@@ -45,35 +43,23 @@ class SpatialInequalityCalculator(BaseMethod):
             raise KeyError(f"Не найдено колонок с '{inequality_keyword}'")
         # 2) Гео‑объединение точек и полигонов
         cities_with_idx = gpd.sjoin(
-            gdf_cities[metric_cols + ['geometry']],
-            gdf_polygons[['geometry']],
-            how='left',
-            predicate='within'
+            gdf_cities[metric_cols + ["geometry"]], gdf_polygons[["geometry"]], how="left", predicate="within"
         )
         # 3) Усреднение по индексам полигонов
-        grouped = (
-            cities_with_idx
-            .groupby('index_right')[metric_cols]
-            .mean()
-            .rename_axis('poly_index')
-        )
+        grouped = cities_with_idx.groupby("index_right")[metric_cols].mean().rename_axis("poly_index")
         # 4) Присоединяем к полигонам
         gdf_polygons_with_metrics = (
-            gdf_polygons
-            .reset_index()
-            .rename(columns={'index': 'poly_index'})
-            .merge(grouped.reset_index(), on='poly_index', how='left')
-            .set_index('poly_index')
+            gdf_polygons.reset_index()
+            .rename(columns={"index": "poly_index"})
+            .merge(grouped.reset_index(), on="poly_index", how="left")
+            .set_index("poly_index")
         )
         # 5) Статистика внутри/вне
-        inside  = cities_with_idx.dropna(subset=['index_right'])
-        outside = cities_with_idx[cities_with_idx['index_right'].isna()]
+        inside = cities_with_idx.dropna(subset=["index_right"])
+        outside = cities_with_idx[cities_with_idx["index_right"].isna()]
         mean_within = inside[metric_cols].mean().to_dict()
         mean_outside = outside[metric_cols].mean().to_dict()
-        stats = {
-            'mean_within': mean_within,
-            'mean_outside': mean_outside
-        }
+        stats = {"mean_within": mean_within, "mean_outside": mean_outside}
         return gdf_polygons_with_metrics, stats
 
     def get_best_territory(
@@ -82,7 +68,7 @@ class SpatialInequalityCalculator(BaseMethod):
         group_name: Optional[str] = None,
         spatial_suffix: str = " - Неравенство",
         default_col: str = "Пространственное неравенство",
-        top_n: int = 5
+        top_n: int = 5,
     ) -> gpd.GeoDataFrame:
         """
         Return up to `top_n` territories (rows) with the minimum spatial inequality value.
@@ -117,9 +103,7 @@ class SpatialInequalityCalculator(BaseMethod):
             if primary_col not in gdf.columns:
                 raise KeyError(f"В GeoDataFrame нет колонки «{primary_col}»")
             top_df = gdf.sort_values(primary_col, ascending=True).head(top_n).copy()
-            pattern = re.compile(
-                rf"^{re.escape(group_name.strip())}.*\bНеравенство\b", re.IGNORECASE
-            )
+            pattern = re.compile(rf"^{re.escape(group_name.strip())}.*\bНеравенство\b", re.IGNORECASE)
             group_metrics = [c for c in top_df.columns if pattern.match(c)]
             non_metrics = [c for c in top_df.columns if "Неравенство" not in c]
             keep_cols = non_metrics + group_metrics
@@ -133,7 +117,7 @@ class SpatialInequalityCalculator(BaseMethod):
         self,
         gdf: gpd.GeoDataFrame,
         suffix: str = " - Неравенство",
-        new_col: str = "Наименьшее неравенство для соц‑группы"
+        new_col: str = "Наименьшее неравенство для соц‑группы",
     ) -> gpd.GeoDataFrame:
         """
         Add a column with the name of the social group with the minimum inequality metric.
@@ -153,10 +137,9 @@ class SpatialInequalityCalculator(BaseMethod):
             GeoDataFrame with an added column for the group with the minimum inequality.
         """
         all_cols = [
-            c for c in gdf.columns
-            if isinstance(c, str)
-               and c.endswith(suffix)
-               and c[: -len(suffix)].strip().lower() != "итоговое"
+            c
+            for c in gdf.columns
+            if isinstance(c, str) and c.endswith(suffix) and c[: -len(suffix)].strip().lower() != "итоговое"
         ]
         if not all_cols:
             raise KeyError(f"Колонки с суффиксом '{suffix}' не найдены")

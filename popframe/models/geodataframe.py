@@ -26,7 +26,7 @@ class BaseRow(BaseModel, ABC):
     -----
     Inheriting classes can be configured to provide default column values to avoid None and NaN.
     """
-    
+
     model_config = ConfigDict(arbitrary_types_allowed=True)
     geometry: BaseGeometry
     index: int
@@ -34,7 +34,7 @@ class BaseRow(BaseModel, ABC):
 
 class GeoDataFrame(gpd.GeoDataFrame, BaseModel, Generic[T]):
     """
-    Custom GeoDataFrame class that extends geopandas.GeoDataFrame and supports data validation with Pydantic's BaseModel. 
+    Custom GeoDataFrame class that extends geopandas.GeoDataFrame and supports data validation with Pydantic's BaseModel.
     This class allows for the automatic validation of data on initialization using a generic class T inherited from BaseRow.
 
     Attributes
@@ -63,12 +63,12 @@ class GeoDataFrame(gpd.GeoDataFrame, BaseModel, Generic[T]):
     - The "index" column is managed separately to avoid conflicts with the GeoDataFrame's index.
     - The coordinate reference system (CRS) is either provided in the kwargs or inherited from the input data.
     """
-    
+
     @property
     def generic(self):
         """
         Returns the generic class type used in the GeoDataFrame. This is needed to ensure Pydantic validation is performed correctly.
-        
+
         Returns
         -------
         T : Type
@@ -88,7 +88,7 @@ class GeoDataFrame(gpd.GeoDataFrame, BaseModel, Generic[T]):
             Additional positional arguments passed to GeoDataFrame.
         **kwargs : dict
             Additional keyword arguments, including CRS (Coordinate Reference System) for spatial data.
-        
+
         Raises
         ------
         AssertionError
@@ -96,7 +96,7 @@ class GeoDataFrame(gpd.GeoDataFrame, BaseModel, Generic[T]):
         """
         generic_class = self.generic
         assert issubclass(generic_class, BaseRow), "Generic should be inherited from BaseRow"
-        
+
         # Convert data to GeoDataFrame if it isn't one already
         if not isinstance(data, gpd.GeoDataFrame):
             data = gpd.GeoDataFrame(data, *args, **kwargs)
@@ -119,7 +119,6 @@ class GeoDataFrame(gpd.GeoDataFrame, BaseModel, Generic[T]):
         index_name = data.index.name
         self.index.name = index_name
         self.set_geometry("geometry", inplace=True)
-        
+
         # Set CRS (Coordinate Reference System)
         self.crs = kwargs["crs"] if "crs" in kwargs else data.crs
-

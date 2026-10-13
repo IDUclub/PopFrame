@@ -4,6 +4,7 @@ from ..models.geodataframe import GeoDataFrame, BaseRow
 import shapely
 import pandas as pd
 
+
 class UnitRow(BaseRow):
     """
     A class representing a unit of geographic data with a polygon or multipolygon geometry and a population count.
@@ -15,6 +16,7 @@ class UnitRow(BaseRow):
     population : int
         The population residing within the geographic unit.
     """
+
     geometry: shapely.Polygon | shapely.MultiPolygon
     population: int
 
@@ -34,6 +36,7 @@ class TownRow(BaseRow):
     is_city : bool
         A boolean indicating whether the town is a city.
     """
+
     geometry: shapely.Point
     name: str
     level: str
@@ -59,10 +62,10 @@ class PopulationFiller(BaseModel):
     -------
     validate_units(cls, gdf) -> GeoDataFrame[UnitRow]
         Validates that the units input is a valid GeoDataFrame of UnitRow type.
-    
+
     validate_towns(cls, gdf) -> GeoDataFrame[TownRow]
         Validates that the towns input is a valid GeoDataFrame of TownRow type.
-    
+
     validate_adjacency_matrix(cls, df) -> pd.DataFrame
         Validates that the adjacency matrix is square and matches the town index.
 
@@ -81,7 +84,7 @@ class PopulationFiller(BaseModel):
     adjacency_matrix: InstanceOf[pd.DataFrame]
     city_multiplier: float = Field(gt=0, default=10)
 
-    @field_validator('units', mode='before')
+    @field_validator("units", mode="before")
     @classmethod
     def validate_units(cls, gdf):
         """
@@ -101,7 +104,7 @@ class PopulationFiller(BaseModel):
             gdf = GeoDataFrame[UnitRow](gdf)
         return gdf
 
-    @field_validator('towns', mode='before')
+    @field_validator("towns", mode="before")
     @classmethod
     def validate_towns(cls, gdf):
         """
@@ -121,7 +124,7 @@ class PopulationFiller(BaseModel):
             gdf = GeoDataFrame[TownRow](gdf)
         return gdf
 
-    @field_validator('adjacency_matrix', mode='after')
+    @field_validator("adjacency_matrix", mode="after")
     @classmethod
     def validate_adjacency_matrix(cls, df):
         """
@@ -136,7 +139,7 @@ class PopulationFiller(BaseModel):
         -------
         pd.DataFrame
             A validated adjacency matrix.
-        
+
         Raises
         ------
         AssertionError
@@ -145,7 +148,7 @@ class PopulationFiller(BaseModel):
         assert all(df.index == df.columns), "Matrix index and columns don't match"
         return df
 
-    @model_validator(mode='after')
+    @model_validator(mode="after")
     def validate_model(self):
         """
         Validates that the coordinate reference systems (CRS) of the towns and units match, and that the adjacency matrix matches the town indices.
@@ -193,17 +196,19 @@ class PopulationFiller(BaseModel):
             A GeoDataFrame with updated population data for the towns.
         """
         towns = self.towns.copy()
-        towns['median_time'] = towns.apply(lambda x: self._get_median_time(x.name), axis=1)
+        towns["median_time"] = towns.apply(lambda x: self._get_median_time(x.name), axis=1)
         for i in self.units.index:
-            geometry = self.units.loc[i, 'geometry']
-            population = self.units.loc[i, 'population']
+            geometry = self.units.loc[i, "geometry"]
+            population = self.units.loc[i, "population"]
             unit_towns = towns.loc[towns.within(geometry)].copy()
-            unit_towns['coef'] = unit_towns.apply(lambda x: (self.city_multiplier if x['is_city'] else 1)/x['median_time'], axis=1)
-            coef_sum = unit_towns['coef'].sum()
-            unit_towns['coef_norm'] = unit_towns['coef'] / coef_sum
-            unit_towns['population'] = population * unit_towns['coef_norm']
+            unit_towns["coef"] = unit_towns.apply(
+                lambda x: (self.city_multiplier if x["is_city"] else 1) / x["median_time"], axis=1
+            )
+            coef_sum = unit_towns["coef"].sum()
+            unit_towns["coef_norm"] = unit_towns["coef"] / coef_sum
+            unit_towns["population"] = population * unit_towns["coef_norm"]
             for j in unit_towns.index:
-                towns.loc[j, 'coef'] = unit_towns.loc[j, 'coef']
-                towns.loc[j, 'coef_norm'] = unit_towns.loc[j, 'coef_norm']
-                towns.loc[j, 'population'] = round(unit_towns.loc[j, 'population'])
+                towns.loc[j, "coef"] = unit_towns.loc[j, "coef"]
+                towns.loc[j, "coef_norm"] = unit_towns.loc[j, "coef_norm"]
+                towns.loc[j, "population"] = round(unit_towns.loc[j, "population"])
         return towns

@@ -5,6 +5,7 @@ This module provides all necessary tools to get accesibility matrix from transpo
 from typing import Any
 
 import geopandas as gpd
+
 try:
     import networkit as nk  # type: ignore
 except Exception as exc:  # pragma: no cover
@@ -16,6 +17,7 @@ from shapely import Polygon
 import math
 
 from ..models.geodataframe import BaseRow, GeoDataFrame
+
 # from ..graph_generator import GraphGenerator
 
 
@@ -162,8 +164,8 @@ class AdjacencyCalculator(BaseModel):  # pylint: disable=too-few-public-methods
 
         target_blocks = loc.index
         source_block = loc.name
-        target_nodes = [from_blocks.loc[i,'index_left'] for i in target_blocks]
-        source_node = from_blocks.loc[source_block, 'index_left']
+        target_nodes = [from_blocks.loc[i, "index_left"] for i in target_blocks]
+        source_node = from_blocks.loc[source_block, "index_left"]
         distances = [nk_dists.getDistance(source_node, node) for node in target_nodes]
 
         return pd.Series(data=distances, index=target_blocks)
@@ -188,11 +190,11 @@ class AdjacencyCalculator(BaseModel):  # pylint: disable=too-few-public-methods
 
         blocks = self.blocks.copy()
         blocks.geometry = blocks.geometry.representative_point()
-        from_blocks = graph_gdf.sjoin_nearest(blocks, how='right')
-        
+        from_blocks = graph_gdf.sjoin_nearest(blocks, how="right")
+
         accs_matrix = pd.DataFrame(0, index=from_blocks.index, columns=from_blocks.index)
         nk_dists = nk.distance.SPSP(  # pylint: disable=c-extension-no-member
-            graph_nk, sources=list(from_blocks['index_left'])
+            graph_nk, sources=list(from_blocks["index_left"])
         ).run()
 
         accs_matrix = accs_matrix.apply(lambda x: self._get_nk_distances(nk_dists, x, from_blocks), axis=1)
@@ -200,6 +202,6 @@ class AdjacencyCalculator(BaseModel):  # pylint: disable=too-few-public-methods
         # accs_matrix.columns = blocks.index
 
         # bug fix in city block's closest node is no connecte to actual transport infrastructure
-        accs_matrix[accs_matrix>10000] = accs_matrix[accs_matrix < 10000].max().max()
+        accs_matrix[accs_matrix > 10000] = accs_matrix[accs_matrix < 10000].max().max()
 
         return accs_matrix

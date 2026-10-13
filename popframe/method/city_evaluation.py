@@ -2,6 +2,7 @@ import geopandas as gpd
 import pandas as pd
 import json
 
+
 class CityPopulationScorer:
     """
     Calculates population-based scores for hexagonal grid cells based on municipal data.
@@ -24,10 +25,8 @@ class CityPopulationScorer:
         2: "Территория отличается относительно низкой численностью и плотностью населения, что ограничивает возможности развитие инфраструктуры и экономики.",
         3: "Территория имеет средние показатели численности и плотности населения, что создаёт возможность развитие инфраструктуры и экономики.",
         4: "Территория имеет высокие показатели численности и плотности населения, что способствует развитие инфраструктуры и экономики.",
-        5: "Территория имеет очень высокими показателями численности и плотности, что указывает на высокий потенциал развития инфраструктуры и экономики."
+        5: "Территория имеет очень высокими показателями численности и плотности, что указывает на высокий потенциал развития инфраструктуры и экономики.",
     }
-
-
 
     def __init__(self, gdf_mo: gpd.GeoDataFrame, gdf_hex: gpd.GeoDataFrame, target_crs: int = 3857):
         """
@@ -58,9 +57,9 @@ class CityPopulationScorer:
             self.gdf_mo: Adds columns 'area_m2', 'area_km2', and 'density_mo'.
         """
         self.gdf_mo = self.gdf_mo.to_crs(epsg=self.target_crs)
-        self.gdf_mo['area_m2'] = self.gdf_mo.geometry.area
-        self.gdf_mo['area_km2'] = self.gdf_mo['area_m2'] / 1_000_000
-        self.gdf_mo['density_mo'] = self.gdf_mo['population'] / self.gdf_mo['area_km2']
+        self.gdf_mo["area_m2"] = self.gdf_mo.geometry.area
+        self.gdf_mo["area_km2"] = self.gdf_mo["area_m2"] / 1_000_000
+        self.gdf_mo["density_mo"] = self.gdf_mo["population"] / self.gdf_mo["area_km2"]
 
     def assign_hex_to_mo(self):
         """
@@ -77,84 +76,61 @@ class CityPopulationScorer:
         """
         self.gdf_hex = self.gdf_hex.to_crs(epsg=self.target_crs)
 
-        mo_small = self.gdf_mo[['geometry', 'territory_id', 'population', 'density_mo']]
+        mo_small = self.gdf_mo[["geometry", "territory_id", "population", "density_mo"]]
 
-        hex_mo = gpd.overlay(
-            self.gdf_hex[['geometry', 'hexagon_id']],
-            mo_small,
-            how='intersection'
-        )
-        hex_mo['inter_area'] = hex_mo.geometry.area
+        hex_mo = gpd.overlay(self.gdf_hex[["geometry", "hexagon_id"]], mo_small, how="intersection")
+        hex_mo["inter_area"] = hex_mo.geometry.area
 
-        idx = hex_mo.groupby('hexagon_id')['inter_area'].idxmax()
-        hex_max = hex_mo.loc[idx, ['hexagon_id', 'territory_id', 'population', 'density_mo']]
+        idx = hex_mo.groupby("hexagon_id")["inter_area"].idxmax()
+        hex_max = hex_mo.loc[idx, ["hexagon_id", "territory_id", "population", "density_mo"]]
 
-        self.gdf_hex = self.gdf_hex.merge(hex_max, on='hexagon_id', how='left')
-        self.gdf_hex = self.gdf_hex.rename(columns={'density_mo': 'density'})
+        self.gdf_hex = self.gdf_hex.merge(hex_max, on="hexagon_id", how="left")
+        self.gdf_hex = self.gdf_hex.rename(columns={"density_mo": "density"})
 
     def normalize_and_score(self):
-            """
-            Нормализует population и density, считает combined_norm,
-            присваивает score = 1–5 для ячеек с данными и 0 для ячеек без данных.
-            """
-            # 1. Нормируем population
-            pop_min, pop_max = self.gdf_hex['population'].min(), self.gdf_hex['population'].max()
-            if pop_max == pop_min:
-                self.gdf_hex['norm_pop'] = 0.5
-            else:
-                self.gdf_hex['norm_pop'] = (
-                    self.gdf_hex['population'] - pop_min
-                ) / (pop_max - pop_min)
+        """
+        Нормализует population и density, считает combined_norm,
+        присваивает score = 1–5 для ячеек с данными и 0 для ячеек без данных.
+        """
+        # 1. Нормируем population
+        pop_min, pop_max = self.gdf_hex["population"].min(), self.gdf_hex["population"].max()
+        if pop_max == pop_min:
+            self.gdf_hex["norm_pop"] = 0.5
+        else:
+            self.gdf_hex["norm_pop"] = (self.gdf_hex["population"] - pop_min) / (pop_max - pop_min)
 
-            # 2. Нормируем density
-            dens_min, dens_max = self.gdf_hex['density'].min(), self.gdf_hex['density'].max()
-            if dens_max == dens_min:
-                self.gdf_hex['norm_dens'] = 0.5
-            else:
-                self.gdf_hex['norm_dens'] = (
-                    self.gdf_hex['density'] - dens_min
-                ) / (dens_max - dens_min)
+        # 2. Нормируем density
+        dens_min, dens_max = self.gdf_hex["density"].min(), self.gdf_hex["density"].max()
+        if dens_max == dens_min:
+            self.gdf_hex["norm_dens"] = 0.5
+        else:
+            self.gdf_hex["norm_dens"] = (self.gdf_hex["density"] - dens_min) / (dens_max - dens_min)
 
-            # Заменяем NaN (в том числе от ячеек без данных) на 0
-            self.gdf_hex['norm_pop']  = self.gdf_hex['norm_pop'].fillna(0)
-            self.gdf_hex['norm_dens'] = self.gdf_hex['norm_dens'].fillna(0)
+        # Заменяем NaN (в том числе от ячеек без данных) на 0
+        self.gdf_hex["norm_pop"] = self.gdf_hex["norm_pop"].fillna(0)
+        self.gdf_hex["norm_dens"] = self.gdf_hex["norm_dens"].fillna(0)
 
-            # 3. Вычисляем сырое значение
-            self.gdf_hex['combined_raw'] = (
-                self.gdf_hex['norm_pop'] + self.gdf_hex['norm_dens']
-            ) / 2
+        # 3. Вычисляем сырое значение
+        self.gdf_hex["combined_raw"] = (self.gdf_hex["norm_pop"] + self.gdf_hex["norm_dens"]) / 2
 
-            # 4. Мин–макс нормируем combined_raw
-            raw_min, raw_max = (
-                self.gdf_hex['combined_raw'].min(),
-                self.gdf_hex['combined_raw'].max()
-            )
-            if raw_max == raw_min:
-                self.gdf_hex['combined_norm'] = 0.5
-            else:
-                self.gdf_hex['combined_norm'] = (
-                    self.gdf_hex['combined_raw'] - raw_min
-                ) / (raw_max - raw_min)
+        # 4. Мин–макс нормируем combined_raw
+        raw_min, raw_max = (self.gdf_hex["combined_raw"].min(), self.gdf_hex["combined_raw"].max())
+        if raw_max == raw_min:
+            self.gdf_hex["combined_norm"] = 0.5
+        else:
+            self.gdf_hex["combined_norm"] = (self.gdf_hex["combined_raw"] - raw_min) / (raw_max - raw_min)
 
-            self.gdf_hex['combined_norm'] = self.gdf_hex['combined_norm'].fillna(0)
+        self.gdf_hex["combined_norm"] = self.gdf_hex["combined_norm"].fillna(0)
 
-            # 5. Присваиваем оценку:
-            #    – для ячеек с данными: масштабируем в [1;5]
-            #    – для ячеек без данных (вода): оставляем 0
-            # 5.1 Сначала проставляем всем 1–5
-            self.gdf_hex['score'] = (
-                (self.gdf_hex['combined_norm'] * 4 + 1)
-                .round()
-                .clip(lower=1, upper=5)
-                .astype(int)
-            )
+        # 5. Присваиваем оценку:
+        #    – для ячеек с данными: масштабируем в [1;5]
+        #    – для ячеек без данных (вода): оставляем 0
+        # 5.1 Сначала проставляем всем 1–5
+        self.gdf_hex["score"] = (self.gdf_hex["combined_norm"] * 4 + 1).round().clip(lower=1, upper=5).astype(int)
 
-            # 5.2 Выставляем 0 там, где нет ни population, ни density
-            mask_no_data = (
-                self.gdf_hex['population'].isna()
-                & self.gdf_hex['density'].isna()
-            )
-            self.gdf_hex.loc[mask_no_data, 'score'] = 0
+        # 5.2 Выставляем 0 там, где нет ни population, ни density
+        mask_no_data = self.gdf_hex["population"].isna() & self.gdf_hex["density"].isna()
+        self.gdf_hex.loc[mask_no_data, "score"] = 0
 
     def assign_interpretations(self):
         """
@@ -167,7 +143,7 @@ class CityPopulationScorer:
         Modifies:
             self.gdf_hex: Adds column 'interpretation'.
         """
-        self.gdf_hex['interpretation'] = self.gdf_hex['score'].apply(
+        self.gdf_hex["interpretation"] = self.gdf_hex["score"].apply(
             lambda v: CityPopulationScorer.INTERPRETATIONS[int(v)] if pd.notna(v) else None
         )
 
@@ -188,20 +164,16 @@ class CityPopulationScorer:
         """
         output_list = []
         for _, row in self.gdf_hex.iterrows():
-            output_list.append({
-                'hexagon_id': row['hexagon_id'],
-                'project': None,
-                'average_population_density': (
-                    round(row['density'], 1) if pd.notna(row['density']) else None
-                ),
-                'total_population': (
-                    int(row['population']) if pd.notna(row['population']) else None
-                ),
-                'score': (
-                    float(row['score']) if pd.notna(row['score']) else None
-                ),
-                'interpretation': row['interpretation']
-            })
+            output_list.append(
+                {
+                    "hexagon_id": row["hexagon_id"],
+                    "project": None,
+                    "average_population_density": (round(row["density"], 1) if pd.notna(row["density"]) else None),
+                    "total_population": (int(row["population"]) if pd.notna(row["population"]) else None),
+                    "score": (float(row["score"]) if pd.notna(row["score"]) else None),
+                    "interpretation": row["interpretation"],
+                }
+            )
         self.output = output_list
         return output_list
 
@@ -224,4 +196,3 @@ class CityPopulationScorer:
         self.normalize_and_score()
         self.assign_interpretations()
         return self.generate_output()
-

@@ -24,7 +24,7 @@ class Town(BaseModel):
     -------
     to_dict() -> dict
         Converts the Town object to a dictionary format.
-    
+
     from_gdf(cls, gdf: gpd.GeoDataFrame) -> dict
         Class method to create a dictionary of Town instances from a GeoDataFrame.
     """
@@ -45,11 +45,11 @@ class Town(BaseModel):
             A dictionary containing the 'id', 'name', 'population', 'level', and 'geometry' of the town.
         """
         res = {
-            'id': self.id,
-            'name': self.name,
-            'population': self.population,
-            'level': self.level,
-            'geometry': self.geometry
+            "id": self.id,
+            "name": self.name,
+            "population": self.population,
+            "level": self.level,
+            "geometry": self.geometry,
         }
         return res
 
@@ -61,7 +61,7 @@ class Town(BaseModel):
         Parameters
         ----------
         gdf : gpd.GeoDataFrame
-            GeoDataFrame containing data to initialize Town instances. 
+            GeoDataFrame containing data to initialize Town instances.
             The GeoDataFrame should have 'id', 'name', 'level', 'population', and 'geometry' columns.
 
         Returns
@@ -69,4 +69,4 @@ class Town(BaseModel):
         dict
             A dictionary where the keys are the indices of the GeoDataFrame and the values are Town instances.
         """
-        return {i: cls(**{**gdf.loc[i].to_dict(), 'id': i}) for i in gdf.index}
+        return {i: cls(**{**gdf.loc[i].to_dict(), "id": i}) for i in gdf.index}

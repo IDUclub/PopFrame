@@ -20,6 +20,7 @@ class TownRow(BaseRow):
     level : str, optional
         The administrative level of the town, defaults to "Нет уровня" (no level).
     """
+
     id: int
     geometry: Point
     name: str
@@ -42,7 +43,7 @@ class LevelFiller(BaseModel):
     -------
     _assign_level(row) -> str
         A static method that assigns the correct administrative level to a town based on its population.
-        
+
     validate_towns(gdf)
         A Pydantic validator that ensures town levels are correctly assigned before processing the GeoDataFrame.
 
@@ -52,7 +53,7 @@ class LevelFiller(BaseModel):
 
     towns: GeoDataFrame[TownRow]
     population_thresholds: ClassVar[dict[str, tuple[int, int]]] = {
-        "Сверхкрупный город": (3000000, float('inf')),
+        "Сверхкрупный город": (3000000, float("inf")),
         "Крупнейший город": (1000000, 3000000),
         "Крупный город": (250000, 1000000),
         "Большой город": (100000, 250000),
@@ -79,8 +80,8 @@ class LevelFiller(BaseModel):
         str
             The administrative level of the town.
         """
-        population = row['population']
-        
+        population = row["population"]
+
         for level, (lower_bound, upper_bound) in LevelFiller.population_thresholds.items():
             if lower_bound < population <= upper_bound:
                 return level
@@ -116,4 +117,3 @@ class LevelFiller(BaseModel):
             An updated GeoDataFrame with filled levels for each town.
         """
         return self.towns
-
