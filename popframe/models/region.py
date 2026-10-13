@@ -4,6 +4,7 @@ import pyproj
 import geopandas as gpd
 import pandas as pd
 import numpy as np
+from shapely.ops import unary_union
 from .town import Town
 import matplotlib.pyplot as plt
 from popframe.preprocessing.level_filler import LevelFiller
@@ -13,6 +14,14 @@ DISTRICTS_PLOT_COLOR = "#28486d"
 SETTLEMENTS_PLOT_COLOR = "#ddd"
 TOWNS_PLOT_COLOR = "#333333"
 TERRITORIES_PLOT_COLOR = "#893434"
+
+
+class _RegionUnpickler(pickle.Unpickler):
+    def find_class(self, module, name):
+        # pandas 2 replaced the numeric index classes used in older region files.
+        if module == "pandas.core.indexes.numeric" and name in {"Int64Index", "UInt64Index", "Float64Index"}:
+            return pd.Index
+        return super().find_class(module, name)
 
 
 class Region:
@@ -150,7 +159,7 @@ class Region:
         gdf = gdf.rename_axis(None)
         return gdf.fillna(0)
 
-    def prepare_for_analysis(self) -> "Region":
+    def prepare_for_analysis(self, *, repair_geometry: bool = False) -> "Region":
         """Validate a loaded model and return an independent copy in local UTM.
 
         Checks geometries, population, town IDs and the travel-time matrix;
@@ -159,6 +168,13 @@ class Region:
         minutes: units cannot be inferred or converted by this method.
         Positive infinity is allowed for unreachable pairs; the diagonal must
         be zero. At least two towns are required for the analysis workflow.
+
+        Parameters
+        ----------
+        repair_geometry : bool, default False
+            Repair invalid boundary polygons with make_valid. Retain polygonal
+            parts of resulting geometry collections, discarding line/point
+            remnants. Empty or non-polygonal results still raise ValueError.
 
         Raises
         ------
@@ -177,6 +193,17 @@ class Region:
             raise ValueError("Населённые пункты должны быть точками.")
         if not towns.geometry.is_valid.all() or towns.geometry.is_empty.any():
             raise ValueError("В населённых пунктах есть пустые или некорректные геометрии.")
+        if (
+            repair_geometry
+            and boundary.geom_type.isin(["Polygon", "MultiPolygon"]).all()
+            and not boundary.geometry.is_valid.all()
+        ):
+            repaired = boundary.geometry.make_valid().map(
+                lambda geom: unary_union([part for part in geom.geoms if part.geom_type in {"Polygon", "MultiPolygon"}])
+                if geom.geom_type == "GeometryCollection"
+                else geom
+            )
+            boundary = boundary.set_geometry(repaired)
         if (
             boundary.empty
             or not boundary.geom_type.isin(["Polygon", "MultiPolygon"]).all()
@@ -246,7 +273,7 @@ class Region:
     @staticmethod
     def from_pickle(file_path: str):
         """
-        Load a Region object from a .pickle file.
+        Load a trusted Region pickle, including pre-pandas-2 numeric indexes.
 
         Parameters
         ----------
@@ -258,10 +285,8 @@ class Region:
         Region
             The loaded Region object.
         """
-        state = None
         with open(file_path, "rb") as f:
-            state = pickle.load(f)
-        return state
+            return _RegionUnpickler(f).load()
 
     def to_pickle(self, file_path: str):
         """

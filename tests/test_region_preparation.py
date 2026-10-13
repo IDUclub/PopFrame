@@ -2,12 +2,15 @@
 
 import unittest
 from copy import deepcopy
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
+import dill
 import geopandas as gpd
 import numpy as np
 import pandas as pd
 from geopandas.testing import assert_geodataframe_equal
-from pandas.testing import assert_frame_equal
+from pandas.testing import assert_frame_equal, assert_index_equal
 from shapely.geometry import Point, Polygon, box
 
 from popframe.models.region import Region
@@ -55,6 +58,55 @@ class RegionPreparationTests(unittest.TestCase):
         self.region.accessibility_matrix.loc[101, 205] = np.inf
         result = self.region.prepare_for_analysis()
         self.assertTrue(np.isposinf(result.accessibility_matrix.loc[101, 205]))
+
+    def test_current_pickle_round_trip(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "region.pickle"
+            self.region.to_pickle(path)
+            result = Region.from_pickle(path)
+        assert_frame_equal(result.accessibility_matrix, self.region.accessibility_matrix)
+        assert_geodataframe_equal(result.get_towns_gdf(), self.region.get_towns_gdf())
+        assert_geodataframe_equal(result.region, self.region.region)
+
+    def test_legacy_numeric_indexes(self):
+        for name, dtype in [("Int64Index", "int64"), ("UInt64Index", "uint64"), ("Float64Index", "float64")]:
+            with self.subTest(name=name), TemporaryDirectory() as directory:
+                expected = pd.Index([101, 205], dtype=dtype, name="town_id")
+                payload = dill.dumps(expected, protocol=2)
+                reference = b"cpandas.core.indexes.base\nIndex\n"
+                self.assertEqual(payload.count(reference), 1)
+                # Reproduce the old GLOBAL reference, keeping the real index data.
+                payload = payload.replace(reference, f"cpandas.core.indexes.numeric\n{name}\n".encode())
+                with self.assertRaises(ModuleNotFoundError):
+                    dill.loads(payload)
+                path = Path(directory) / "legacy.pickle"
+                path.write_bytes(payload)
+                assert_index_equal(Region.from_pickle(path), expected)
+
+    def test_unrelated_missing_module_is_not_hidden(self):
+        with TemporaryDirectory() as directory:
+            path = Path(directory) / "missing.pickle"
+            path.write_bytes(b"cpopframe_missing_module\nMissingClass\n.")
+            with self.assertRaises(ModuleNotFoundError):
+                Region.from_pickle(path)
+
+    def test_boundary_repair_preserves_area_and_source(self):
+        # A repeated edge creates a zero-area line remnant after make_valid.
+        geometry = Polygon([(30, 59), (32, 59), (33, 59), (32, 59), (32, 61), (30, 61), (30, 59)])
+        self.region.region = gpd.GeoDataFrame(geometry=[geometry], crs=4326)
+        source = self.region.region.copy()
+        self.assertFalse(geometry.is_valid)
+        result = self.region.prepare_for_analysis(repair_geometry=True)
+        self.assertTrue(result.region.is_valid.all())
+        repaired = result.region.to_crs(4326).geometry.iloc[0]
+        self.assertAlmostEqual(repaired.area, geometry.area)
+        self.assertEqual(repaired.geom_type, "Polygon")
+        assert_geodataframe_equal(self.region.region, source)
+
+    def test_repair_rejects_boundary_collapsed_to_line(self):
+        self.region.region = gpd.GeoDataFrame(geometry=[Polygon([(30, 59), (31, 59), (32, 59)])], crs=4326)
+        with self.assertRaisesRegex(ValueError, "Граница региона"):
+            self.region.prepare_for_analysis(repair_geometry=True)
 
     def test_invalid_matrices(self):
         base = self.region.accessibility_matrix
