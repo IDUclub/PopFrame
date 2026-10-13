@@ -3,6 +3,7 @@ import dill as pickle
 import pyproj
 import geopandas as gpd
 import pandas as pd
+import numpy as np
 from .town import Town
 import matplotlib.pyplot as plt
 from popframe.preprocessing.level_filler import LevelFiller
@@ -148,6 +149,66 @@ class Region:
         gdf.set_index("id", inplace=True, drop=False)
         gdf = gdf.rename_axis(None)
         return gdf.fillna(0)
+
+    def prepare_for_analysis(self) -> "Region":
+        """Validate a loaded model and return an independent copy in local UTM.
+
+        Checks geometries, population, town IDs and the travel-time matrix;
+        aligns matrix rows and columns with towns and recalculates size levels.
+        The source model is not modified. Matrix values must already represent
+        minutes: units cannot be inferred or converted by this method.
+        Positive infinity is allowed for unreachable pairs; the diagonal must
+        be zero. At least two towns are required for the analysis workflow.
+
+        Raises
+        ------
+        ValueError
+            If the model is incomplete, inconsistent or cannot be projected.
+        """
+        boundary = self.region
+        if self.crs is None or boundary.crs is None:
+            raise ValueError("Не задана система координат региона или населённых пунктов.")
+        if len(self._towns) < 2:
+            raise ValueError("Для анализа нужны минимум два населённых пункта.")
+        towns = self.get_towns_gdf()
+        if not towns.index.is_unique:
+            raise ValueError("Идентификаторы населённых пунктов должны быть уникальными.")
+        if not towns.geom_type.eq("Point").all():
+            raise ValueError("Населённые пункты должны быть точками.")
+        if not towns.geometry.is_valid.all() or towns.geometry.is_empty.any():
+            raise ValueError("В населённых пунктах есть пустые или некорректные геометрии.")
+        if (
+            boundary.empty
+            or not boundary.geom_type.isin(["Polygon", "MultiPolygon"]).all()
+            or not boundary.geometry.is_valid.all()
+            or boundary.geometry.is_empty.any()
+        ):
+            raise ValueError("Граница региона должна содержать непустые корректные полигоны.")
+        if not np.isfinite(towns["population"]).all() or not towns["population"].gt(0).all():
+            raise ValueError("Население должно быть положительным конечным числом.")
+
+        matrix = self.accessibility_matrix
+        if not matrix.index.is_unique or not matrix.columns.is_unique:
+            raise ValueError("В матрице времени повторяются идентификаторы.")
+        if set(matrix.index) != set(towns.index) or set(matrix.columns) != set(towns.index):
+            raise ValueError("Идентификаторы матрицы времени и населённых пунктов различаются.")
+        try:
+            matrix = matrix.loc[towns.index, towns.index].astype(float).copy()
+        except (TypeError, ValueError) as exc:
+            raise ValueError("Матрица времени должна содержать числа в минутах.") from exc
+        if matrix.isna().any().any() or (matrix.to_numpy() < 0).any():
+            raise ValueError("В матрице времени есть пропуски или отрицательные значения.")
+        if not np.allclose(np.diag(matrix), 0):
+            raise ValueError("Время поездки пункта в самого себя должно быть нулевым.")
+
+        try:
+            local_crs = boundary.estimate_utm_crs()
+        except (RuntimeError, ValueError) as exc:
+            raise ValueError("Не удалось подобрать локальную проекцию UTM для региона.") from exc
+        if local_crs is None:
+            raise ValueError("Не удалось подобрать локальную проекцию UTM для региона.")
+        towns = LevelFiller(towns=towns.to_crs(local_crs).copy()).fill_levels()
+        return Region(region=boundary.to_crs(local_crs), towns=towns, accessibility_matrix=matrix)
 
     @singledispatchmethod
     def __getitem__(self, arg):
