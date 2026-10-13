@@ -247,7 +247,7 @@ class TerritoryEvaluation(BaseMethod):
         dict
             The results of the territory evaluation.
         """
-        settlements_in_buffer["score"] = settlements_in_buffer["level"].map(level_scores)
+        settlements_in_buffer = settlements_in_buffer.assign(score=settlements_in_buffer["level"].map(level_scores))
         max_settlement = settlements_in_buffer.loc[settlements_in_buffer["score"].idxmax()]
         max_level = max_settlement["level"]
         max_score = max_settlement["score"]

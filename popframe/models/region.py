@@ -159,6 +159,31 @@ class Region:
         gdf = gdf.rename_axis(None)
         return gdf.fillna(0)
 
+    def plot(self, territories=None, ax=None, title="Схема расселения"):
+        """Plot the region outline, towns and optional highlighted territories.
+
+        Territories are projected to the region CRS for display. Returns the
+        Matplotlib axes for further annotation or export.
+        """
+        from matplotlib.lines import Line2D
+
+        if ax is None:
+            _, ax = plt.subplots(figsize=(16, 10))
+        self.region.boundary.plot(ax=ax, color=DISTRICTS_PLOT_COLOR, linewidth=0.9)
+        self.get_towns_gdf().plot(ax=ax, color=TOWNS_PLOT_COLOR, markersize=9, alpha=0.55)
+        handles = [Line2D([], [], color=TOWNS_PLOT_COLOR, marker="o", linestyle="",
+                          markersize=4, alpha=0.6, label="Населённые пункты")]
+        if territories is not None and not territories.empty:
+            territories.to_crs(self.crs).plot(
+                ax=ax, color=TERRITORIES_PLOT_COLOR, edgecolor=TERRITORIES_PLOT_COLOR, alpha=0.8,
+            )
+            handles.append(Line2D([], [], color=TERRITORIES_PLOT_COLOR, marker="h", linestyle="",
+                                  markersize=12, label="Выбранная территория"))
+        ax.legend(handles=handles, loc="upper right")
+        ax.set_title(title)
+        ax.set_axis_off()
+        return ax
+
     def prepare_for_analysis(self, *, repair_geometry: bool = False) -> "Region":
         """Validate a loaded model and return an independent copy in local UTM.
 
