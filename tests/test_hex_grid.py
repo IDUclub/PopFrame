@@ -1,18 +1,21 @@
 """Preserve teaching IDs, geography, and the map-to-calculation selection."""
 
+import json
 import unittest
 
 import geopandas as gpd
 import h3
 import matplotlib.pyplot as plt
 import pandas as pd
+from folium import GeoJson
 from geopandas.testing import assert_geodataframe_equal
+from matplotlib.colors import to_rgba
 from shapely.geometry import Point, Polygon, box
 
-from popframe.interactive import HexagonSelector
 from popframe.method.territory_evaluation import TerritoryEvaluation
 from popframe.models.region import Region
 from popframe.preprocessing.hex_grid import create_leningrad_hexagons
+from popframe.visualization import explore_territory_scores, plot_settlement_scheme
 
 
 class HexGridTests(unittest.TestCase):
@@ -38,7 +41,7 @@ class HexGridTests(unittest.TestCase):
         self.assertEqual(projected.crs.to_epsg(), 32636)
         assert_geodataframe_equal(projected.to_crs(4326), grid, check_less_precise=True)
 
-    def test_click_and_dropdown_pass_numeric_id_to_calculation(self):
+    def test_explore_and_numeric_id_selection(self):
         grid = create_leningrad_hexagons(crs=32636)
         source = grid.copy()
         towns = gpd.GeoDataFrame(
@@ -55,19 +58,15 @@ class HexGridTests(unittest.TestCase):
             towns=towns,
             accessibility_matrix=pd.DataFrame([[0.0, 10.0], [12.0, 0.0]]),
         )
-        picker = HexagonSelector(grid, region)
-        self.assertEqual(picker.value, 1632)
-        feature = next(f for f in picker.grid_layer.data["features"] if f["properties"]["id"] == 25)
-        # Exercise the same event dispatch used by the frontend, not just the callback.
-        picker.grid_layer._handle_mouse_events(None, {"event": "click", "feature": feature}, [])
-        self.assertEqual(picker.value, 25)
-        self.assertEqual(picker.selection_layer.data["features"][0]["properties"]["id"], 25)
-        self.assertIn("25", picker.caption.value)
-        picker.dropdown.value = 1632
-        selected = grid.loc[grid["id"].eq(picker.value)].copy().reset_index(drop=True)
+        map_view = grid.explore(tiles="OpenStreetMap", tooltip=["id"], popup=["id"])
+        layer = next(layer for layer in map_view._children.values() if isinstance(layer, GeoJson))
+        self.assertEqual(len(layer.data["features"]), 2148)
+        self.assertEqual(layer.data["features"][1632]["properties"]["id"], 1632)
+        self.assertIn("L.geoJson", map_view.get_root().render())
+        selected_id = 1632
+        selected = grid.loc[grid["id"].eq(selected_id)].copy().reset_index(drop=True)
         self.assertEqual(selected.id.tolist(), [1632])
-        self.assertIs(type(picker.value), int)
-        selected["name"] = f"Гексагон {picker.value}"
+        selected["name"] = f"Гексагон {selected_id}"
         result = TerritoryEvaluation(region=region).evaluate_territory_location(selected)[0]
         self.assertEqual(result["territory"], "Гексагон 1632")
         self.assertEqual(result["score"], 2)
@@ -77,7 +76,25 @@ class HexGridTests(unittest.TestCase):
         )
         assert_geodataframe_equal(grid, source)
         plt.close(ax.figure)
-        picker.close()
+
+        circles = towns.copy()
+        circles.geometry = circles.geometry.buffer(100)
+        areas = region.region.assign(agglomeration_level=4)
+        ax = plot_settlement_scheme(region, circles, areas)
+        self.assertEqual(tuple(ax.collections[1].get_facecolors()[0]), to_rgba("#FFFF99"))
+        self.assertEqual(tuple(ax.collections[2].get_facecolors()[0]), to_rgba("#FFD700"))
+        plt.close(ax.figure)
+
+    def test_score_map_zero_is_black_and_positive_scores_use_old_palette(self):
+        grid = create_leningrad_hexagons().iloc[:3].copy()
+        grid["score"] = [0, 1, 6]
+        source = grid.copy()
+        map_view = explore_territory_scores(grid)
+        layer = next(layer for layer in map_view._children.values() if isinstance(layer, GeoJson))
+        colors = [layer.style_function(feature)["fillColor"] for feature in layer.data["features"]]
+        self.assertEqual(colors, ["black", "#a50026", "#006837"])
+        self.assertIn(json.dumps("Оценка расположения территории"), map_view.get_root().render())
+        assert_geodataframe_equal(grid, source)
 
 
 if __name__ == "__main__":
