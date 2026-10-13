@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.anchor_settlement &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="popframe.method.base_method" href="popframe.method.base_method.html" />
+    <link rel="prev" title="popframe.method.agglomeration" href="popframe.method.agglomeration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation / Документация по API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="popframe.preprocessing.html">popframe.preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.models.html">popframe.models</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="popframe.method.html">popframe.method</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.agglomeration.html">popframe.method.agglomeration</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">popframe.method.anchor_settlement</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder"><code class="docutils literal notranslate"><span class="pre">AnchorSettlementBuilder</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.base_method.html">popframe.method.base_method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.city_evaluation.html">popframe.method.city_evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.engineer.html">popframe.method.engineer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.landuse_assessment.html">popframe.method.landuse_assessment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.popuation_frame.html">popframe.method.popuation_frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.spatial_inequality.html">popframe.method.spatial_inequality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.territory_evaluation.html">popframe.method.territory_evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.utils.html">popframe.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API documentation / Документация по API</a></li>
+          <li class="breadcrumb-item"><a href="popframe.method.html">popframe.method</a></li>
+      <li class="breadcrumb-item active">popframe.method.anchor_settlement</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/popframe.method.anchor_settlement.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-popframe.method.anchor_settlement">
+<span id="popframe-method-anchor-settlement"></span><h1>popframe.method.anchor_settlement<a class="headerlink" href="#module-popframe.method.anchor_settlement" title="Permalink to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder" title="popframe.method.anchor_settlement.AnchorSettlementBuilder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AnchorSettlementBuilder</span></code></a>(*, region[, ...])</p></td>
+<td><p>Build boundaries for anchor (опорные) settlements using travel-time buffers.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">popframe.method.anchor_settlement.</span></span><span class="sig-name descname"><span class="pre">AnchorSettlementBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="popframe.models.region.Region.html#popframe.models.region.Region" title="popframe.models.region.Region"><span class="pre">Region</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_m_per_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">400</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="popframe.method.base_method.html#popframe.method.base_method.BaseMethod" title="popframe.method.base_method.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<p>Build boundaries for anchor (опорные) settlements using travel-time buffers.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder.radius_m_per_min">
+<span class="sig-name descname"><span class="pre">radius_m_per_min</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder.radius_m_per_min" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder._build_anchor_settlement_boundaries">
+<span class="sig-name descname"><span class="pre">_build_anchor_settlement_boundaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder._build_anchor_settlement_boundaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder._build_anchor_settlement_boundaries" title="Permalink to this definition"></a></dt>
+<dd><p>Builds boundaries for anchor settlements iteratively, starting from the closest town based on travel time.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>towns<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of towns.</p>
+</dd>
+<dt>time<span class="classifier">int</span></dt><dd><p>Maximum travel time.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>GeoDataFrame of the anchor settlement boundaries.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder._get_boundary_around_node">
+<span class="sig-name descname"><span class="pre">_get_boundary_around_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">accessibility_matrix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder._get_boundary_around_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder._get_boundary_around_node" title="Permalink to this definition"></a></dt>
+<dd><p>Get the boundary around a node within a maximum travel time.</p>
+<section id="id1">
+<h2>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>start_node<span class="classifier">int or str</span></dt><dd><p>The starting node (town id).</p>
+</dd>
+<dt>max_time<span class="classifier">int</span></dt><dd><p>Maximum travel time.</p>
+</dd>
+<dt>towns<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of towns.</p>
+</dd>
+<dt>accessibility_matrix<span class="classifier">pandas.DataFrame</span></dt><dd><p>Matrix of travel times between towns.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h2>Returns<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>dict or None</dt><dd><p>Dictionary with geometry and nodes in boundary, or None if no nodes found.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder._simplify_multipolygons">
+<span class="sig-name descname"><span class="pre">_simplify_multipolygons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder._simplify_multipolygons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder._simplify_multipolygons" title="Permalink to this definition"></a></dt>
+<dd><p>Simplify MultiPolygon geometries, keeping only those intersecting with anchor towns.</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame with geometries to simplify.</p>
+</dd>
+<dt>towns<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of towns.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Returns<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>Simplified GeoDataFrame.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder._merge_intersecting_boundaries">
+<span class="sig-name descname"><span class="pre">_merge_intersecting_boundaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder._merge_intersecting_boundaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder._merge_intersecting_boundaries" title="Permalink to this definition"></a></dt>
+<dd><p>Merge intersecting boundaries into single geometries.</p>
+<section id="id5">
+<h2>Parameters<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame with boundaries to merge.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h2>Returns<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>GeoDataFrame with merged boundaries.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder.split_multipolygons">
+<span class="sig-name descname"><span class="pre">split_multipolygons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">geometry</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder.split_multipolygons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder.split_multipolygons" title="Permalink to this definition"></a></dt>
+<dd><p>Split MultiPolygon into individual polygons, marking all but the largest as ‘created’.</p>
+<section id="id7">
+<h2>Parameters<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geometry<span class="classifier">shapely.geometry.MultiPolygon or Polygon</span></dt><dd><p>The geometry to split.</p>
+</dd>
+</dl>
+</section>
+<section id="id8">
+<h2>Returns<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>list of tuple</dt><dd><p>List of (polygon, label) tuples.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder.voronoi_polygons_within_boundaries">
+<span class="sig-name descname"><span class="pre">voronoi_polygons_within_boundaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary_polygon</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anchor_towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder.voronoi_polygons_within_boundaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder.voronoi_polygons_within_boundaries" title="Permalink to this definition"></a></dt>
+<dd><p>Create a Voronoi diagram within the given boundary polygon for anchor towns.</p>
+<section id="id9">
+<h2>Parameters<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>boundary_polygon<span class="classifier">shapely.geometry.Polygon</span></dt><dd><p>The boundary polygon.</p>
+</dd>
+<dt>anchor_towns<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of anchor towns.</p>
+</dd>
+</dl>
+</section>
+<section id="id10">
+<h2>Returns<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>GeoDataFrame with Voronoi polygons and their sources.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder.find_largest_intersection">
+<span class="sig-name descname"><span class="pre">find_largest_intersection</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_poly</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Polygon</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder.find_largest_intersection"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder.find_largest_intersection" title="Permalink to this definition"></a></dt>
+<dd><p>Find the polygon in gdf with the largest intersection area with the target polygon.</p>
+<section id="id11">
+<h2>Parameters<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>target_poly<span class="classifier">shapely.geometry.Polygon</span></dt><dd><p>The target polygon.</p>
+</dd>
+<dt>gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame to search for intersections.</p>
+</dd>
+</dl>
+</section>
+<section id="id12">
+<h2>Returns<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>tuple</dt><dd><p>(index, geometry) of the polygon with the largest intersection, or (None, None).</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder.cluster_and_merge_created_polygons">
+<span class="sig-name descname"><span class="pre">cluster_and_merge_created_polygons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">created_gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder.cluster_and_merge_created_polygons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder.cluster_and_merge_created_polygons" title="Permalink to this definition"></a></dt>
+<dd><p>Cluster and merge all intersecting ‘created’ polygons.</p>
+<section id="id13">
+<h2>Parameters<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>created_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of created polygons.</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h2>Returns<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>GeoDataFrame with merged clusters.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder.merge_created_polygons">
+<span class="sig-name descname"><span class="pre">merge_created_polygons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">voronoi_gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder.merge_created_polygons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder.merge_created_polygons" title="Permalink to this definition"></a></dt>
+<dd><p>Merge ‘created’ polygons and then merge with the ‘original’ polygon with the largest intersection.</p>
+<section id="id15">
+<h2>Parameters<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>voronoi_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame with Voronoi polygons.</p>
+</dd>
+</dl>
+</section>
+<section id="id16">
+<h2>Returns<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>GeoDataFrame with merged polygons.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder.final_simplification">
+<span class="sig-name descname"><span class="pre">final_simplification</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">merged_gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder.final_simplification"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder.final_simplification" title="Permalink to this definition"></a></dt>
+<dd><p>Shrink geometries by a buffer and merge intersecting polygons into one.</p>
+<section id="id17">
+<h2>Parameters<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>merged_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame with merged polygons.</p>
+</dd>
+</dl>
+</section>
+<section id="id18">
+<h2>Returns<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>Final simplified GeoDataFrame.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder.merge_gdfs_excluding_intersections">
+<span class="sig-name descname"><span class="pre">merge_gdfs_excluding_intersections</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundaries_gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">final_gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">anchor_towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder.merge_gdfs_excluding_intersections"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder.merge_gdfs_excluding_intersections" title="Permalink to this definition"></a></dt>
+<dd><p>Merge boundaries_gdf and final_gdf, excluding intersecting polygons, and assign names from anchor_towns.</p>
+<section id="id19">
+<h2>Parameters<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>boundaries_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>Initial boundaries GeoDataFrame.</p>
+</dd>
+<dt>final_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>Final polygons GeoDataFrame.</p>
+</dd>
+<dt>anchor_towns<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of anchor towns.</p>
+</dd>
+</dl>
+</section>
+<section id="id20">
+<h2>Returns<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>Merged GeoDataFrame with ‘geometry’ and ‘anchor_name’.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.anchor_settlement.AnchorSettlementBuilder.get_anchor_settlement_boundaries">
+<span class="sig-name descname"><span class="pre">get_anchor_settlement_boundaries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">update_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">50</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/anchor_settlement.html#AnchorSettlementBuilder.get_anchor_settlement_boundaries"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.anchor_settlement.AnchorSettlementBuilder.get_anchor_settlement_boundaries" title="Permalink to this definition"></a></dt>
+<dd><p>Main function to orchestrate the creation, merging, and finalization of anchor settlement boundaries.</p>
+<section id="id21">
+<h2>Parameters<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>towns<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of towns.</p>
+</dd>
+<dt>update_df<span class="classifier">pandas.DataFrame or None, optional</span></dt><dd><p>Optional DataFrame for updates.</p>
+</dd>
+<dt>time<span class="classifier">int, optional</span></dt><dd><p>Maximum travel time. Default is 50.</p>
+</dd>
+</dl>
+</section>
+<section id="id22">
+<h2>Returns<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>GeoDataFrame with finalized anchor settlement boundaries.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="popframe.method.agglomeration.html" class="btn btn-neutral float-left" title="popframe.method.agglomeration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="popframe.method.base_method.html" class="btn btn-neutral float-right" title="popframe.method.base_method" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

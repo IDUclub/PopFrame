@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.preprocessing.population_filler &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">popframe.preprocessing.population_filler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for popframe.preprocessing.population_filler</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">statistics</span><span class="w"> </span><span class="kn">import</span> <span class="n">median</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">model_validator</span><span class="p">,</span> <span class="n">field_validator</span><span class="p">,</span> <span class="n">Field</span><span class="p">,</span> <span class="n">InstanceOf</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models.geodataframe</span><span class="w"> </span><span class="kn">import</span> <span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">BaseRow</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">shapely</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+
+<div class="viewcode-block" id="UnitRow"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.population_filler.html#popframe.preprocessing.population_filler.UnitRow">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">UnitRow</span><span class="p">(</span><span class="n">BaseRow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A class representing a unit of geographic data with a polygon or multipolygon geometry and a population count.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : shapely.Polygon | shapely.MultiPolygon</span>
+<span class="sd">        Polygonal geometry representing the unit's boundaries.</span>
+<span class="sd">    population : int</span>
+<span class="sd">        The population residing within the geographic unit.</span>
+<span class="sd">    """</span>
+
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Polygon</span> <span class="o">|</span> <span class="n">shapely</span><span class="o">.</span><span class="n">MultiPolygon</span>
+    <span class="n">population</span><span class="p">:</span> <span class="nb">int</span></div>
+
+
+<div class="viewcode-block" id="TownRow"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.population_filler.html#popframe.preprocessing.population_filler.TownRow">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TownRow</span><span class="p">(</span><span class="n">BaseRow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A class representing a town's data row with point geometry, name, administrative level, and city status.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    geometry : shapely.Point</span>
+<span class="sd">        The geographic location of the town.</span>
+<span class="sd">    name : str</span>
+<span class="sd">        The name of the town.</span>
+<span class="sd">    level : str</span>
+<span class="sd">        The administrative level of the town.</span>
+<span class="sd">    is_city : bool</span>
+<span class="sd">        A boolean indicating whether the town is a city.</span>
+<span class="sd">    """</span>
+
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">shapely</span><span class="o">.</span><span class="n">Point</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">level</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">is_city</span><span class="p">:</span> <span class="nb">bool</span></div>
+
+
+<div class="viewcode-block" id="PopulationFiller"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.population_filler.html#popframe.preprocessing.population_filler.PopulationFiller">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PopulationFiller</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A class for filling in population data for towns based on their proximity to geographic units and an adjacency matrix.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    units : GeoDataFrame[UnitRow]</span>
+<span class="sd">        A GeoDataFrame containing geographic units with population data.</span>
+<span class="sd">    towns : GeoDataFrame[TownRow]</span>
+<span class="sd">        A GeoDataFrame containing town data.</span>
+<span class="sd">    adjacency_matrix : pd.DataFrame</span>
+<span class="sd">        A DataFrame representing the adjacency matrix between towns, used to calculate median travel times.</span>
+<span class="sd">    city_multiplier : float, optional</span>
+<span class="sd">        A multiplier applied to towns that are cities for population distribution, defaults to 10.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    validate_units(cls, gdf) -&gt; GeoDataFrame[UnitRow]</span>
+<span class="sd">        Validates that the units input is a valid GeoDataFrame of UnitRow type.</span>
+
+<span class="sd">    validate_towns(cls, gdf) -&gt; GeoDataFrame[TownRow]</span>
+<span class="sd">        Validates that the towns input is a valid GeoDataFrame of TownRow type.</span>
+
+<span class="sd">    validate_adjacency_matrix(cls, df) -&gt; pd.DataFrame</span>
+<span class="sd">        Validates that the adjacency matrix is square and matches the town index.</span>
+
+<span class="sd">    validate_model(self) -&gt; PopulationFiller</span>
+<span class="sd">        Validates that the CRS of towns and units match and that the adjacency matrix matches the town indices.</span>
+
+<span class="sd">    _get_median_time(self, town_id) -&gt; float</span>
+<span class="sd">        Computes the median time from the adjacency matrix for a given town.</span>
+
+<span class="sd">    fill(self) -&gt; GeoDataFrame[TownRow]</span>
+<span class="sd">        Fills in population data for the towns based on their proximity to geographic units and the adjacency matrix.</span>
+<span class="sd">    """</span>
+
+    <span class="n">units</span><span class="p">:</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">UnitRow</span><span class="p">]</span>
+    <span class="n">towns</span><span class="p">:</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">TownRow</span><span class="p">]</span>
+    <span class="n">adjacency_matrix</span><span class="p">:</span> <span class="n">InstanceOf</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span>
+    <span class="n">city_multiplier</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="n">Field</span><span class="p">(</span><span class="n">gt</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<div class="viewcode-block" id="PopulationFiller.validate_units"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.population_filler.html#popframe.preprocessing.population_filler.PopulationFiller.validate_units">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"units"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_units</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gdf</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validates that the input is a GeoDataFrame of UnitRow type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf : GeoDataFrame</span>
+<span class="sd">            The input GeoDataFrame to be validated.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GeoDataFrame[UnitRow]</span>
+<span class="sd">            A validated GeoDataFrame of UnitRow type.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">UnitRow</span><span class="p">]):</span>
+            <span class="n">gdf</span> <span class="o">=</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">UnitRow</span><span class="p">](</span><span class="n">gdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span></div>
+
+<div class="viewcode-block" id="PopulationFiller.validate_towns"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.population_filler.html#popframe.preprocessing.population_filler.PopulationFiller.validate_towns">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"towns"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_towns</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">gdf</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validates that the input is a GeoDataFrame of TownRow type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf : GeoDataFrame</span>
+<span class="sd">            The input GeoDataFrame to be validated.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GeoDataFrame[TownRow]</span>
+<span class="sd">            A validated GeoDataFrame of TownRow type.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">TownRow</span><span class="p">]):</span>
+            <span class="n">gdf</span> <span class="o">=</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">TownRow</span><span class="p">](</span><span class="n">gdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span></div>
+
+<div class="viewcode-block" id="PopulationFiller.validate_adjacency_matrix"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.population_filler.html#popframe.preprocessing.population_filler.PopulationFiller.validate_adjacency_matrix">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"adjacency_matrix"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_adjacency_matrix</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validates the adjacency matrix to ensure it is square and that its index matches the columns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        df : pd.DataFrame</span>
+<span class="sd">            The adjacency matrix to be validated.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pd.DataFrame</span>
+<span class="sd">            A validated adjacency matrix.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If the matrix index and columns do not match.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">),</span> <span class="s2">"Matrix index and columns don't match"</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="PopulationFiller.validate_model"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.population_filler.html#popframe.preprocessing.population_filler.PopulationFiller.validate_model">[docs]</a>    <span class="nd">@model_validator</span><span class="p">(</span><span class="n">mode</span><span class="o">=</span><span class="s2">"after"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validates that the coordinate reference systems (CRS) of the towns and units match, and that the adjacency matrix matches the town indices.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        PopulationFiller</span>
+<span class="sd">            The validated PopulationFiller instance.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If the CRS of the towns and units do not match, or if the matrix indices and town indices do not match.</span>
+<span class="sd">        """</span>
+        <span class="n">adj_mx</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span>
+        <span class="n">towns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">towns</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span>
+        <span class="k">assert</span> <span class="n">towns</span><span class="o">.</span><span class="n">crs</span> <span class="o">==</span> <span class="n">units</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span> <span class="s2">"Units and towns CRS don't match"</span>
+        <span class="k">assert</span> <span class="nb">all</span><span class="p">(</span><span class="n">adj_mx</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">towns</span><span class="o">.</span><span class="n">index</span><span class="p">),</span> <span class="s2">"Matrix index and towns index don't match"</span>
+        <span class="k">return</span> <span class="bp">self</span></div>
+
+<div class="viewcode-block" id="PopulationFiller._get_median_time"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.population_filler.html#popframe.preprocessing.population_filler.PopulationFiller._get_median_time">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_median_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">town_id</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculates the median time from the adjacency matrix for a given town.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        town_id : int</span>
+<span class="sd">            The ID of the town for which to calculate the median time.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The median travel time for the town.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">median</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">adjacency_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">town_id</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="PopulationFiller.fill"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.population_filler.html#popframe.preprocessing.population_filler.PopulationFiller.fill">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">fill</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">TownRow</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Distributes the population from geographic units to towns based on the proximity and population distribution model.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GeoDataFrame[TownRow]</span>
+<span class="sd">            A GeoDataFrame with updated population data for the towns.</span>
+<span class="sd">        """</span>
+        <span class="n">towns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">towns</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">towns</span><span class="p">[</span><span class="s2">"median_time"</span><span class="p">]</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_median_time</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">name</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+            <span class="n">geometry</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s2">"geometry"</span><span class="p">]</span>
+            <span class="n">population</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s2">"population"</span><span class="p">]</span>
+            <span class="n">unit_towns</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">towns</span><span class="o">.</span><span class="n">within</span><span class="p">(</span><span class="n">geometry</span><span class="p">)]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">unit_towns</span><span class="p">[</span><span class="s2">"coef"</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit_towns</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">city_multiplier</span> <span class="k">if</span> <span class="n">x</span><span class="p">[</span><span class="s2">"is_city"</span><span class="p">]</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">x</span><span class="p">[</span><span class="s2">"median_time"</span><span class="p">],</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span>
+            <span class="p">)</span>
+            <span class="n">coef_sum</span> <span class="o">=</span> <span class="n">unit_towns</span><span class="p">[</span><span class="s2">"coef"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">unit_towns</span><span class="p">[</span><span class="s2">"coef_norm"</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit_towns</span><span class="p">[</span><span class="s2">"coef"</span><span class="p">]</span> <span class="o">/</span> <span class="n">coef_sum</span>
+            <span class="n">unit_towns</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span> <span class="o">=</span> <span class="n">population</span> <span class="o">*</span> <span class="n">unit_towns</span><span class="p">[</span><span class="s2">"coef_norm"</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">unit_towns</span><span class="o">.</span><span class="n">index</span><span class="p">:</span>
+                <span class="n">towns</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="s2">"coef"</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit_towns</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="s2">"coef"</span><span class="p">]</span>
+                <span class="n">towns</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="s2">"coef_norm"</span><span class="p">]</span> <span class="o">=</span> <span class="n">unit_towns</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="s2">"coef_norm"</span><span class="p">]</span>
+                <span class="n">towns</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="s2">"population"</span><span class="p">]</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">unit_towns</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">j</span><span class="p">,</span> <span class="s2">"population"</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">towns</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

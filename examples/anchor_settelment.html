@@ -1,0 +1,2277 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Опорные населенные пункты &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/nbsphinx-code-cells.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Оценка территории по критерию для гексагональной сетки" href="criterion_hex.html" />
+    <link rel="prev" title="Agglomeration" href="aglomeration.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aglomeration.html">Построение границ агломераций</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Построени границ опорных населенных пунктов</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Проепроцессинг">Проепроцессинг</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Получение-территорий">Получение территорий</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Данные-по-соц-категориям">Данные по соц категориям</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Функция-поиска-родительской-территории-по-типу">Функция поиска родительской территории по типу</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Получение-данных-из-TownsNet">Получение данных из TownsNet</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#Получаем-данные-по-городам-и-ГПСП">Получаем данные по городам и ГПСП</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#Работа-метода">Работа метода</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#Границы-опорных-пунктов">Границы опорных пунктов</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="criterion_hex.html">Оценка критериев для гексагональной сетки</a></li>
+<li class="toctree-l2"><a class="reference internal" href="engineer.html">Оценка инженерной инфраструктуры</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spatial_inequality.html">Оценка пространственного неравенства</a></li>
+<li class="toctree-l2"><a class="reference internal" href="territory_evaluation.html">Оценка территории</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Опорные населенные пункты</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/anchor_settelment.nblink.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Опорные-населенные-пункты">
+<h1>Опорные населенные пункты<a class="headerlink" href="#Опорные-населенные-пункты" title="Permalink to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">popframe.models.region</span><span class="w"> </span><span class="kn">import</span> <span class="n">Region</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">popframe.method.anchor_settlement</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnchorSettlementBuilder</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<section id="Проепроцессинг">
+<h2>Проепроцессинг<a class="headerlink" href="#Проепроцессинг" title="Permalink to this heading"></a></h2>
+<section id="Получение-территорий">
+<h3>Получение территорий<a class="headerlink" href="#Получение-территорий" title="Permalink to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">fetch_territories</span><span class="p">(</span>
+    <span class="n">url</span><span class="o">=</span><span class="s1">'http://10.32.1.107:5300/api/v1/all_territories'</span><span class="p">,</span>
+    <span class="n">parent_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">get_all_levels</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">territory_type_id</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">name</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">cities_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+    <span class="n">created_at</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+    <span class="n">centers_only</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">'parent_id'</span><span class="p">:</span> <span class="n">parent_id</span><span class="p">,</span>
+        <span class="s1">'get_all_levels'</span><span class="p">:</span> <span class="n">get_all_levels</span><span class="p">,</span>
+        <span class="s1">'territory_type_id'</span><span class="p">:</span> <span class="n">territory_type_id</span><span class="p">,</span>
+        <span class="s1">'name'</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+        <span class="s1">'cities_only'</span><span class="p">:</span> <span class="n">cities_only</span><span class="p">,</span>
+        <span class="s1">'created_at'</span><span class="p">:</span> <span class="n">created_at</span><span class="p">,</span>
+        <span class="s1">'centers_only'</span><span class="p">:</span> <span class="n">centers_only</span>
+    <span class="p">}</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">geojson_data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_features</span><span class="p">(</span><span class="n">geojson_data</span><span class="p">[</span><span class="s1">'features'</span><span class="p">])</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">4326</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Ошибка запроса: </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+<br/></pre></div>
+</div>
+</div>
+</section>
+<section id="Данные-по-соц-категориям">
+<h3>Данные по соц категориям<a class="headerlink" href="#Данные-по-соц-категориям" title="Permalink to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">BASE_URL</span> <span class="o">=</span> <span class="s2">"http://10.32.1.47:5000/api"</span>
+<span class="n">CATEGORIES</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'soc_workers'</span><span class="p">,</span> <span class="s1">'soc_old'</span><span class="p">,</span> <span class="s1">'soc_parents'</span><span class="p">]</span>
+<span class="n">METRICS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'dev'</span><span class="p">,</span> <span class="s1">'soc'</span><span class="p">,</span> <span class="s1">'bas'</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_region_data</span><span class="p">(</span><span class="n">territory_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Dict</span><span class="p">]:</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">BASE_URL</span><span class="si">}</span><span class="s2">/regions/values_identities"</span><span class="p">,</span>
+            <span class="n">params</span><span class="o">=</span><span class="p">{</span><span class="s1">'territory_id'</span><span class="p">:</span> <span class="nb">int</span><span class="p">(</span><span class="n">territory_id</span><span class="p">)},</span>
+            <span class="n">timeout</span><span class="o">=</span><span class="mi">10</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="p">(</span><span class="n">requests</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">RequestException</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_unique_regions_data</span><span class="p">(</span><span class="n">territory_ids</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">Dict</span><span class="p">]:</span>
+    <span class="n">regions_data</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">territory_id</span> <span class="ow">in</span> <span class="n">territory_ids</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">get_region_data</span><span class="p">(</span><span class="n">territory_id</span><span class="p">)</span>
+        <span class="n">regions_data</span><span class="p">[</span><span class="n">territory_id</span><span class="p">]</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># Небольшая задержка между запросами</span>
+    <span class="k">return</span> <span class="n">regions_data</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">enrich_geodataframe</span><span class="p">(</span>
+        <span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'_</span><span class="si">{index}</span><span class="s1">'</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+
+    <span class="c1"># Определяем индексы для обработки</span>
+    <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="p">[</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">index</span>
+
+    <span class="c1"># Проверяем валидность индексов</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="mi">0</span> <span class="o">&lt;=</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Индексы должны быть в диапазоне [0, 2]"</span><span class="p">)</span>
+
+    <span class="c1"># Получаем данные для уникальных parent_id</span>
+    <span class="n">unique_parents</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s1">'parent_id'</span><span class="p">]</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+    <span class="n">regions_data</span> <span class="o">=</span> <span class="n">fetch_unique_regions_data</span><span class="p">(</span><span class="n">unique_parents</span><span class="p">[</span><span class="o">~</span><span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">unique_parents</span><span class="p">)])</span>
+
+    <span class="c1"># Создаем новые колонки для каждой метрики</span>
+    <span class="k">for</span> <span class="n">category</span> <span class="ow">in</span> <span class="n">CATEGORIES</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">metric</span> <span class="ow">in</span> <span class="n">METRICS</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">indices</span><span class="p">:</span>
+                <span class="n">suffix</span> <span class="o">=</span> <span class="n">suffix_format</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">i</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s1">''</span>
+                <span class="n">column_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">category</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">metric</span><span class="si">}{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">"</span>
+
+                <span class="k">def</span><span class="w"> </span><span class="nf">safe_get_value</span><span class="p">(</span><span class="n">parent_id</span><span class="p">):</span>
+                    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">parent_id</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+
+                    <span class="n">region_data</span> <span class="o">=</span> <span class="n">regions_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">parent_id</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">region_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+
+                    <span class="n">category_data</span> <span class="o">=</span> <span class="n">region_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">category</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">category_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+
+                    <span class="n">metric_data</span> <span class="o">=</span> <span class="n">category_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">metric</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">metric_data</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">i</span> <span class="o">&gt;=</span> <span class="nb">len</span><span class="p">(</span><span class="n">metric_data</span><span class="p">):</span>
+                        <span class="k">return</span> <span class="kc">None</span>
+
+                    <span class="k">return</span> <span class="n">metric_data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+                <span class="n">gdf</span><span class="p">[</span><span class="n">column_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s1">'parent_id'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">safe_get_value</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gdf</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">enrich_with_region_data</span><span class="p">(</span>
+        <span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">index</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Union</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="nb">int</span><span class="p">]]]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">suffix_format</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'_</span><span class="si">{index}</span><span class="s1">'</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+
+    <span class="n">enriched_gdf</span> <span class="o">=</span> <span class="n">enrich_geodataframe</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">suffix_format</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">enriched_gdf</span>
+<br/></pre></div>
+</div>
+</div>
+</section>
+<section id="Функция-поиска-родительской-территории-по-типу">
+<h3>Функция поиска родительской территории по типу<a class="headerlink" href="#Функция-поиска-родительской-территории-по-типу" title="Permalink to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Глобальный словарь для хранения информации о территориях</span>
+<span class="n">territory_dict</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">initialize_territory_dict</span><span class="p">(</span><span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+    <span class="k">global</span> <span class="n">territory_dict</span>
+    <span class="n">territory_dict</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">row</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]:</span> <span class="p">{</span>
+            <span class="s1">'level'</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">'level'</span><span class="p">],</span>
+            <span class="s1">'parent_id'</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">'parent'</span><span class="p">][</span><span class="s1">'id'</span><span class="p">]</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s1">'parent'</span><span class="p">])</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+            <span class="s1">'name'</span><span class="p">:</span> <span class="n">row</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span>  <span class="c1"># Добавляем name в словарь</span>
+        <span class="p">}</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">()</span>
+    <span class="p">}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">find_parent_info</span><span class="p">(</span><span class="nb">id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">target_type_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">:</span>
+    <span class="k">if</span> <span class="nb">id</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">territory_dict</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="n">current</span> <span class="o">=</span> <span class="n">territory_dict</span><span class="p">[</span><span class="nb">id</span><span class="p">]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">current</span><span class="p">[</span><span class="s1">'parent_id'</span><span class="p">]:</span>
+        <span class="k">return</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+
+    <span class="n">parent</span> <span class="o">=</span> <span class="n">territory_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">current</span><span class="p">[</span><span class="s1">'parent_id'</span><span class="p">])</span>
+    <span class="k">if</span> <span class="n">parent</span> <span class="ow">and</span> <span class="n">parent</span><span class="p">[</span><span class="s1">'level'</span><span class="p">]</span> <span class="o">==</span> <span class="n">target_type_id</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">current</span><span class="p">[</span><span class="s1">'parent_id'</span><span class="p">],</span> <span class="n">parent</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">find_parent_info</span><span class="p">(</span><span class="n">current</span><span class="p">[</span><span class="s1">'parent_id'</span><span class="p">],</span> <span class="n">target_type_id</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">find_parent_ids</span><span class="p">(</span><span class="n">target_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+                   <span class="n">reference_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+                   <span class="n">target_type_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+    <span class="c1"># Инициализируем словарь территорий на основе reference_gdf</span>
+    <span class="n">initialize_territory_dict</span><span class="p">(</span><span class="n">reference_gdf</span><span class="p">)</span>
+
+    <span class="c1"># Применяем функцию поиска parent_id и name для каждой территории в target_gdf</span>
+    <span class="n">parent_info</span> <span class="o">=</span> <span class="n">target_gdf</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+        <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">find_parent_info</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">target_type_id</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Разделяем результаты на два столбца</span>
+    <span class="n">target_gdf</span><span class="p">[</span><span class="s1">'parent_id'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">info</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">parent_info</span><span class="p">]</span>
+    <span class="n">target_gdf</span><span class="p">[</span><span class="s1">'parent_name'</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">info</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">info</span> <span class="k">else</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">parent_info</span><span class="p">]</span>
+
+    <span class="k">return</span> <span class="n">target_gdf</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Получение-данных-из-TownsNet">
+<h3>Получение данных из TownsNet<a class="headerlink" href="#Получение-данных-из-TownsNet" title="Permalink to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">API_URL</span> <span class="o">=</span> <span class="s2">"http://10.32.1.102:5510/provision/</span><span class="si">{region_id}</span><span class="s2">/get_evaluation"</span>
+
+<span class="n">CATEGORIES_PROV</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Базовая"</span><span class="p">,</span> <span class="s2">"Дополнительная"</span><span class="p">,</span> <span class="s2">"Комфорт"</span><span class="p">]</span>
+<span class="n">CATEGORIES_COLUMNS</span> <span class="o">=</span> <span class="p">[</span><span class="s1">'basic'</span><span class="p">,</span> <span class="s1">'additional'</span><span class="p">,</span> <span class="s1">'comfort'</span><span class="p">]</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_gdf</span><span class="p">(</span><span class="n">region_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">category_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">category_column</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"category"</span><span class="p">:</span> <span class="n">category_name</span><span class="p">}</span>
+
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">API_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">region_id</span><span class="o">=</span><span class="n">region_id</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">response</span><span class="o">.</span><span class="n">status_code</span> <span class="o">==</span> <span class="mi">200</span><span class="p">:</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_features</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"features"</span><span class="p">])</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[[</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="n">category_column</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">gdf</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">"API request failed with status </span><span class="si">{</span><span class="n">response</span><span class="o">.</span><span class="n">status_code</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_all_categories</span><span class="p">(</span><span class="n">region_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">):</span>
+    <span class="n">gdfs</span> <span class="o">=</span> <span class="p">[</span><span class="n">fetch_gdf</span><span class="p">(</span><span class="n">region_id</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">category_column</span><span class="p">)</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">category_column</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">CATEGORIES_PROV</span><span class="p">,</span><span class="n">CATEGORIES_COLUMNS</span><span class="p">)]</span>
+
+    <span class="n">combined_gdf</span> <span class="o">=</span> <span class="n">gdfs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">gdf</span><span class="p">,</span> <span class="n">category</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">gdfs</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">CATEGORIES_COLUMNS</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>
+        <span class="n">combined_gdf</span> <span class="o">=</span> <span class="n">combined_gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">gdf</span><span class="p">[[</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="n">category</span><span class="p">]],</span> <span class="n">on</span><span class="o">=</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"outer"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">combined_gdf</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_population</span><span class="p">(</span><span class="n">territories_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+    <span class="n">POPULATION_COUNT_INDICATOR_ID</span> <span class="o">=</span><span class="mi">1</span>
+    <span class="n">URBAN_API</span> <span class="o">=</span> <span class="s1">'http://10.32.1.107:5300'</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s1">'</span><span class="si">{</span><span class="n">URBAN_API</span><span class="si">}</span><span class="s1">/api/v1/indicator/</span><span class="si">{</span><span class="n">POPULATION_COUNT_INDICATOR_ID</span><span class="si">}</span><span class="s1">/values'</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+    <span class="n">res_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+
+    <span class="n">res_df</span><span class="p">[</span><span class="s1">'territory_id'</span><span class="p">]</span> <span class="o">=</span> <span class="n">res_df</span><span class="p">[</span><span class="s1">'territory'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">res_df</span> <span class="o">=</span> <span class="n">res_df</span><span class="p">[</span><span class="n">res_df</span><span class="p">[</span><span class="s1">'territory_id'</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">territories_gdf</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">)]</span>
+    <span class="n">res_df</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">res_df</span>
+        <span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'territory_id'</span><span class="p">)</span>
+        <span class="o">.</span><span class="n">agg</span><span class="p">({</span><span class="s1">'value'</span><span class="p">:</span> <span class="s1">'last'</span><span class="p">})</span>
+        <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'value'</span><span class="p">:</span> <span class="s1">'population'</span><span class="p">})</span>
+    <span class="p">)</span>
+
+    <span class="n">territories_gdf</span> <span class="o">=</span> <span class="n">territories_gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">res_df</span><span class="p">,</span>  <span class="n">left_on</span><span class="o">=</span><span class="s1">'id'</span><span class="p">,</span> <span class="n">right_on</span><span class="o">=</span><span class="s1">'territory_id'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+    <span class="n">territories_gdf</span><span class="p">[</span><span class="s1">'population'</span><span class="p">]</span> <span class="o">=</span> <span class="n">territories_gdf</span><span class="p">[</span><span class="s1">'population'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># Заменяем NaN на 0</span>
+
+    <span class="k">return</span> <span class="n">territories_gdf</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Получаем-данные-по-городам-и-ГПСП">
+<h3>Получаем данные по городам и ГПСП<a class="headerlink" href="#Получаем-данные-по-городам-и-ГПСП" title="Permalink to this heading"></a></h3>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">all_territories</span> <span class="o">=</span> <span class="n">fetch_territories</span><span class="p">(</span><span class="n">parent_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">get_all_levels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cities_only</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">centers_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">all_territories</span> <span class="o">=</span> <span class="n">all_territories</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'territory_id'</span><span class="p">:</span> <span class="s1">'id'</span><span class="p">})</span>
+<span class="n">all_territories</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>geometry</th>
+      <th>id</th>
+      <th>territory_type</th>
+      <th>parent</th>
+      <th>name</th>
+      <th>level</th>
+      <th>properties</th>
+      <th>admin_center</th>
+      <th>target_city_type</th>
+      <th>okato_code</th>
+      <th>oktmo_code</th>
+      <th>is_city</th>
+      <th>created_at</th>
+      <th>updated_at</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>POINT (34.61597 59.54053)</td>
+      <td>2</td>
+      <td>{'id': 2, 'name': 'Муниципальное образование'}</td>
+      <td>{'id': 1, 'name': 'Ленинградская область'}</td>
+      <td>Бокситогорский муниципальный район</td>
+      <td>3</td>
+      <td>{'Малые города': 2, 'Крупные города': 0, 'Числ...</td>
+      <td>{'id': 328, 'name': 'город Бокситогорск'}</td>
+      <td>None</td>
+      <td>41203000000</td>
+      <td>41603000</td>
+      <td>False</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2024-11-14T12:17:18.795643Z</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>POINT (34.28178 59.4324)</td>
+      <td>3</td>
+      <td>{'id': 3, 'name': 'Поселение'}</td>
+      <td>{'id': 2, 'name': 'Бокситогорский муниципальны...</td>
+      <td>Самойловское сельское поселение</td>
+      <td>4</td>
+      <td>{'Численность населения': 2154, 'Административ...</td>
+      <td>{'id': 310, 'name': 'поселок Совхозный'}</td>
+      <td>None</td>
+      <td>41203876000</td>
+      <td>41603476</td>
+      <td>False</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2024-11-14T12:17:52.703740Z</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>POINT (33.95669 59.66792)</td>
+      <td>4</td>
+      <td>{'id': 3, 'name': 'Поселение'}</td>
+      <td>{'id': 2, 'name': 'Бокситогорский муниципальны...</td>
+      <td>Большедворское сельское поселение</td>
+      <td>4</td>
+      <td>{'Численность населения': 1698, 'Административ...</td>
+      <td>{'id': 427, 'name': 'деревня Большой Двор'}</td>
+      <td>None</td>
+      <td>41203812000</td>
+      <td>41603412</td>
+      <td>False</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2024-11-14T12:17:34.396287Z</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>POINT (34.14548 59.52005)</td>
+      <td>5</td>
+      <td>{'id': 3, 'name': 'Поселение'}</td>
+      <td>{'id': 2, 'name': 'Бокситогорский муниципальны...</td>
+      <td>Пикалевское городское поселение</td>
+      <td>4</td>
+      <td>{'Численность населения': 20169, 'Администрати...</td>
+      <td>{'id': 335, 'name': 'город Пикалево'}</td>
+      <td>None</td>
+      <td>41440000000</td>
+      <td>41603102</td>
+      <td>False</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2024-11-14T12:17:34.930089Z</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>POINT (33.85846 59.34944)</td>
+      <td>6</td>
+      <td>{'id': 3, 'name': 'Поселение'}</td>
+      <td>{'id': 2, 'name': 'Бокситогорский муниципальны...</td>
+      <td>Борское сельское поселение</td>
+      <td>4</td>
+      <td>{'Численность населения': 3393, 'Административ...</td>
+      <td>{'id': 2859, 'name': 'деревня Бор'}</td>
+      <td>None</td>
+      <td>41203816000</td>
+      <td>41603416</td>
+      <td>False</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2024-11-14T12:17:35.367513Z</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>3131</th>
+      <td>3131</td>
+      <td>POINT (31.2342 59.17022)</td>
+      <td>3133</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Апраксин Бор</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248844010</td>
+      <td>41648444111</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T21:46:24.081332Z</td>
+    </tr>
+    <tr>
+      <th>3132</th>
+      <td>3132</td>
+      <td>POINT (31.32183 59.18624)</td>
+      <td>3134</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Александровка</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248844002</td>
+      <td>41648444106</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T11:14:58.578700Z</td>
+    </tr>
+    <tr>
+      <th>3133</th>
+      <td>3133</td>
+      <td>POINT (31.48353 59.28739)</td>
+      <td>3135</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Большая Горка</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248860002</td>
+      <td>41648444131</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T21:46:27.219027Z</td>
+    </tr>
+    <tr>
+      <th>3134</th>
+      <td>3134</td>
+      <td>POINT (31.45352 59.30929)</td>
+      <td>3136</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Дроздово</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248860003</td>
+      <td>41648444146</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T21:46:27.140158Z</td>
+    </tr>
+    <tr>
+      <th>3135</th>
+      <td>3135</td>
+      <td>POINT (31.4571 59.30223)</td>
+      <td>3137</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Большая Кунесть</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248860009</td>
+      <td>41648444136</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T11:29:40.547203Z</td>
+    </tr>
+  </tbody>
+</table>
+<p>3136 rows × 15 columns</p>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[8]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># all_territories.to_parquet('data/all_territories.parquet')</span>
+<span class="c1"># all_territories = gpd.read_parquet('data/all_territories.parquet')</span>
+</pre></div>
+</div>
+</div>
+<p>Данные сохранены в файлы, при необходимиости можно раскомментировать код и получить обновленные данные</p>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Получение данных о городах</span>
+<span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">fetch_territories</span><span class="p">(</span><span class="n">parent_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">get_all_levels</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cities_only</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">centers_only</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">towns_gdf</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[9]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>geometry</th>
+      <th>territory_id</th>
+      <th>territory_type</th>
+      <th>parent</th>
+      <th>name</th>
+      <th>level</th>
+      <th>properties</th>
+      <th>admin_center</th>
+      <th>target_city_type</th>
+      <th>okato_code</th>
+      <th>oktmo_code</th>
+      <th>is_city</th>
+      <th>created_at</th>
+      <th>updated_at</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>POINT (33.74561 59.36031)</td>
+      <td>207</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 6, 'name': 'Борское сельское поселение'}</td>
+      <td>деревня Болото</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41203816004</td>
+      <td>41603416106</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T21:46:49.047689Z</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>POINT (33.78685 59.47791)</td>
+      <td>208</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 6, 'name': 'Борское сельское поселение'}</td>
+      <td>деревня Большой Остров</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41203816020</td>
+      <td>41603416111</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T21:46:50.317027Z</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>POINT (33.79438 59.47479)</td>
+      <td>209</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 6, 'name': 'Борское сельское поселение'}</td>
+      <td>деревня Бор</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41203816001</td>
+      <td>41603416101</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T11:08:10.553286Z</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>POINT (33.77497 59.44313)</td>
+      <td>210</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 6, 'name': 'Борское сельское поселение'}</td>
+      <td>деревня Бороватое</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41203816005</td>
+      <td>41603416116</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T21:46:50.270215Z</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>POINT (33.67886 59.33333)</td>
+      <td>211</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 6, 'name': 'Борское сельское поселение'}</td>
+      <td>деревня Бочево</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41203816003</td>
+      <td>41603416121</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T10:15:56.823065Z</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2926</th>
+      <td>POINT (31.2342 59.17022)</td>
+      <td>3133</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Апраксин Бор</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248844010</td>
+      <td>41648444111</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T21:46:24.081332Z</td>
+    </tr>
+    <tr>
+      <th>2927</th>
+      <td>POINT (31.32183 59.18624)</td>
+      <td>3134</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Александровка</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248844002</td>
+      <td>41648444106</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T11:14:58.578700Z</td>
+    </tr>
+    <tr>
+      <th>2928</th>
+      <td>POINT (31.48353 59.28739)</td>
+      <td>3135</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Большая Горка</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248860002</td>
+      <td>41648444131</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T21:46:27.219027Z</td>
+    </tr>
+    <tr>
+      <th>2929</th>
+      <td>POINT (31.45352 59.30929)</td>
+      <td>3136</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Дроздово</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248860003</td>
+      <td>41648444146</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T21:46:27.140158Z</td>
+    </tr>
+    <tr>
+      <th>2930</th>
+      <td>POINT (31.4571 59.30223)</td>
+      <td>3137</td>
+      <td>{'id': 18, 'name': 'Населенный пункт'}</td>
+      <td>{'id': 205, 'name': 'Трубникоборское сельское ...</td>
+      <td>деревня Большая Кунесть</td>
+      <td>5</td>
+      <td>{}</td>
+      <td>None</td>
+      <td>None</td>
+      <td>41248860009</td>
+      <td>41648444136</td>
+      <td>True</td>
+      <td>2024-06-16T21:35:40.801621Z</td>
+      <td>2025-05-22T11:29:40.547203Z</td>
+    </tr>
+  </tbody>
+</table>
+<p>2931 rows × 14 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">towns_gdf</span><span class="p">[</span><span class="s1">'is_anchor_settlement'</span><span class="p">]</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="p">[</span><span class="s1">'target_city_type'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="s1">'id'</span> <span class="ow">in</span> <span class="n">x</span><span class="p">)</span>
+<span class="n">towns_gdf</span><span class="p">[</span><span class="s2">"is_anchor_settlement"</span><span class="p">]</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="p">[</span><span class="s2">"is_anchor_settlement"</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">bool</span><span class="p">)</span>
+<span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="p">[[</span><span class="s1">'geometry'</span><span class="p">,</span> <span class="s1">'territory_id'</span><span class="p">,</span> <span class="s1">'name'</span><span class="p">,</span> <span class="s1">'is_anchor_settlement'</span><span class="p">]]</span>
+<span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'territory_id'</span><span class="p">:</span> <span class="s1">'id'</span><span class="p">})</span>
+<span class="n">towns_gdf</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[10]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>geometry</th>
+      <th>id</th>
+      <th>name</th>
+      <th>is_anchor_settlement</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>POINT (33.74561 59.36031)</td>
+      <td>207</td>
+      <td>деревня Болото</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>POINT (33.78685 59.47791)</td>
+      <td>208</td>
+      <td>деревня Большой Остров</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>POINT (33.79438 59.47479)</td>
+      <td>209</td>
+      <td>деревня Бор</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>POINT (33.77497 59.44313)</td>
+      <td>210</td>
+      <td>деревня Бороватое</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>POINT (33.67886 59.33333)</td>
+      <td>211</td>
+      <td>деревня Бочево</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2926</th>
+      <td>2926</td>
+      <td>POINT (31.2342 59.17022)</td>
+      <td>3133</td>
+      <td>деревня Апраксин Бор</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2927</th>
+      <td>2927</td>
+      <td>POINT (31.32183 59.18624)</td>
+      <td>3134</td>
+      <td>деревня Александровка</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2928</th>
+      <td>2928</td>
+      <td>POINT (31.48353 59.28739)</td>
+      <td>3135</td>
+      <td>деревня Большая Горка</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2929</th>
+      <td>2929</td>
+      <td>POINT (31.45352 59.30929)</td>
+      <td>3136</td>
+      <td>деревня Дроздово</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>2930</th>
+      <td>2930</td>
+      <td>POINT (31.4571 59.30223)</td>
+      <td>3137</td>
+      <td>деревня Большая Кунесть</td>
+      <td>False</td>
+    </tr>
+  </tbody>
+</table>
+<p>2931 rows × 5 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">find_parent_ids</span><span class="p">(</span><span class="n">towns_gdf</span><span class="p">,</span> <span class="n">all_territories</span><span class="p">,</span> <span class="n">target_type_id</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="n">towns_gdf</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[11]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>geometry</th>
+      <th>id</th>
+      <th>name</th>
+      <th>is_anchor_settlement</th>
+      <th>parent_id</th>
+      <th>parent_name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>POINT (33.74561 59.36031)</td>
+      <td>207</td>
+      <td>деревня Болото</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>POINT (33.78685 59.47791)</td>
+      <td>208</td>
+      <td>деревня Большой Остров</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>POINT (33.79438 59.47479)</td>
+      <td>209</td>
+      <td>деревня Бор</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>POINT (33.77497 59.44313)</td>
+      <td>210</td>
+      <td>деревня Бороватое</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>POINT (33.67886 59.33333)</td>
+      <td>211</td>
+      <td>деревня Бочево</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2926</th>
+      <td>2926</td>
+      <td>POINT (31.2342 59.17022)</td>
+      <td>3133</td>
+      <td>деревня Апраксин Бор</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+    </tr>
+    <tr>
+      <th>2927</th>
+      <td>2927</td>
+      <td>POINT (31.32183 59.18624)</td>
+      <td>3134</td>
+      <td>деревня Александровка</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+    </tr>
+    <tr>
+      <th>2928</th>
+      <td>2928</td>
+      <td>POINT (31.48353 59.28739)</td>
+      <td>3135</td>
+      <td>деревня Большая Горка</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+    </tr>
+    <tr>
+      <th>2929</th>
+      <td>2929</td>
+      <td>POINT (31.45352 59.30929)</td>
+      <td>3136</td>
+      <td>деревня Дроздово</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+    </tr>
+    <tr>
+      <th>2930</th>
+      <td>2930</td>
+      <td>POINT (31.4571 59.30223)</td>
+      <td>3137</td>
+      <td>деревня Большая Кунесть</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+    </tr>
+  </tbody>
+</table>
+<p>2931 rows × 7 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">enrich_with_region_data</span><span class="p">(</span><span class="n">towns_gdf</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">towns_gdf</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[13]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>geometry</th>
+      <th>id</th>
+      <th>name</th>
+      <th>is_anchor_settlement</th>
+      <th>parent_id</th>
+      <th>parent_name</th>
+      <th>population</th>
+      <th>soc_workers_dev</th>
+      <th>soc_workers_soc</th>
+      <th>soc_workers_bas</th>
+      <th>soc_old_dev</th>
+      <th>soc_old_soc</th>
+      <th>soc_old_bas</th>
+      <th>soc_parents_dev</th>
+      <th>soc_parents_soc</th>
+      <th>soc_parents_bas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>POINT (33.74561 59.36031)</td>
+      <td>207</td>
+      <td>деревня Болото</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>10.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>0.096542</td>
+      <td>0.194644</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>POINT (33.78685 59.47791)</td>
+      <td>208</td>
+      <td>деревня Большой Остров</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>68.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>0.096542</td>
+      <td>0.194644</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>POINT (33.79438 59.47479)</td>
+      <td>209</td>
+      <td>деревня Бор</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>1734.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>0.096542</td>
+      <td>0.194644</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>POINT (33.77497 59.44313)</td>
+      <td>210</td>
+      <td>деревня Бороватое</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>10.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>0.096542</td>
+      <td>0.194644</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>POINT (33.67886 59.33333)</td>
+      <td>211</td>
+      <td>деревня Бочево</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>10.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>0.096542</td>
+      <td>0.194644</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2926</th>
+      <td>2926</td>
+      <td>POINT (31.2342 59.17022)</td>
+      <td>3133</td>
+      <td>деревня Апраксин Бор</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>313.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>0.520615</td>
+      <td>0.271781</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+    </tr>
+    <tr>
+      <th>2927</th>
+      <td>2927</td>
+      <td>POINT (31.32183 59.18624)</td>
+      <td>3134</td>
+      <td>деревня Александровка</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>313.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>0.520615</td>
+      <td>0.271781</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+    </tr>
+    <tr>
+      <th>2928</th>
+      <td>2928</td>
+      <td>POINT (31.48353 59.28739)</td>
+      <td>3135</td>
+      <td>деревня Большая Горка</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>313.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>0.520615</td>
+      <td>0.271781</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+    </tr>
+    <tr>
+      <th>2929</th>
+      <td>2929</td>
+      <td>POINT (31.45352 59.30929)</td>
+      <td>3136</td>
+      <td>деревня Дроздово</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>5.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>0.520615</td>
+      <td>0.271781</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+    </tr>
+    <tr>
+      <th>2930</th>
+      <td>2930</td>
+      <td>POINT (31.4571 59.30223)</td>
+      <td>3137</td>
+      <td>деревня Большая Кунесть</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>5.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>0.520615</td>
+      <td>0.271781</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+    </tr>
+  </tbody>
+</table>
+<p>2931 rows × 17 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">provision_gdf</span> <span class="o">=</span> <span class="n">fetch_all_categories</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">provision_gdf</span> <span class="o">=</span> <span class="n">provision_gdf</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">4326</span><span class="p">)</span>
+
+<span class="c1"># Добавляем буфер вокруг точек в gdf1</span>
+<span class="n">orig_geometry</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="p">[</span><span class="s1">'geometry'</span><span class="p">]</span>
+<span class="n">towns_gdf</span><span class="p">[</span><span class="s1">'geometry'</span><span class="p">]</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mf">0.002</span><span class="p">)</span>
+<span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="o">.</span><span class="n">sjoin</span><span class="p">(</span><span class="n">provision_gdf</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="s1">'intersects'</span><span class="p">)</span>
+<span class="n">towns_gdf</span><span class="p">[</span><span class="s1">'geometry'</span><span class="p">]</span> <span class="o">=</span> <span class="n">orig_geometry</span>
+<span class="n">towns_gdf</span><span class="p">[</span><span class="s1">'provision'</span><span class="p">]</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="p">[[</span><span class="s1">'basic'</span><span class="p">,</span> <span class="s1">'additional'</span><span class="p">,</span> <span class="s1">'comfort'</span><span class="p">]]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="c1"># towns_gdf.to_parquet('data/towns_gdf.parquet')</span>
+<span class="n">towns_gdf</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[14]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>geometry</th>
+      <th>id</th>
+      <th>name</th>
+      <th>is_anchor_settlement</th>
+      <th>parent_id</th>
+      <th>parent_name</th>
+      <th>population</th>
+      <th>soc_workers_dev</th>
+      <th>soc_workers_soc</th>
+      <th>...</th>
+      <th>soc_old_soc</th>
+      <th>soc_old_bas</th>
+      <th>soc_parents_dev</th>
+      <th>soc_parents_soc</th>
+      <th>soc_parents_bas</th>
+      <th>index_right</th>
+      <th>basic</th>
+      <th>additional</th>
+      <th>comfort</th>
+      <th>provision</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>0</td>
+      <td>POINT (33.74561 59.36031)</td>
+      <td>207</td>
+      <td>деревня Болото</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>10.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>POINT (33.78685 59.47791)</td>
+      <td>208</td>
+      <td>деревня Большой Остров</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>68.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>2</td>
+      <td>POINT (33.79438 59.47479)</td>
+      <td>209</td>
+      <td>деревня Бор</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>1734.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>3</td>
+      <td>POINT (33.77497 59.44313)</td>
+      <td>210</td>
+      <td>деревня Бороватое</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>10.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>3.0</td>
+      <td>0.53</td>
+      <td>0.7</td>
+      <td>0.4</td>
+      <td>0.543333</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>4</td>
+      <td>POINT (33.67886 59.33333)</td>
+      <td>211</td>
+      <td>деревня Бочево</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>10.0</td>
+      <td>None</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2926</th>
+      <td>2926</td>
+      <td>POINT (31.2342 59.17022)</td>
+      <td>3133</td>
+      <td>деревня Апраксин Бор</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>313.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>2926.0</td>
+      <td>0.20</td>
+      <td>0.4</td>
+      <td>0.2</td>
+      <td>0.266667</td>
+    </tr>
+    <tr>
+      <th>2927</th>
+      <td>2927</td>
+      <td>POINT (31.32183 59.18624)</td>
+      <td>3134</td>
+      <td>деревня Александровка</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>313.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2928</th>
+      <td>2928</td>
+      <td>POINT (31.48353 59.28739)</td>
+      <td>3135</td>
+      <td>деревня Большая Горка</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>313.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2929</th>
+      <td>2929</td>
+      <td>POINT (31.45352 59.30929)</td>
+      <td>3136</td>
+      <td>деревня Дроздово</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>5.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+      <td>NaN</td>
+    </tr>
+    <tr>
+      <th>2930</th>
+      <td>2930</td>
+      <td>POINT (31.4571 59.30223)</td>
+      <td>3137</td>
+      <td>деревня Большая Кунесть</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>5.0</td>
+      <td>None</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>2930.0</td>
+      <td>0.33</td>
+      <td>0.4</td>
+      <td>0.4</td>
+      <td>0.376667</td>
+    </tr>
+  </tbody>
+</table>
+<p>2932 rows × 22 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># towns_gdf = gpd.read_parquet('data/cities_gdf.parquet')</span>
+<span class="c1"># towns_gdf['provision'] = towns_gdf[['basic', 'additional', 'comfort']].mean(axis=1)</span>
+<span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+<span class="n">towns_gdf</span><span class="p">[</span><span class="s1">'parent_name'</span><span class="p">]</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="p">[</span><span class="s1">'parent_name'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="s1">''</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+
+<span class="c1"># теперь можно безопасно сохранить в parquet</span>
+<span class="n">towns_gdf</span><span class="o">.</span><span class="n">to_parquet</span><span class="p">(</span><span class="s1">'data/towns_gdf.parquet'</span><span class="p">)</span>
+<span class="n">towns_gdf</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[15]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>index</th>
+      <th>geometry</th>
+      <th>id</th>
+      <th>name</th>
+      <th>is_anchor_settlement</th>
+      <th>parent_id</th>
+      <th>parent_name</th>
+      <th>population</th>
+      <th>soc_workers_dev</th>
+      <th>soc_workers_soc</th>
+      <th>...</th>
+      <th>soc_old_soc</th>
+      <th>soc_old_bas</th>
+      <th>soc_parents_dev</th>
+      <th>soc_parents_soc</th>
+      <th>soc_parents_bas</th>
+      <th>index_right</th>
+      <th>basic</th>
+      <th>additional</th>
+      <th>comfort</th>
+      <th>provision</th>
+    </tr>
+    <tr>
+      <th>id</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>207</th>
+      <td>0</td>
+      <td>POINT (33.74561 59.36031)</td>
+      <td>207</td>
+      <td>деревня Болото</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>10.0</td>
+      <td>0</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>208</th>
+      <td>1</td>
+      <td>POINT (33.78685 59.47791)</td>
+      <td>208</td>
+      <td>деревня Большой Остров</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>68.0</td>
+      <td>0</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>209</th>
+      <td>2</td>
+      <td>POINT (33.79438 59.47479)</td>
+      <td>209</td>
+      <td>деревня Бор</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>1734.0</td>
+      <td>0</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>210</th>
+      <td>3</td>
+      <td>POINT (33.77497 59.44313)</td>
+      <td>210</td>
+      <td>деревня Бороватое</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>10.0</td>
+      <td>0</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>3.0</td>
+      <td>0.53</td>
+      <td>0.7</td>
+      <td>0.4</td>
+      <td>0.543333</td>
+    </tr>
+    <tr>
+      <th>211</th>
+      <td>4</td>
+      <td>POINT (33.67886 59.33333)</td>
+      <td>211</td>
+      <td>деревня Бочево</td>
+      <td>False</td>
+      <td>6.0</td>
+      <td>Борское сельское поселение</td>
+      <td>10.0</td>
+      <td>0</td>
+      <td>0.033795</td>
+      <td>...</td>
+      <td>0.041469</td>
+      <td>0.072120</td>
+      <td>0.308008</td>
+      <td>0.033795</td>
+      <td>0.002834</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>3133</th>
+      <td>2926</td>
+      <td>POINT (31.2342 59.17022)</td>
+      <td>3133</td>
+      <td>деревня Апраксин Бор</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>313.0</td>
+      <td>0</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>2926.0</td>
+      <td>0.20</td>
+      <td>0.4</td>
+      <td>0.2</td>
+      <td>0.266667</td>
+    </tr>
+    <tr>
+      <th>3134</th>
+      <td>2927</td>
+      <td>POINT (31.32183 59.18624)</td>
+      <td>3134</td>
+      <td>деревня Александровка</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>313.0</td>
+      <td>0</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>3135</th>
+      <td>2928</td>
+      <td>POINT (31.48353 59.28739)</td>
+      <td>3135</td>
+      <td>деревня Большая Горка</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>313.0</td>
+      <td>0</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>3136</th>
+      <td>2929</td>
+      <td>POINT (31.45352 59.30929)</td>
+      <td>3136</td>
+      <td>деревня Дроздово</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>5.0</td>
+      <td>0</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>0.0</td>
+      <td>0.00</td>
+      <td>0.0</td>
+      <td>0.0</td>
+      <td>0.000000</td>
+    </tr>
+    <tr>
+      <th>3137</th>
+      <td>2930</td>
+      <td>POINT (31.4571 59.30223)</td>
+      <td>3137</td>
+      <td>деревня Большая Кунесть</td>
+      <td>False</td>
+      <td>205.0</td>
+      <td>Трубникоборское сельское поселение</td>
+      <td>5.0</td>
+      <td>0</td>
+      <td>0.152398</td>
+      <td>...</td>
+      <td>0.105424</td>
+      <td>0.491682</td>
+      <td>0.335392</td>
+      <td>0.152398</td>
+      <td>0.226743</td>
+      <td>2930.0</td>
+      <td>0.33</td>
+      <td>0.4</td>
+      <td>0.4</td>
+      <td>0.376667</td>
+    </tr>
+  </tbody>
+</table>
+<p>2932 rows × 22 columns</p>
+</div></div>
+</div>
+</section>
+</section>
+<section id="Работа-метода">
+<h2>Работа метода<a class="headerlink" href="#Работа-метода" title="Permalink to this heading"></a></h2>
+<section id="Границы-опорных-пунктов">
+<h3>Границы опорных пунктов<a class="headerlink" href="#Границы-опорных-пунктов" title="Permalink to this heading"></a></h3>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">popframe.models.region</span><span class="w"> </span><span class="kn">import</span> <span class="n">Region</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">popframe.method.anchor_settlement</span><span class="w"> </span><span class="kn">import</span> <span class="n">AnchorSettlementBuilder</span>
+
+<span class="c1"># Создаем экземпляр класса</span>
+<span class="n">region_model</span> <span class="o">=</span> <span class="n">Region</span><span class="o">.</span><span class="n">from_pickle</span><span class="p">(</span><span class="s1">'data/1.pickle'</span><span class="p">)</span>
+<span class="n">builder</span> <span class="o">=</span> <span class="n">AnchorSettlementBuilder</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region_model</span><span class="p">)</span>
+
+<span class="c1"># Вызываем метод построения границ</span>
+<span class="n">towns_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_parquet</span><span class="p">(</span><span class="s1">'data/towns_gdf.parquet'</span><span class="p">)</span>
+<span class="n">settlement_boundaries</span> <span class="o">=</span> <span class="n">builder</span><span class="o">.</span><span class="n">get_anchor_settlement_boundaries</span><span class="p">(</span><span class="n">towns_gdf</span><span class="p">,</span> <span class="n">time</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># settlement_boundaries.to_file('data/settlement_boundaries.geojson', driver='GeoJSON')</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+
+<span class="c1"># Создание графика и оси</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">30</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+
+<span class="c1"># Визуализация границ с заливкой светло-голубым цветом</span>
+<span class="n">settlement_boundaries</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span> <span class="n">facecolor</span><span class="o">=</span><span class="s2">"#ADD8E6"</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Визуализация границ региона (серым цветом с прозрачностью)</span>
+<span class="n">region_boundary</span> <span class="o">=</span> <span class="n">region_model</span><span class="o">.</span><span class="n">region</span>
+<span class="n">region_boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'black'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+
+<span class="n">local_crs</span> <span class="o">=</span> <span class="n">region_boundary</span><span class="o">.</span><span class="n">crs</span>
+
+
+<span class="n">non_anchor_towns</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="p">[</span><span class="n">towns_gdf</span><span class="p">[</span><span class="s2">"is_anchor_settlement"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">False</span><span class="p">]</span>  <span class="c1"># Не опорные города</span>
+<span class="n">anchor_towns</span> <span class="o">=</span> <span class="n">towns_gdf</span><span class="p">[</span><span class="n">towns_gdf</span><span class="p">[</span><span class="s2">"is_anchor_settlement"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span>  <span class="c1"># Не опорные города</span>
+
+<span class="n">non_anchor_towns</span> <span class="o">=</span> <span class="n">non_anchor_towns</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">local_crs</span><span class="p">)</span>
+<span class="n">anchor_towns</span> <span class="o">=</span> <span class="n">anchor_towns</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">local_crs</span><span class="p">)</span>
+
+<span class="c1"># Визуализация не опорных городов (тепловая карта по provision)</span>
+<span class="n">non_anchor_towns</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">column</span><span class="o">=</span><span class="s2">"basic"</span><span class="p">,</span>  <span class="c1"># Градиент по 'provision'</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s2">"YlOrRd"</span><span class="p">,</span>  <span class="c1"># От жёлтого к красному</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>  <span class="c1"># Включаем легенду</span>
+    <span class="n">markersize</span><span class="o">=</span><span class="n">non_anchor_towns</span><span class="p">[</span><span class="s2">"basic"</span><span class="p">]</span> <span class="o">*</span> <span class="mi">10</span><span class="p">,</span>  <span class="c1"># Размер точек по значению</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span>
+<span class="p">)</span>
+
+<span class="c1"># Визуализация опорных городов (зелёным цветом)</span>
+<span class="n">anchor_towns</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s2">"green"</span><span class="p">,</span>  <span class="c1"># Фиксированный зелёный цвет</span>
+    <span class="n">markersize</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span>  <span class="c1"># Размер маркеров</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"black"</span>
+<span class="p">)</span>
+
+
+<span class="c1"># Настройки отображения</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+
+<span class="c1"># Показ графика</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_anchor_settelment_26_0.png" src="../_images/examples_anchor_settelment_26_0.png" />
+</div>
+</div>
+</section>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="aglomeration.html" class="btn btn-neutral float-left" title="Agglomeration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="criterion_hex.html" class="btn btn-neutral float-right" title="Оценка территории по критерию для гексагональной сетки" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

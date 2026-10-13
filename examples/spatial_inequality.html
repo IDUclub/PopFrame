@@ -1,0 +1,2018 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Пространственное неравенство &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/nbsphinx-code-cells.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Оценка территории по критериям" href="territory_evaluation.html" />
+    <link rel="prev" title="Инженерная инфраструктура" href="engineer.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aglomeration.html">Построение границ агломераций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="anchor_settelment.html">Построени границ опорных населенных пунктов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="criterion_hex.html">Оценка критериев для гексагональной сетки</a></li>
+<li class="toctree-l2"><a class="reference internal" href="engineer.html">Оценка инженерной инфраструктуры</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Оценка пространственного неравенства</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Подготовка-данных">Подготовка данных</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Тестовый-пример">Тестовый пример</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Пространственное-неравенство-для-территорий-(полигонов)-по-группам-населения">Пространственное неравенство для территорий (полигонов) по группам населения</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Лучшие-территории-по-наименьшему-неравенству">Лучшие территории по наименьшему неравенству</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Соц.-группа-с-наименьшим-неравенством">Соц. группа с наименьшим неравенством</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#Визуализация">Визуализация</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="territory_evaluation.html">Оценка территории</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Пространственное неравенство</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/spatial_inequality.nblink.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Пространственное-неравенство">
+<h1>Пространственное неравенство<a class="headerlink" href="#Пространственное-неравенство" title="Permalink to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># import osmnx as ox</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">popframe.models.region</span><span class="w"> </span><span class="kn">import</span> <span class="n">Region</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">tqdm</span><span class="w"> </span><span class="kn">import</span> <span class="n">tqdm</span>
+
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<section id="Подготовка-данных">
+<h2>Подготовка данных<a class="headerlink" href="#Подготовка-данных" title="Permalink to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">preprocess_data</span><span class="p">(</span><span class="n">region_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">level</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Загружает оценки неравенства для всех соцгрупп, вычисляет итоговое</span>
+<span class="sd">    Пространственное неравенство, подтягивает название и население</span>
+<span class="sd">    территорий и возвращает итоговый GeoDataFrame.</span>
+
+<span class="sd">    Параметры:</span>
+<span class="sd">        region_id (int): ID региона для запроса оценок.</span>
+<span class="sd">        level (int, optional): Уровень агрегирования для запроса. По умолчанию None.</span>
+
+<span class="sd">    Возвращает:</span>
+<span class="sd">        GeoDataFrame с колонками:</span>
+<span class="sd">            - territory_id</span>
+<span class="sd">            - geometry</span>
+<span class="sd">            - для каждой соцгруппы: "{name} - Неравенство", "{name} - Неравенство - basic",</span>
+<span class="sd">              "{name} - Неравенство - additional", "{name} - Неравенство - comfort"</span>
+<span class="sd">            - "Пространственное неравенство"</span>
+<span class="sd">            - name (название территории)</span>
+<span class="sd">            - population (население)</span>
+<span class="sd">    """</span>
+    <span class="n">API_URL</span> <span class="o">=</span> <span class="s2">"http://10.32.1.102:5510/provision/</span><span class="si">{region_id}</span><span class="s2">/get_evaluation"</span>
+    <span class="n">URBAN_API</span> <span class="o">=</span> <span class="s2">"http://10.32.1.107:5300"</span>
+    <span class="n">POP_INDICATOR</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1"># Список соц‑групп</span>
+    <span class="n">social_groups</span> <span class="o">=</span> <span class="p">[</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Подростки младшего возраста (14-15)"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Подростки старшего возраста (16-17)"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Трудоспособные горожане (18-59)"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Люди старшего возраста (60-75)"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Люди преклонного возраста (старше 75)"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Горожане, ожидающие ребенка"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Горожане с младенцами"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Горожане с детьми детсадовского возраста (1-6 лет)"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>  <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Горожане с детьми младшего школьного возраста (7-13 лет)"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Горожане с подростками (14-18 лет)"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">11</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Христиане"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">12</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Мусульмане"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">13</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Иудеи"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">14</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Буддисты"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">15</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Студенты и учащиеся колледжей"</span><span class="p">},</span>
+        <span class="p">{</span><span class="s2">"soc_group_id"</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">:</span> <span class="s2">"Горожане с питомцами"</span><span class="p">},</span>
+    <span class="p">]</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_gdf</span><span class="p">(</span><span class="n">social_group_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"region_id"</span><span class="p">:</span> <span class="n">region_id</span><span class="p">,</span> <span class="s2">"level"</span><span class="p">:</span> <span class="n">level</span><span class="p">,</span> <span class="s2">"social_group_id"</span><span class="p">:</span> <span class="n">social_group_id</span><span class="p">}</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">API_URL</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">region_id</span><span class="o">=</span><span class="n">region_id</span><span class="p">),</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_features</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="s2">"features"</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">gdf</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="mi">32636</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">fetch_territories</span><span class="p">(</span><span class="n">parent_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">'parent_id'</span><span class="p">:</span> <span class="n">parent_id</span><span class="p">,</span>
+            <span class="s1">'get_all_levels'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'cities_only'</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="s1">'centers_only'</span><span class="p">:</span> <span class="kc">True</span>
+        <span class="p">}</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">URBAN_API</span><span class="si">}</span><span class="s2">/api/v1/all_territories"</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_features</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">()[</span><span class="s1">'features'</span><span class="p">])</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="mi">4326</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">get_population</span><span class="p">(</span><span class="n">terr_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+        <span class="n">resp</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">URBAN_API</span><span class="si">}</span><span class="s2">/api/v1/indicator/</span><span class="si">{</span><span class="n">POP_INDICATOR</span><span class="si">}</span><span class="s2">/values"</span><span class="p">,</span> <span class="n">verify</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">resp</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">resp</span><span class="o">.</span><span class="n">json</span><span class="p">())</span>
+        <span class="n">df</span><span class="p">[</span><span class="s1">'territory_id'</span><span class="p">]</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="s1">'territory'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="p">[</span><span class="s1">'id'</span><span class="p">]</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">dict</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="n">pop</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s1">'territory_id'</span><span class="p">)[</span><span class="s1">'value'</span><span class="p">]</span><span class="o">.</span><span class="n">last</span><span class="p">()</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s1">'value'</span><span class="p">:</span> <span class="s1">'population'</span><span class="p">})</span>
+        <span class="n">terr_gdf</span> <span class="o">=</span> <span class="n">terr_gdf</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="s1">'idx'</span><span class="p">)</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+        <span class="n">terr_gdf</span> <span class="o">=</span> <span class="n">terr_gdf</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">pop</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'territory_id'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+        <span class="n">terr_gdf</span><span class="p">[</span><span class="s1">'population'</span><span class="p">]</span> <span class="o">=</span> <span class="n">terr_gdf</span><span class="p">[</span><span class="s1">'population'</span><span class="p">]</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">terr_gdf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s1">'idx'</span><span class="p">)</span>
+
+    <span class="c1"># 1) Базовая таблица</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="n">social_groups</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">gdf_base</span> <span class="o">=</span> <span class="n">fetch_gdf</span><span class="p">(</span><span class="n">first</span><span class="p">[</span><span class="s2">"soc_group_id"</span><span class="p">])</span>
+    <span class="n">gdf_final</span> <span class="o">=</span> <span class="n">gdf_base</span><span class="p">[[</span><span class="s1">'territory_id'</span><span class="p">,</span> <span class="s1">'geometry'</span><span class="p">]]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">metrics</span> <span class="o">=</span> <span class="p">[</span><span class="s2">"Обеспеченность"</span><span class="p">,</span> <span class="s2">"basic"</span><span class="p">,</span> <span class="s2">"additional"</span><span class="p">,</span> <span class="s2">"comfort"</span><span class="p">]</span>
+
+    <span class="c1"># 2) Делаем merge для всех соц‑групп</span>
+    <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">tqdm</span><span class="p">(</span><span class="n">social_groups</span><span class="p">,</span> <span class="n">desc</span><span class="o">=</span><span class="s2">"Обработка соц-групп"</span><span class="p">):</span>
+        <span class="n">gdf_i</span> <span class="o">=</span> <span class="n">fetch_gdf</span><span class="p">(</span><span class="n">grp</span><span class="p">[</span><span class="s2">"soc_group_id"</span><span class="p">])</span>
+        <span class="n">df_i</span> <span class="o">=</span> <span class="n">gdf_i</span><span class="p">[[</span><span class="s1">'territory_id'</span><span class="p">]</span> <span class="o">+</span> <span class="n">metrics</span><span class="p">]</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span>
+            <span class="s2">"Обеспеченность"</span><span class="p">:</span>            <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">grp</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> - Неравенство"</span><span class="p">,</span>
+            <span class="s2">"basic"</span><span class="p">:</span>                     <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">grp</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> - Неравенство - basic"</span><span class="p">,</span>
+            <span class="s2">"additional"</span><span class="p">:</span>                <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">grp</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> - Неравенство - additional"</span><span class="p">,</span>
+            <span class="s2">"comfort"</span><span class="p">:</span>                   <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">grp</span><span class="p">[</span><span class="s1">'name'</span><span class="p">]</span><span class="si">}</span><span class="s2"> - Неравенство - comfort"</span><span class="p">,</span>
+        <span class="p">})</span>
+        <span class="n">gdf_final</span> <span class="o">=</span> <span class="n">gdf_final</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">df_i</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'territory_id'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+
+    <span class="c1"># 3) Инвертируем (1 - value) для всех Неравенство-столбцов</span>
+    <span class="n">ine_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">gdf_final</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">"Неравенство"</span> <span class="ow">in</span> <span class="n">c</span><span class="p">]</span>
+    <span class="n">gdf_final</span><span class="p">[</span><span class="n">ine_cols</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">gdf_final</span><span class="p">[</span><span class="n">ine_cols</span><span class="p">]</span>
+
+    <span class="c1"># 4) Итоговое Пространственное неравенство</span>
+    <span class="n">gdf_final</span><span class="p">[</span><span class="s2">"Пространственное неравенство"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_final</span><span class="p">[</span><span class="n">ine_cols</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1"># 5) Подтягиваем name и population</span>
+    <span class="n">terrs</span> <span class="o">=</span> <span class="n">fetch_territories</span><span class="p">(</span><span class="n">parent_id</span><span class="o">=</span><span class="n">region_id</span><span class="p">)</span>
+    <span class="n">terrs</span> <span class="o">=</span> <span class="n">get_population</span><span class="p">(</span><span class="n">terrs</span><span class="p">)</span>
+    <span class="n">attrs</span> <span class="o">=</span> <span class="n">terrs</span><span class="p">[[</span><span class="s1">'territory_id'</span><span class="p">,</span> <span class="s1">'name'</span><span class="p">,</span> <span class="s1">'population'</span><span class="p">]]</span>
+    <span class="n">gdf_final</span> <span class="o">=</span> <span class="n">gdf_final</span><span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">attrs</span><span class="p">,</span> <span class="n">on</span><span class="o">=</span><span class="s1">'territory_id'</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s1">'left'</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gdf_final</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf_final</span> <span class="o">=</span> <span class="n">preprocess_data</span><span class="p">(</span><span class="n">region_id</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+<span class="n">gdf_final</span><span class="o">.</span><span class="n">head</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>territory_id</th>
+      <th>geometry</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - basic</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - additional</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - comfort</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - basic</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - additional</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - comfort</th>
+      <th>...</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - basic</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - additional</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - comfort</th>
+      <th>Горожане с питомцами - Неравенство</th>
+      <th>Горожане с питомцами - Неравенство - basic</th>
+      <th>Горожане с питомцами - Неравенство - additional</th>
+      <th>Горожане с питомцами - Неравенство - comfort</th>
+      <th>Пространственное неравенство</th>
+      <th>name</th>
+      <th>population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>207</td>
+      <td>POINT (542576.859 6580696.856)</td>
+      <td>0.75</td>
+      <td>0.83</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>0.76</td>
+      <td>0.83</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>0.83</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>0.76</td>
+      <td>0.83</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>0.71</td>
+      <td>деревня Болото</td>
+      <td>10.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>208</td>
+      <td>POINT (544527.863 6593642.176)</td>
+      <td>0.56</td>
+      <td>0.58</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.59</td>
+      <td>0.58</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>0.58</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.58</td>
+      <td>0.58</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.57</td>
+      <td>деревня Большой Остров</td>
+      <td>68.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>209</td>
+      <td>POINT (544980.557 6593207.96)</td>
+      <td>0.41</td>
+      <td>0.33</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.44</td>
+      <td>0.33</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>0.33</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.42</td>
+      <td>0.33</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.47</td>
+      <td>деревня Бор</td>
+      <td>1734.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>210</td>
+      <td>POINT (543991.333 6589719.929)</td>
+      <td>0.69</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>0.71</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>0.70</td>
+      <td>0.75</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>0.67</td>
+      <td>деревня Бороватое</td>
+      <td>10.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>211</td>
+      <td>POINT (538619.331 6577374.018)</td>
+      <td>0.78</td>
+      <td>0.83</td>
+      <td>0.38</td>
+      <td>1.0</td>
+      <td>0.79</td>
+      <td>0.83</td>
+      <td>0.38</td>
+      <td>1.0</td>
+      <td>...</td>
+      <td>0.83</td>
+      <td>0.38</td>
+      <td>1.0</td>
+      <td>0.79</td>
+      <td>0.83</td>
+      <td>0.38</td>
+      <td>1.0</td>
+      <td>0.74</td>
+      <td>деревня Бочево</td>
+      <td>10.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 69 columns</p>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># gdf_final.to_file('spatial_inequality_LO_towns.geojson')</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Тестовый-пример">
+<h2>Тестовый пример<a class="headerlink" href="#Тестовый-пример" title="Permalink to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf_cities</span>  <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s1">'data/spatial_inequality_LO_towns.geojson'</span><span class="p">)</span>
+<span class="n">gdf_cities</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf_agglomerations</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">read_file</span><span class="p">(</span><span class="s1">'data/settlement_boundaries.geojson'</span><span class="p">)</span>
+<span class="c1"># gdf_agglomerations = gpd.read_file('data/final_agglomerations.geojson')</span>
+<span class="n">gdf_agglomerations</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[91]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">popframe.method.spatial_inequality</span><span class="w"> </span><span class="kn">import</span> <span class="n">SpatialInequalityCalculator</span>
+
+<span class="n">region_model</span> <span class="o">=</span> <span class="n">Region</span><span class="o">.</span><span class="n">from_pickle</span><span class="p">(</span><span class="s1">'data/1.pickle'</span><span class="p">)</span>
+<span class="n">calculator</span> <span class="o">=</span> <span class="n">SpatialInequalityCalculator</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region_model</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</section>
+<section id="Пространственное-неравенство-для-территорий-(полигонов)-по-группам-населения">
+<h2>Пространственное неравенство для территорий (полигонов) по группам населения<a class="headerlink" href="#Пространственное-неравенство-для-территорий-(полигонов)-по-группам-населения" title="Permalink to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[92]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 3) Переносим метрики неравенства из городов на полигоны</span>
+<span class="n">gdf_polys_with_metrics</span><span class="p">,</span> <span class="n">stats</span> <span class="o">=</span> <span class="n">calculator</span><span class="o">.</span><span class="n">transfer_inequality_metrics_to_polygons</span><span class="p">(</span>
+    <span class="n">gdf_cities</span><span class="p">,</span>
+    <span class="n">gdf_agglomerations</span><span class="p">,</span>
+    <span class="n">inequality_keyword</span><span class="o">=</span><span class="s2">"Неравенство"</span>
+<span class="p">)</span>
+<span class="n">stats</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[92]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+{&#39;mean_within&#39;: {&#39;Подростки младшего возраста (14-15) - Неравенство&#39;: 0.6338924731182796,
+  &#39;Подростки младшего возраста (14-15) - Неравенство - basic&#39;: 0.6906967741935484,
+  &#39;Подростки младшего возраста (14-15) - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Подростки младшего возраста (14-15) - Неравенство - comfort&#39;: 0.8671225806451612,
+  &#39;Подростки старшего возраста (16-17) - Неравенство&#39;: 0.6455698924731182,
+  &#39;Подростки старшего возраста (16-17) - Неравенство - basic&#39;: 0.6906967741935484,
+  &#39;Подростки старшего возраста (16-17) - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Подростки старшего возраста (16-17) - Неравенство - comfort&#39;: 0.8377763440860215,
+  &#39;Трудоспособные горожане (18-59) - Неравенство&#39;: 0.6255053763440861,
+  &#39;Трудоспособные горожане (18-59) - Неравенство - basic&#39;: 0.639247311827957,
+  &#39;Трудоспособные горожане (18-59) - Неравенство - additional&#39;: 0.4478236559139785,
+  &#39;Трудоспособные горожане (18-59) - Неравенство - comfort&#39;: 0.7209247311827958,
+  &#39;Люди старшего возраста (60-75) - Неравенство&#39;: 0.6237204301075269,
+  &#39;Люди старшего возраста (60-75) - Неравенство - basic&#39;: 0.639247311827957,
+  &#39;Люди старшего возраста (60-75) - Неравенство - additional&#39;: 0.4478236559139785,
+  &#39;Люди старшего возраста (60-75) - Неравенство - comfort&#39;: 0.7270150537634409,
+  &#39;Люди преклонного возраста (старше 75) - Неравенство&#39;: 0.6138236559139785,
+  &#39;Люди преклонного возраста (старше 75) - Неравенство - basic&#39;: 0.639247311827957,
+  &#39;Люди преклонного возраста (старше 75) - Неравенство - additional&#39;: 0.4478236559139785,
+  &#39;Люди преклонного возраста (старше 75) - Неравенство - comfort&#39;: 0.7270150537634409,
+  &#39;Горожане, ожидающие ребенка - Неравенство&#39;: 0.6338924731182796,
+  &#39;Горожане, ожидающие ребенка - Неравенство - basic&#39;: 0.6906967741935484,
+  &#39;Горожане, ожидающие ребенка - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Горожане, ожидающие ребенка - Неравенство - comfort&#39;: 0.8671225806451612,
+  &#39;Горожане с младенцами - Неравенство&#39;: 0.6408043010752688,
+  &#39;Горожане с младенцами - Неравенство - basic&#39;: 0.7021548387096774,
+  &#39;Горожане с младенцами - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Горожане с младенцами - Неравенство - comfort&#39;: 0.8671225806451612,
+  &#39;Горожане с детьми детсадовского возраста (1-6 лет) - Неравенство&#39;: 0.6443483870967742,
+  &#39;Горожане с детьми детсадовского возраста (1-6 лет) - Неравенство - basic&#39;: 0.7097247311827957,
+  &#39;Горожане с детьми детсадовского возраста (1-6 лет) - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Горожане с детьми детсадовского возраста (1-6 лет) - Неравенство - comfort&#39;: 0.8671225806451612,
+  &#39;Горожане с детьми младшего школьного возраста (7-13 лет) - Неравенство&#39;: 0.6398967741935484,
+  &#39;Горожане с детьми младшего школьного возраста (7-13 лет) - Неравенство - basic&#39;: 0.6990494623655914,
+  &#39;Горожане с детьми младшего школьного возраста (7-13 лет) - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Горожане с детьми младшего школьного возраста (7-13 лет) - Неравенство - comfort&#39;: 0.8671225806451612,
+  &#39;Горожане с подростками (14-18 лет) - Неравенство&#39;: 0.6357333333333333,
+  &#39;Горожане с подростками (14-18 лет) - Неравенство - basic&#39;: 0.6883655913978494,
+  &#39;Горожане с подростками (14-18 лет) - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Горожане с подростками (14-18 лет) - Неравенство - comfort&#39;: 0.8377763440860215,
+  &#39;Христиане - Неравенство&#39;: 0.6308989247311827,
+  &#39;Христиане - Неравенство - basic&#39;: 0.6906967741935484,
+  &#39;Христиане - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Христиане - Неравенство - comfort&#39;: 0.8079096774193548,
+  &#39;Мусульмане - Неравенство&#39;: 0.6338924731182796,
+  &#39;Мусульмане - Неравенство - basic&#39;: 0.6906967741935484,
+  &#39;Мусульмане - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Мусульмане - Неравенство - comfort&#39;: 0.8671225806451612,
+  &#39;Иудеи - Неравенство&#39;: 0.6338924731182796,
+  &#39;Иудеи - Неравенство - basic&#39;: 0.6906967741935484,
+  &#39;Иудеи - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Иудеи - Неравенство - comfort&#39;: 0.8671225806451612,
+  &#39;Буддисты - Неравенство&#39;: 0.6338924731182796,
+  &#39;Буддисты - Неравенство - basic&#39;: 0.6906967741935484,
+  &#39;Буддисты - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Буддисты - Неравенство - comfort&#39;: 0.8671225806451612,
+  &#39;Студенты и учащиеся колледжей - Неравенство&#39;: 0.6363784946236559,
+  &#39;Студенты и учащиеся колледжей - Неравенство - basic&#39;: 0.6906967741935484,
+  &#39;Студенты и учащиеся колледжей - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Студенты и учащиеся колледжей - Неравенство - comfort&#39;: 0.8377763440860215,
+  &#39;Горожане с питомцами - Неравенство&#39;: 0.6454193548387096,
+  &#39;Горожане с питомцами - Неравенство - basic&#39;: 0.6906967741935484,
+  &#39;Горожане с питомцами - Неравенство - additional&#39;: 0.3650924731182796,
+  &#39;Горожане с питомцами - Неравенство - comfort&#39;: 0.8671225806451612,
+  &#39;Пространственное неравенство&#39;: 0.6323956989247312},
+ &#39;mean_outside&#39;: {&#39;Подростки младшего возраста (14-15) - Неравенство&#39;: 0.8628712871287129,
+  &#39;Подростки младшего возраста (14-15) - Неравенство - basic&#39;: 0.8793729372937293,
+  &#39;Подростки младшего возраста (14-15) - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Подростки младшего возраста (14-15) - Неравенство - comfort&#39;: 0.9669471947194718,
+  &#39;Подростки старшего возраста (16-17) - Неравенство&#39;: 0.8686633663366337,
+  &#39;Подростки старшего возраста (16-17) - Неравенство - basic&#39;: 0.8793729372937293,
+  &#39;Подростки старшего возраста (16-17) - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Подростки старшего возраста (16-17) - Неравенство - comfort&#39;: 0.9713531353135313,
+  &#39;Трудоспособные горожане (18-59) - Неравенство&#39;: 0.8499834983498349,
+  &#39;Трудоспособные горожане (18-59) - Неравенство - basic&#39;: 0.8349174917491748,
+  &#39;Трудоспособные горожане (18-59) - Неравенство - additional&#39;: 0.7895214521452145,
+  &#39;Трудоспособные горожане (18-59) - Неравенство - comfort&#39;: 0.9072607260726072,
+  &#39;Люди старшего возраста (60-75) - Неравенство&#39;: 0.8465016501650166,
+  &#39;Люди старшего возраста (60-75) - Неравенство - basic&#39;: 0.8349174917491748,
+  &#39;Люди старшего возраста (60-75) - Неравенство - additional&#39;: 0.7895214521452145,
+  &#39;Люди старшего возраста (60-75) - Неравенство - comfort&#39;: 0.8916501650165017,
+  &#39;Люди преклонного возраста (старше 75) - Неравенство&#39;: 0.8425082508250825,
+  &#39;Люди преклонного возраста (старше 75) - Неравенство - basic&#39;: 0.8349174917491748,
+  &#39;Люди преклонного возраста (старше 75) - Неравенство - additional&#39;: 0.7895214521452145,
+  &#39;Люди преклонного возраста (старше 75) - Неравенство - comfort&#39;: 0.8916501650165017,
+  &#39;Горожане, ожидающие ребенка - Неравенство&#39;: 0.8628712871287129,
+  &#39;Горожане, ожидающие ребенка - Неравенство - basic&#39;: 0.8793729372937293,
+  &#39;Горожане, ожидающие ребенка - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Горожане, ожидающие ребенка - Неравенство - comfort&#39;: 0.9669471947194718,
+  &#39;Горожане с младенцами - Неравенство&#39;: 0.8653960396039605,
+  &#39;Горожане с младенцами - Неравенство - basic&#39;: 0.8829537953795379,
+  &#39;Горожане с младенцами - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Горожане с младенцами - Неравенство - comfort&#39;: 0.9669471947194718,
+  &#39;Горожане с детьми детсадовского возраста (1-6 лет) - Неравенство&#39;: 0.8658415841584159,
+  &#39;Горожане с детьми детсадовского возраста (1-6 лет) - Неравенство - basic&#39;: 0.8897359735973598,
+  &#39;Горожане с детьми детсадовского возраста (1-6 лет) - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Горожане с детьми детсадовского возраста (1-6 лет) - Неравенство - comfort&#39;: 0.9669471947194718,
+  &#39;Горожане с детьми младшего школьного возраста (7-13 лет) - Неравенство&#39;: 0.8627392739273926,
+  &#39;Горожане с детьми младшего школьного возраста (7-13 лет) - Неравенство - basic&#39;: 0.8822937293729374,
+  &#39;Горожане с детьми младшего школьного возраста (7-13 лет) - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Горожане с детьми младшего школьного возраста (7-13 лет) - Неравенство - comfort&#39;: 0.9669471947194718,
+  &#39;Горожане с подростками (14-18 лет) - Неравенство&#39;: 0.8640429042904288,
+  &#39;Горожане с подростками (14-18 лет) - Неравенство - basic&#39;: 0.8746039603960396,
+  &#39;Горожане с подростками (14-18 лет) - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Горожане с подростками (14-18 лет) - Неравенство - comfort&#39;: 0.9713531353135313,
+  &#39;Христиане - Неравенство&#39;: 0.861072607260726,
+  &#39;Христиане - Неравенство - basic&#39;: 0.8793729372937293,
+  &#39;Христиане - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Христиане - Неравенство - comfort&#39;: 0.9407920792079209,
+  &#39;Мусульмане - Неравенство&#39;: 0.8628712871287129,
+  &#39;Мусульмане - Неравенство - basic&#39;: 0.8793729372937293,
+  &#39;Мусульмане - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Мусульмане - Неравенство - comfort&#39;: 0.9669471947194718,
+  &#39;Иудеи - Неравенство&#39;: 0.8628712871287129,
+  &#39;Иудеи - Неравенство - basic&#39;: 0.8793729372937293,
+  &#39;Иудеи - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Иудеи - Неравенство - comfort&#39;: 0.9669471947194718,
+  &#39;Буддисты - Неравенство&#39;: 0.8628712871287129,
+  &#39;Буддисты - Неравенство - basic&#39;: 0.8793729372937293,
+  &#39;Буддисты - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Буддисты - Неравенство - comfort&#39;: 0.9669471947194718,
+  &#39;Студенты и учащиеся колледжей - Неравенство&#39;: 0.8666831683168316,
+  &#39;Студенты и учащиеся колледжей - Неравенство - basic&#39;: 0.8793729372937293,
+  &#39;Студенты и учащиеся колледжей - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Студенты и учащиеся колледжей - Неравенство - comfort&#39;: 0.9713531353135313,
+  &#39;Горожане с питомцами - Неравенство&#39;: 0.8667821782178218,
+  &#39;Горожане с питомцами - Неравенство - basic&#39;: 0.8793729372937293,
+  &#39;Горожане с питомцами - Неравенство - additional&#39;: 0.7530198019801981,
+  &#39;Горожане с питомцами - Неравенство - comfort&#39;: 0.9669471947194718,
+  &#39;Пространственное неравенство&#39;: 0.8613696369636964}}
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[93]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf_polys_with_metrics</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[93]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>anchor_name</th>
+      <th>geometry</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - basic</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - additional</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - comfort</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - basic</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - additional</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - comfort</th>
+      <th>...</th>
+      <th>Буддисты - Неравенство - comfort</th>
+      <th>Студенты и учащиеся колледжей - Неравенство</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - basic</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - additional</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - comfort</th>
+      <th>Горожане с питомцами - Неравенство</th>
+      <th>Горожане с питомцами - Неравенство - basic</th>
+      <th>Горожане с питомцами - Неравенство - additional</th>
+      <th>Горожане с питомцами - Неравенство - comfort</th>
+      <th>Пространственное неравенство</th>
+    </tr>
+    <tr>
+      <th>poly_index</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>город Приозерск</td>
+      <td>POLYGON ((327427.183 6730670.252, 327136.101 6...</td>
+      <td>0.532121</td>
+      <td>0.583939</td>
+      <td>0.296212</td>
+      <td>0.913333</td>
+      <td>0.559394</td>
+      <td>0.583939</td>
+      <td>0.296212</td>
+      <td>0.926515</td>
+      <td>...</td>
+      <td>0.913333</td>
+      <td>0.545758</td>
+      <td>0.583939</td>
+      <td>0.296212</td>
+      <td>0.926515</td>
+      <td>0.545758</td>
+      <td>0.583939</td>
+      <td>0.296212</td>
+      <td>0.913333</td>
+      <td>0.577424</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>город Луга</td>
+      <td>POLYGON ((287016.41 6543947.996, 287016.796 65...</td>
+      <td>0.647885</td>
+      <td>0.731630</td>
+      <td>0.351894</td>
+      <td>0.804317</td>
+      <td>0.669031</td>
+      <td>0.731630</td>
+      <td>0.351894</td>
+      <td>0.833700</td>
+      <td>...</td>
+      <td>0.804317</td>
+      <td>0.660617</td>
+      <td>0.731630</td>
+      <td>0.351894</td>
+      <td>0.833700</td>
+      <td>0.660573</td>
+      <td>0.731630</td>
+      <td>0.351894</td>
+      <td>0.804317</td>
+      <td>0.631057</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>город Сланцы</td>
+      <td>POLYGON ((197917.925 6549729.864, 197918.01 65...</td>
+      <td>0.797669</td>
+      <td>0.800902</td>
+      <td>0.706391</td>
+      <td>0.827068</td>
+      <td>0.799398</td>
+      <td>0.800902</td>
+      <td>0.706391</td>
+      <td>0.853158</td>
+      <td>...</td>
+      <td>0.827068</td>
+      <td>0.804135</td>
+      <td>0.800902</td>
+      <td>0.706391</td>
+      <td>0.853158</td>
+      <td>0.804135</td>
+      <td>0.800902</td>
+      <td>0.706391</td>
+      <td>0.827068</td>
+      <td>0.778872</td>
+    </tr>
+  </tbody>
+</table>
+<p>3 rows × 67 columns</p>
+</div></div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[94]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">region_boundary</span> <span class="o">=</span> <span class="n">region_model</span><span class="o">.</span><span class="n">region</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[95]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">contextily</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">ctx</span>
+
+<span class="c1"># создаём фигуру и ось</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c1"># рисуем границу региона</span>
+<span class="n">region_boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">facecolor</span><span class="o">=</span><span class="s2">"gray"</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"black"</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">label</span><span class="o">=</span><span class="s2">"Граница региона"</span>
+<span class="p">)</span>
+
+<span class="c1"># рисуем полигоны с показателем "Пространственное неравенство"</span>
+<span class="c1"># используем diverging cmap и центрируем цветовую шкалу в среднем значении</span>
+<span class="n">vmin</span> <span class="o">=</span> <span class="n">gdf_polys_with_metrics</span><span class="p">[</span><span class="s1">'Пространственное неравенство'</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">vmax</span> <span class="o">=</span> <span class="n">gdf_polys_with_metrics</span><span class="p">[</span><span class="s1">'Пространственное неравенство'</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">vcenter</span> <span class="o">=</span> <span class="n">gdf_polys_with_metrics</span><span class="p">[</span><span class="s1">'Пространственное неравенство'</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+
+<span class="n">gdf_polys_with_metrics</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s1">'Пространственное неравенство'</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'coolwarm'</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.2</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">False</span>  <span class="c1"># legend сделаем вручную</span>
+<span class="p">)</span>
+
+<span class="c1"># добавляем градиентный colorbar</span>
+<span class="n">sm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'coolwarm'</span><span class="p">,</span>
+    <span class="n">norm</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">Normalize</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+<span class="p">)</span>
+<span class="n">sm</span><span class="o">.</span><span class="n">set_array</span><span class="p">([])</span>  <span class="c1"># пустой, чтобы цветовая шкала работала</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span>
+    <span class="n">sm</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.02</span>
+<span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s2">"Пространственное неравенство"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+
+
+<span class="c1"># убираем оси</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+
+<span class="c1"># заголовок и пояснение</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+    <span class="s2">"Карта пространственного неравенства</span><span class="se">\n</span><span class="s2">Ленинградская область"</span><span class="p">,</span>
+    <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">'fontsize'</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span> <span class="s1">'fontweight'</span><span class="p">:</span> <span class="s1">'bold'</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span>
+    <span class="s2">"Источник: моделирование на основе данных о соцгруппах"</span><span class="p">,</span>
+    <span class="n">x</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.92</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">color</span><span class="o">=</span><span class="s1">'gray'</span>
+<span class="p">)</span>
+
+<span class="c1"># легенда (если нужно)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="s1">'lower left'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<br/><br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_spatial_inequality_14_0.png" src="../_images/examples_spatial_inequality_14_0.png" />
+</div>
+</div>
+</section>
+<section id="Лучшие-территории-по-наименьшему-неравенству">
+<h2>Лучшие территории по наименьшему неравенству<a class="headerlink" href="#Лучшие-территории-по-наименьшему-неравенству" title="Permalink to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[96]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">best_youth</span> <span class="o">=</span> <span class="n">calculator</span><span class="o">.</span><span class="n">get_best_territory</span><span class="p">(</span>
+    <span class="n">gdf_polys_with_metrics</span><span class="p">,</span>
+    <span class="n">group_name</span><span class="o">=</span><span class="s2">"Подростки младшего возраста (14-15)"</span><span class="p">,</span>
+    <span class="n">top_n</span><span class="o">=</span> <span class="mi">3</span> <span class="c1"># опционально, сколько лучших территорий показать (по умолчанию 5)</span>
+<span class="p">)</span>
+<span class="n">best_youth</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[96]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>anchor_name</th>
+      <th>geometry</th>
+      <th>Пространственное неравенство</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - basic</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - additional</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - comfort</th>
+    </tr>
+    <tr>
+      <th>poly_index</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>24</th>
+      <td>город Мурино</td>
+      <td>POLYGON ((351375.352 6664593.09, 351374.724 66...</td>
+      <td>0.346316</td>
+      <td>0.301579</td>
+      <td>0.324211</td>
+      <td>0.140526</td>
+      <td>0.635789</td>
+    </tr>
+    <tr>
+      <th>20</th>
+      <td>город Кудрово</td>
+      <td>POLYGON ((359656.173 6637951.473, 359656.203 6...</td>
+      <td>0.359231</td>
+      <td>0.363462</td>
+      <td>0.343077</td>
+      <td>0.000000</td>
+      <td>0.793846</td>
+    </tr>
+    <tr>
+      <th>18</th>
+      <td>город Отрадное</td>
+      <td>POLYGON ((358256.176 6613983.925, 358256.291 6...</td>
+      <td>0.395714</td>
+      <td>0.401071</td>
+      <td>0.368571</td>
+      <td>0.081429</td>
+      <td>0.768571</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[97]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># 5) Находим территорию с минимальным общим неравенством</span>
+<span class="n">best_overall</span> <span class="o">=</span> <span class="n">calculator</span><span class="o">.</span><span class="n">get_best_territory</span><span class="p">(</span>
+    <span class="n">gdf_cities</span><span class="p">)</span>
+<span class="n">best_overall</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[97]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>territory_id</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - basic</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - additional</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - comfort</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - basic</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - additional</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - comfort</th>
+      <th>Трудоспособные горожане (18-59) - Неравенство</th>
+      <th>...</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - additional</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - comfort</th>
+      <th>Горожане с питомцами - Неравенство</th>
+      <th>Горожане с питомцами - Неравенство - basic</th>
+      <th>Горожане с питомцами - Неравенство - additional</th>
+      <th>Горожане с питомцами - Неравенство - comfort</th>
+      <th>Пространственное неравенство</th>
+      <th>name</th>
+      <th>population</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>1060</th>
+      <td>1267</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>...</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>0.00</td>
+      <td>город Сосновый Бор</td>
+      <td>63462.0</td>
+      <td>POINT (283470.037 6644117.652)</td>
+    </tr>
+    <tr>
+      <th>1585</th>
+      <td>1792</td>
+      <td>0.22</td>
+      <td>0.25</td>
+      <td>0.00</td>
+      <td>0.20</td>
+      <td>0.24</td>
+      <td>0.25</td>
+      <td>0.00</td>
+      <td>0.17</td>
+      <td>0.23</td>
+      <td>...</td>
+      <td>0.00</td>
+      <td>0.17</td>
+      <td>0.24</td>
+      <td>0.25</td>
+      <td>0.00</td>
+      <td>0.20</td>
+      <td>0.16</td>
+      <td>деревня Шереметьевка</td>
+      <td>44.0</td>
+      <td>POINT (389284.621 6648362.546)</td>
+    </tr>
+    <tr>
+      <th>2621</th>
+      <td>2828</td>
+      <td>0.19</td>
+      <td>0.17</td>
+      <td>0.12</td>
+      <td>0.20</td>
+      <td>0.24</td>
+      <td>0.17</td>
+      <td>0.12</td>
+      <td>0.33</td>
+      <td>0.23</td>
+      <td>...</td>
+      <td>0.12</td>
+      <td>0.33</td>
+      <td>0.21</td>
+      <td>0.17</td>
+      <td>0.12</td>
+      <td>0.20</td>
+      <td>0.17</td>
+      <td>деревня Фишева Гора</td>
+      <td>5.0</td>
+      <td>POINT (530645.861 6611990.519)</td>
+    </tr>
+    <tr>
+      <th>1651</th>
+      <td>1858</td>
+      <td>0.16</td>
+      <td>0.23</td>
+      <td>0.12</td>
+      <td>0.25</td>
+      <td>0.21</td>
+      <td>0.23</td>
+      <td>0.12</td>
+      <td>0.38</td>
+      <td>0.18</td>
+      <td>...</td>
+      <td>0.12</td>
+      <td>0.38</td>
+      <td>0.18</td>
+      <td>0.23</td>
+      <td>0.12</td>
+      <td>0.25</td>
+      <td>0.19</td>
+      <td>деревня Энколово</td>
+      <td>412.0</td>
+      <td>POINT (356965.492 6666121.124)</td>
+    </tr>
+    <tr>
+      <th>1654</th>
+      <td>1861</td>
+      <td>0.16</td>
+      <td>0.25</td>
+      <td>0.12</td>
+      <td>0.20</td>
+      <td>0.21</td>
+      <td>0.25</td>
+      <td>0.12</td>
+      <td>0.33</td>
+      <td>0.18</td>
+      <td>...</td>
+      <td>0.12</td>
+      <td>0.33</td>
+      <td>0.18</td>
+      <td>0.25</td>
+      <td>0.12</td>
+      <td>0.20</td>
+      <td>0.19</td>
+      <td>деревня Корабсельки</td>
+      <td>200.0</td>
+      <td>POINT (355472.818 6665585.5)</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 69 columns</p>
+</div></div>
+</div>
+</section>
+<section id="Соц.-группа-с-наименьшим-неравенством">
+<h2>Соц. группа с наименьшим неравенством<a class="headerlink" href="#Соц.-группа-с-наименьшим-неравенством" title="Permalink to this heading"></a></h2>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[148]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">cities_with_best_group</span> <span class="o">=</span> <span class="n">calculator</span><span class="o">.</span><span class="n">get_best_group_for_territory</span><span class="p">(</span>
+    <span class="n">gdf_cities</span>
+<span class="p">)</span>
+<span class="n">cities_with_best_group</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[148]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>territory_id</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - basic</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - additional</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - comfort</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - basic</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - additional</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - comfort</th>
+      <th>Трудоспособные горожане (18-59) - Неравенство</th>
+      <th>...</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - comfort</th>
+      <th>Горожане с питомцами - Неравенство</th>
+      <th>Горожане с питомцами - Неравенство - basic</th>
+      <th>Горожане с питомцами - Неравенство - additional</th>
+      <th>Горожане с питомцами - Неравенство - comfort</th>
+      <th>Пространственное неравенство</th>
+      <th>name</th>
+      <th>population</th>
+      <th>geometry</th>
+      <th>Наименьшее неравенство для соц‑группы</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>207</td>
+      <td>0.75</td>
+      <td>0.83</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>0.76</td>
+      <td>0.83</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>0.74</td>
+      <td>...</td>
+      <td>1.0</td>
+      <td>0.76</td>
+      <td>0.83</td>
+      <td>0.25</td>
+      <td>1.0</td>
+      <td>0.71</td>
+      <td>деревня Болото</td>
+      <td>10.0</td>
+      <td>POINT (542576.859 6580696.856)</td>
+      <td>Люди преклонного возраста (старше 75)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>208</td>
+      <td>0.56</td>
+      <td>0.58</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.59</td>
+      <td>0.58</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.59</td>
+      <td>...</td>
+      <td>1.0</td>
+      <td>0.58</td>
+      <td>0.58</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.57</td>
+      <td>деревня Большой Остров</td>
+      <td>68.0</td>
+      <td>POINT (544527.863 6593642.176)</td>
+      <td>Подростки младшего возраста (14-15)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>209</td>
+      <td>0.41</td>
+      <td>0.33</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.44</td>
+      <td>0.33</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.46</td>
+      <td>...</td>
+      <td>1.0</td>
+      <td>0.42</td>
+      <td>0.33</td>
+      <td>0.12</td>
+      <td>1.0</td>
+      <td>0.47</td>
+      <td>деревня Бор</td>
+      <td>1734.0</td>
+      <td>POINT (544980.557 6593207.96)</td>
+      <td>Подростки младшего возраста (14-15)</td>
+    </tr>
+  </tbody>
+</table>
+<p>3 rows × 70 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[109]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><br/><span></span><span class="n">gdf_with_best_group</span> <span class="o">=</span> <span class="n">calculator</span><span class="o">.</span><span class="n">get_best_group_for_territory</span><span class="p">(</span>
+    <span class="n">gdf_polys_with_metrics</span>
+<span class="p">)</span>
+<span class="n">gdf_with_best_group</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[109]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>anchor_name</th>
+      <th>geometry</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - basic</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - additional</th>
+      <th>Подростки младшего возраста (14-15) - Неравенство - comfort</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - basic</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - additional</th>
+      <th>Подростки старшего возраста (16-17) - Неравенство - comfort</th>
+      <th>...</th>
+      <th>Студенты и учащиеся колледжей - Неравенство</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - basic</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - additional</th>
+      <th>Студенты и учащиеся колледжей - Неравенство - comfort</th>
+      <th>Горожане с питомцами - Неравенство</th>
+      <th>Горожане с питомцами - Неравенство - basic</th>
+      <th>Горожане с питомцами - Неравенство - additional</th>
+      <th>Горожане с питомцами - Неравенство - comfort</th>
+      <th>Пространственное неравенство</th>
+      <th>Наименьшее неравенство для соц‑группы</th>
+    </tr>
+    <tr>
+      <th>poly_index</th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>город Приозерск</td>
+      <td>POLYGON ((327427.183 6730670.252, 327136.101 6...</td>
+      <td>0.532121</td>
+      <td>0.583939</td>
+      <td>0.296212</td>
+      <td>0.913333</td>
+      <td>0.559394</td>
+      <td>0.583939</td>
+      <td>0.296212</td>
+      <td>0.926515</td>
+      <td>...</td>
+      <td>0.545758</td>
+      <td>0.583939</td>
+      <td>0.296212</td>
+      <td>0.926515</td>
+      <td>0.545758</td>
+      <td>0.583939</td>
+      <td>0.296212</td>
+      <td>0.913333</td>
+      <td>0.577424</td>
+      <td>Люди преклонного возраста (старше 75)</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>город Луга</td>
+      <td>POLYGON ((287016.41 6543947.996, 287016.796 65...</td>
+      <td>0.647885</td>
+      <td>0.731630</td>
+      <td>0.351894</td>
+      <td>0.804317</td>
+      <td>0.669031</td>
+      <td>0.731630</td>
+      <td>0.351894</td>
+      <td>0.833700</td>
+      <td>...</td>
+      <td>0.660617</td>
+      <td>0.731630</td>
+      <td>0.351894</td>
+      <td>0.833700</td>
+      <td>0.660573</td>
+      <td>0.731630</td>
+      <td>0.351894</td>
+      <td>0.804317</td>
+      <td>0.631057</td>
+      <td>Люди преклонного возраста (старше 75)</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>город Сланцы</td>
+      <td>POLYGON ((197917.925 6549729.864, 197918.01 65...</td>
+      <td>0.797669</td>
+      <td>0.800902</td>
+      <td>0.706391</td>
+      <td>0.827068</td>
+      <td>0.799398</td>
+      <td>0.800902</td>
+      <td>0.706391</td>
+      <td>0.853158</td>
+      <td>...</td>
+      <td>0.804135</td>
+      <td>0.800902</td>
+      <td>0.706391</td>
+      <td>0.853158</td>
+      <td>0.804135</td>
+      <td>0.800902</td>
+      <td>0.706391</td>
+      <td>0.827068</td>
+      <td>0.778872</td>
+      <td>Люди старшего возраста (60-75)</td>
+    </tr>
+  </tbody>
+</table>
+<p>3 rows × 68 columns</p>
+</div></div>
+</div>
+</section>
+<section id="Визуализация">
+<h2>Визуализация<a class="headerlink" href="#Визуализация" title="Permalink to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[116]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">plot_spatial_metric</span><span class="p">(</span>
+    <span class="n">region_boundary</span><span class="p">,</span>
+    <span class="n">gdf_polys</span><span class="p">,</span>
+    <span class="n">gdf_cities</span><span class="p">,</span>
+    <span class="n">attr</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">city_thresh</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span>
+    <span class="n">dpi</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlBu_r'</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Рисует карту: полигоны и (опционально отфильтрованные) города,</span>
+<span class="sd">    раскрашенные по атрибуту attr.</span>
+
+<span class="sd">    Параметры</span>
+<span class="sd">    ----------</span>
+<span class="sd">    region_boundary : GeoDataFrame</span>
+<span class="sd">        Полигон(ы) границы региона.</span>
+<span class="sd">    gdf_polys : GeoDataFrame</span>
+<span class="sd">        Полигоны с метриками (должен содержать колонку attr).</span>
+<span class="sd">    gdf_cities : GeoDataFrame</span>
+<span class="sd">        Точки‑города (должны содержать колонку attr).</span>
+<span class="sd">    attr : str</span>
+<span class="sd">        Название колонки для цветового кода.</span>
+<span class="sd">    city_thresh : float, optional</span>
+<span class="sd">        Если задан, то показываем только города с gdf_cities[attr] ≤ city_thresh.</span>
+<span class="sd">    figsize : tuple, default (15, 10)</span>
+<span class="sd">        Размер фигуры.</span>
+<span class="sd">    dpi : int, default 120</span>
+<span class="sd">        Разрешение в dpi.</span>
+<span class="sd">    cmap : str, default 'RdYlBu_r'</span>
+<span class="sd">        Имя matplotlib‑палитры.</span>
+<span class="sd">    """</span>
+    <span class="c1"># Переводим всё в WebMercator</span>
+    <span class="n">region_web</span> <span class="o">=</span> <span class="n">region_boundary</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+    <span class="n">polys_web</span>  <span class="o">=</span> <span class="n">gdf_polys</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+    <span class="n">cities_web</span> <span class="o">=</span> <span class="n">gdf_cities</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+
+    <span class="c1"># При необходимости фильтруем города</span>
+    <span class="k">if</span> <span class="n">city_thresh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">cities_web</span> <span class="o">=</span> <span class="n">cities_web</span><span class="p">[</span><span class="n">cities_web</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">city_thresh</span><span class="p">]</span>
+
+    <span class="c1"># Границы шкалы</span>
+    <span class="n">vmin</span>    <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">vmax</span>    <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">vcenter</span> <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">attr</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">norm</span>    <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">TwoSlopeNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vcenter</span><span class="o">=</span><span class="n">vcenter</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+
+    <span class="c1"># Рисуем</span>
+    <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="n">figsize</span><span class="p">,</span> <span class="n">dpi</span><span class="o">=</span><span class="n">dpi</span><span class="p">)</span>
+
+    <span class="c1"># 1) Полигоны</span>
+    <span class="n">polys_web</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">column</span><span class="o">=</span><span class="n">attr</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 2) Города</span>
+    <span class="n">cities_web</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">column</span><span class="o">=</span><span class="n">attr</span><span class="p">,</span>
+        <span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span>
+        <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+        <span class="n">markersize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 3) Лёгкая рамка региона</span>
+    <span class="n">region_web</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+        <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+        <span class="n">facecolor</span><span class="o">=</span><span class="s2">"gray"</span><span class="p">,</span>
+        <span class="n">edgecolor</span><span class="o">=</span><span class="s2">"lightgray"</span><span class="p">,</span>
+        <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.2</span><span class="p">,</span>
+        <span class="n">alpha</span><span class="o">=</span><span class="mf">0.2</span>
+    <span class="p">)</span>
+
+    <span class="c1"># 4) Общий colorbar</span>
+    <span class="n">sm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="n">cmap</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+    <span class="n">sm</span><span class="o">.</span><span class="n">set_array</span><span class="p">([])</span>
+    <span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sm</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="c1"># 5) Оформление заголовков</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+        <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="se">\n</span><span class="s2">в Ленинградской области"</span><span class="p">,</span>
+        <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">'fontsize'</span><span class="p">:</span><span class="mi">16</span><span class="p">,</span> <span class="s1">'fontweight'</span><span class="p">:</span><span class="s1">'bold'</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="k">if</span> <span class="n">city_thresh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">fig</span><span class="o">.</span><span class="n">suptitle</span><span class="p">(</span> <span class="s2">"Источник: моделирование на основе данных о соцгруппах. </span><span class="se">\n</span><span class="s2">"</span>
+            <span class="sa">f</span><span class="s2">" (Социальная групапа  - </span><span class="si">{</span><span class="n">attr</span><span class="si">}</span><span class="s2"> ≤ </span><span class="si">{</span><span class="n">city_thresh</span><span class="si">}</span><span class="s2">)"</span><span class="p">,</span>
+            <span class="n">x</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="mf">0.07</span><span class="p">,</span>
+            <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+            <span class="n">color</span><span class="o">=</span><span class="s1">'gray'</span>
+        <span class="p">)</span>
+
+    <span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+    <span class="k">return</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[101]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># визуализируем 'Пространственное неравенство', показывая города с ≤ 0.8</span>
+<span class="n">plot_spatial_metric</span><span class="p">(</span>
+    <span class="n">region_boundary</span><span class="o">=</span><span class="n">region_boundary</span><span class="p">,</span>
+    <span class="n">gdf_polys</span><span class="o">=</span><span class="n">gdf_polys_with_metrics</span><span class="p">,</span>
+    <span class="n">gdf_cities</span><span class="o">=</span><span class="n">gdf_cities</span><span class="p">,</span>
+    <span class="n">attr</span><span class="o">=</span><span class="s1">'Подростки младшего возраста (14-15) - Неравенство'</span><span class="p">,</span>
+    <span class="n">city_thresh</span><span class="o">=</span><span class="mf">0.8</span>
+<span class="p">)</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_spatial_inequality_23_0.png" src="../_images/examples_spatial_inequality_23_0.png" />
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[101]:
+</pre></div>
+</div>
+<div class="output_area docutils container">
+<div class="highlight"><pre>
+(&lt;Figure size 1800x1200 with 2 Axes&gt;,
+ &lt;Axes: title={&#39;center&#39;: &#39;Подростки младшего возраста (14-15) - Неравенство\nв Ленинградской области&#39;}&gt;)
+</pre></div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">unary_union</span>
+
+<span class="c1"># --- Предполагаем, что region_web, polys_web и cities_web уже в EPSG:3857 ---</span>
+<span class="c1"># 1) Переводим всё в Web Mercator</span>
+<span class="n">region_web</span> <span class="o">=</span> <span class="n">region_boundary</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+<span class="n">polys_web</span>  <span class="o">=</span> <span class="n">gdf_with_best_group</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+<span class="n">cities_web</span> <span class="o">=</span> <span class="n">gdf_cities</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+<span class="c1"># 1) Только города внутри полигонов</span>
+<span class="n">union_poly</span>      <span class="o">=</span> <span class="n">unary_union</span><span class="p">(</span><span class="n">polys_web</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+<span class="n">cities_in_polys</span> <span class="o">=</span> <span class="n">cities_web</span><span class="p">[</span><span class="n">cities_web</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">within</span><span class="p">(</span><span class="n">union_poly</span><span class="p">)]</span>
+
+<span class="c1"># 2) Нормировка</span>
+<span class="n">numeric_attr</span> <span class="o">=</span> <span class="s1">'Пространственное неравенство'</span>
+<span class="n">vmin</span>    <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">numeric_attr</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">vmax</span>    <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">numeric_attr</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">vcenter</span> <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">numeric_attr</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">norm</span>    <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">TwoSlopeNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vcenter</span><span class="o">=</span><span class="n">vcenter</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+
+<span class="c1"># 3) Цвета групп без NaN</span>
+<span class="n">group_attr</span> <span class="o">=</span> <span class="s1">'Наименьшее неравенство для соц‑группы'</span>
+<span class="n">groups</span> <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">group_attr</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">unique_groups</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span>
+<span class="n">cmap_groups</span>   <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">'tab20'</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_groups</span><span class="p">))</span>
+<span class="n">group_colors</span>  <span class="o">=</span> <span class="p">{</span><span class="n">grp</span><span class="p">:</span> <span class="n">cmap_groups</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">grp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">unique_groups</span><span class="p">)}</span>
+<span class="n">polys_web</span><span class="p">[</span><span class="s1">'__group_color'</span><span class="p">]</span> <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">group_attr</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">group_colors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+<span class="c1"># 4) Рисуем</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+
+<span class="c1"># фон</span>
+<span class="n">region_web</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># заливка с белой обводкой</span>
+<span class="n">polys_web</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="n">numeric_attr</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlBu_r'</span><span class="p">,</span>
+    <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1"># цветные границы групп</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">group_attr</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span>
+<span class="n">polys_web</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">color</span><span class="o">=</span><span class="n">polys_web</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">'__group_color'</span><span class="p">],</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">)</span>
+
+<span class="c1"># города</span>
+<span class="n">cities_in_polys</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="n">numeric_attr</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlBu_r'</span><span class="p">,</span>
+    <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+    <span class="n">markersize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span>
+<span class="p">)</span>
+
+<span class="c1"># легенда групп слева-снизу (без NaN)</span>
+<span class="n">legend_patches</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">group_colors</span><span class="p">[</span><span class="n">grp</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">grp</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">unique_groups</span>
+<span class="p">]</span>
+<span class="n">leg</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+    <span class="n">handles</span><span class="o">=</span><span class="n">legend_patches</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="n">group_attr</span><span class="p">,</span>
+    <span class="n">loc</span><span class="o">=</span><span class="s1">'lower left'</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">title_fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+<span class="c1"># (опционально) если вам нужно поднять легенду поверх всех:</span>
+<span class="n">leg</span><span class="o">.</span><span class="n">set_zorder</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1"># colorbar</span>
+<span class="n">sm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlBu_r'</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">sm</span><span class="o">.</span><span class="n">set_array</span><span class="p">([])</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sm</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="n">numeric_attr</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">numeric_attr</span><span class="si">}</span><span class="s2">по соц‑группам</span><span class="se">\n</span><span class="s2">в Ленинградской области"</span><span class="p">,</span>
+    <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">'fontsize'</span><span class="p">:</span><span class="mi">16</span><span class="p">,</span> <span class="s1">'fontweight'</span><span class="p">:</span><span class="s1">'bold'</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_spatial_inequality_24_0.png" src="../_images/examples_spatial_inequality_24_0.png" />
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[136]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.patches</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpatches</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">unary_union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+
+<span class="c1"># --- 1) В CRS WebMercator ---</span>
+<span class="n">region_web</span> <span class="o">=</span> <span class="n">region_boundary</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+<span class="n">polys_web</span>  <span class="o">=</span> <span class="n">gdf_with_best_group</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+<span class="n">cities_web</span> <span class="o">=</span> <span class="n">gdf_cities</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+
+<span class="c1"># --- 2) Оставляем города внутри опорных полигонов ---</span>
+<span class="n">union_poly</span>      <span class="o">=</span> <span class="n">unary_union</span><span class="p">(</span><span class="n">polys_web</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+<span class="n">cities_in_polys</span> <span class="o">=</span> <span class="n">cities_web</span><span class="p">[</span><span class="n">cities_web</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">within</span><span class="p">(</span><span class="n">union_poly</span><span class="p">)]</span>
+
+<span class="c1"># --- 3) Вычисляем для каждого полигона значение неравенства «лучшей» группы ---</span>
+<span class="c1"># наз­вание колонки с именем лучшей группы</span>
+<span class="n">group_attr</span> <span class="o">=</span> <span class="s1">'Наименьшее неравенство для соц‑группы'</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_best_ineq</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="c1"># у нас в gdf есть колонки вида "&lt;название группы&gt; - Неравенство"</span>
+    <span class="n">best_group</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="n">group_attr</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">best_group</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="n">col_name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">best_group</span><span class="si">}</span><span class="s2"> - Неравенство"</span>
+    <span class="k">return</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">col_name</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="n">polys_web</span><span class="p">[</span><span class="s1">'best_ineq'</span><span class="p">]</span> <span class="o">=</span> <span class="n">polys_web</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">extract_best_ineq</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># --- 4) Нормировка по новой величине ---</span>
+<span class="n">numeric_attr</span> <span class="o">=</span> <span class="s1">'best_ineq'</span>
+<span class="n">vmin</span>    <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">numeric_attr</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">vmax</span>    <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">numeric_attr</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">vcenter</span> <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">numeric_attr</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="n">norm</span>    <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">TwoSlopeNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin</span><span class="p">,</span> <span class="n">vcenter</span><span class="o">=</span><span class="n">vcenter</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax</span><span class="p">)</span>
+
+<span class="c1"># --- 5) Готовим цвета для обводки по группам (как раньше) ---</span>
+<span class="n">groups</span> <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">group_attr</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">unique_groups</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span>
+<span class="n">cmap_groups</span>  <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">'tab20'</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_groups</span><span class="p">))</span>
+<span class="n">group_colors</span> <span class="o">=</span> <span class="p">{</span><span class="n">grp</span><span class="p">:</span> <span class="n">cmap_groups</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">grp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">unique_groups</span><span class="p">)}</span>
+<span class="n">polys_web</span><span class="p">[</span><span class="s1">'__group_color'</span><span class="p">]</span> <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">group_attr</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">group_colors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="kc">None</span><span class="p">))</span>
+
+<span class="c1"># --- 6) Рисуем карту ---</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">15</span><span class="p">),</span> <span class="n">dpi</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+
+<span class="c1"># фон</span>
+<span class="n">region_web</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">facecolor</span><span class="o">=</span><span class="s1">'gray'</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'lightgray'</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<span class="c1"># заливка полигонов по best_ineq, с белой прослойкой</span>
+<span class="n">polys_web</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="n">numeric_attr</span><span class="p">,</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlBu_r'</span><span class="p">,</span>
+    <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.7</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">1</span>
+<span class="p">)</span>
+
+<span class="c1"># обводка цветом группы</span>
+<span class="n">mask</span> <span class="o">=</span> <span class="n">polys_web</span><span class="p">[</span><span class="n">group_attr</span><span class="p">]</span><span class="o">.</span><span class="n">notna</span><span class="p">()</span>
+<span class="n">polys_web</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">color</span><span class="o">=</span><span class="n">polys_web</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">mask</span><span class="p">,</span> <span class="s1">'__group_color'</span><span class="p">],</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">1.5</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">2</span>
+<span class="p">)</span>
+
+<span class="c1"># города (если нужно, можно тоже по best_ineq или по-global)</span>
+<span class="n">cities_in_polys</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s1">'Пространственное неравенство'</span><span class="p">,</span>  <span class="c1"># или numeric_attr</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlBu_r'</span><span class="p">,</span>
+    <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">,</span>
+    <span class="n">markersize</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'none'</span><span class="p">,</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span>
+    <span class="n">zorder</span><span class="o">=</span><span class="mi">3</span>
+<span class="p">)</span>
+
+<span class="c1"># легенда «группа» слева‑снизу без NaN</span>
+<span class="n">legend_patches</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="n">mpatches</span><span class="o">.</span><span class="n">Patch</span><span class="p">(</span><span class="n">color</span><span class="o">=</span><span class="n">group_colors</span><span class="p">[</span><span class="n">grp</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="n">grp</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">grp</span> <span class="ow">in</span> <span class="n">unique_groups</span>
+<span class="p">]</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span>
+    <span class="n">handles</span><span class="o">=</span><span class="n">legend_patches</span><span class="p">,</span>
+    <span class="n">title</span><span class="o">=</span><span class="n">group_attr</span><span class="p">,</span>
+    <span class="n">loc</span><span class="o">=</span><span class="s1">'lower left'</span><span class="p">,</span>
+    <span class="n">fontsize</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+    <span class="n">title_fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span>
+    <span class="n">frameon</span><span class="o">=</span><span class="kc">False</span>
+<span class="p">)</span>
+
+<span class="c1"># общий colorbar для best_ineq</span>
+<span class="n">sm</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">ScalarMappable</span><span class="p">(</span><span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlBu_r'</span><span class="p">,</span> <span class="n">norm</span><span class="o">=</span><span class="n">norm</span><span class="p">)</span>
+<span class="n">sm</span><span class="o">.</span><span class="n">set_array</span><span class="p">([])</span>
+<span class="n">cbar</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">colorbar</span><span class="p">(</span><span class="n">sm</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">fraction</span><span class="o">=</span><span class="mf">0.03</span><span class="p">,</span> <span class="n">pad</span><span class="o">=</span><span class="mf">0.02</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">set_label</span><span class="p">(</span><span class="s1">'Неравенство лучшей соц‑группы'</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">12</span><span class="p">)</span>
+<span class="n">cbar</span><span class="o">.</span><span class="n">ax</span><span class="o">.</span><span class="n">tick_params</span><span class="p">(</span><span class="n">labelsize</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span>
+    <span class="s2">"Неравенство лучшей соц‑группы по районам</span><span class="se">\n</span><span class="s2">в Ленинградской области"</span><span class="p">,</span>
+    <span class="n">fontdict</span><span class="o">=</span><span class="p">{</span><span class="s1">'fontsize'</span><span class="p">:</span><span class="mi">16</span><span class="p">,</span> <span class="s1">'fontweight'</span><span class="p">:</span><span class="s1">'bold'</span><span class="p">}</span>
+<span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_spatial_inequality_25_0.png" src="../_images/examples_spatial_inequality_25_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[152]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">folium</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">unary_union</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mpl</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.colors</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">mcolors</span>
+
+<span class="c1"># --- 1) Переводим GeoDataFrame в WGS84 ---</span>
+<span class="n">polys</span> <span class="o">=</span> <span class="n">gdf_with_best_group</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">4326</span><span class="p">)</span>
+<span class="n">cities</span> <span class="o">=</span> <span class="n">gdf_cities</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">4326</span><span class="p">)</span>
+
+<span class="c1"># --- 2) Вычисляем для каждого полигона значение неравенства лучшей соц‑группы ---</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">extract_best_ineq</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'Наименьшее неравенство для соц‑группы'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">isna</span><span class="p">(</span><span class="n">best</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">return</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">best</span><span class="si">}</span><span class="s2"> - Неравенство"</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+
+<span class="n">polys</span><span class="p">[</span><span class="s1">'best_ineq'</span><span class="p">]</span> <span class="o">=</span> <span class="n">polys</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">extract_best_ineq</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># --- 3) Задаём нормировки и палитры из Matplotlib ---</span>
+<span class="c1"># для полигонов по best_ineq</span>
+<span class="n">vmin_p</span> <span class="o">=</span> <span class="n">polys</span><span class="p">[</span><span class="s1">'best_ineq'</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">vmax_p</span> <span class="o">=</span> <span class="n">polys</span><span class="p">[</span><span class="s1">'best_ineq'</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">norm_p</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">TwoSlopeNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin_p</span><span class="p">,</span> <span class="n">vcenter</span><span class="o">=</span><span class="p">(</span><span class="n">vmin_p</span><span class="o">+</span><span class="n">vmax_p</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax_p</span><span class="p">)</span>
+<span class="n">cmap_p</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">'RdYlBu_r'</span><span class="p">)</span>
+
+<span class="c1"># для городов по их пространственному неравенству</span>
+<span class="n">vmin_c</span> <span class="o">=</span> <span class="n">cities</span><span class="p">[</span><span class="s1">'Пространственное неравенство'</span><span class="p">]</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+<span class="n">vmax_c</span> <span class="o">=</span> <span class="n">cities</span><span class="p">[</span><span class="s1">'Пространственное неравенство'</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+<span class="n">norm_c</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">colors</span><span class="o">.</span><span class="n">TwoSlopeNorm</span><span class="p">(</span><span class="n">vmin</span><span class="o">=</span><span class="n">vmin_c</span><span class="p">,</span> <span class="n">vcenter</span><span class="o">=</span><span class="p">(</span><span class="n">vmin_c</span><span class="o">+</span><span class="n">vmax_c</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">vmax</span><span class="o">=</span><span class="n">vmax_c</span><span class="p">)</span>
+<span class="n">cmap_c</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">'RdYlBu_r'</span><span class="p">)</span>
+
+<span class="c1"># --- 4) Готовим цвета для обводки полигонов по лучшей группе ---</span>
+<span class="n">group_attr</span> <span class="o">=</span> <span class="s1">'Наименьшее неравенство для соц‑группы'</span>
+<span class="n">groups</span> <span class="o">=</span> <span class="n">polys</span><span class="p">[</span><span class="n">group_attr</span><span class="p">]</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">str</span><span class="p">)</span>
+<span class="n">unique_groups</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">dict</span><span class="o">.</span><span class="n">fromkeys</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span>
+<span class="n">cmap_groups</span> <span class="o">=</span> <span class="n">mpl</span><span class="o">.</span><span class="n">cm</span><span class="o">.</span><span class="n">get_cmap</span><span class="p">(</span><span class="s1">'tab20'</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">unique_groups</span><span class="p">))</span>
+<span class="n">group_colors</span> <span class="o">=</span> <span class="p">{</span><span class="n">grp</span><span class="p">:</span> <span class="n">mcolors</span><span class="o">.</span><span class="n">to_hex</span><span class="p">(</span><span class="n">cmap_groups</span><span class="p">(</span><span class="n">i</span><span class="p">))</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">grp</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">unique_groups</span><span class="p">)}</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fmt</span><span class="p">(</span><span class="n">val</span><span class="p">):</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="si">:</span><span class="s2">.3f</span><span class="si">}</span><span class="s2">"</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">"-"</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">popup_poly</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="c1"># теперь заголовок «Опорный населённый пункт: &lt;название&gt;»</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'anchor_name'</span><span class="p">,</span> <span class="s1">'—'</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"&lt;b&gt;Опорный населенный пункт: </span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/b&gt;"</span><span class="p">]</span>
+
+    <span class="n">si</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'Пространственное неравенство'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">si</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Пространственное неравенство: &lt;b&gt;</span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">si</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/b&gt;"</span><span class="p">)</span>
+
+    <span class="n">best</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">group_attr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">best</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Наиболее обеспеченная соц-группа: &lt;b&gt;</span><span class="si">{</span><span class="n">best</span><span class="si">}</span><span class="s2">&lt;/b&gt;"</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">suffix</span><span class="p">,</span> <span class="n">label</span> <span class="ow">in</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s1">'- basic'</span><span class="p">,</span> <span class="s1">'Базовая инфраструктура'</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">'- additional'</span><span class="p">,</span> <span class="s1">'Дополнительная инфраструктура'</span><span class="p">),</span>
+            <span class="p">(</span><span class="s1">'- comfort'</span><span class="p">,</span> <span class="s1">'Инфраструктура комфорта'</span><span class="p">),</span>
+        <span class="p">]:</span>
+            <span class="n">col</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">best</span><span class="si">}</span><span class="s2"> - Неравенство </span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">]):</span>
+                <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">label</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">folium</span><span class="o">.</span><span class="n">Popup</span><span class="p">(</span><span class="s2">"&lt;br&gt;"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="n">max_width</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">popup_city</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+    <span class="n">name</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'name'</span><span class="p">)</span> <span class="ow">or</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'anchor_name'</span><span class="p">,</span><span class="s1">'—'</span><span class="p">)</span>
+    <span class="n">lines</span> <span class="o">=</span> <span class="p">[</span><span class="sa">f</span><span class="s2">"&lt;b&gt;</span><span class="si">{</span><span class="n">name</span><span class="si">}</span><span class="s2">&lt;/b&gt;"</span><span class="p">]</span>
+    <span class="n">si</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'Пространственное неравенство'</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">si</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Пространственное неравенство: &lt;b&gt;</span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">si</span><span class="p">)</span><span class="si">}</span><span class="s2">&lt;/b&gt;"</span><span class="p">)</span>
+    <span class="n">best</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">group_attr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">best</span><span class="p">):</span>
+        <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Наиболее обеспеченная соц-группа: &lt;b&gt;</span><span class="si">{</span><span class="n">best</span><span class="si">}</span><span class="s2">&lt;/b&gt;"</span><span class="p">)</span>
+        <span class="n">col</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">best</span><span class="si">}</span><span class="s2"> - Неравенство"</span>
+        <span class="k">if</span> <span class="n">col</span> <span class="ow">in</span> <span class="n">row</span> <span class="ow">and</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">]):</span>
+            <span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Значение: </span><span class="si">{</span><span class="n">fmt</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="n">col</span><span class="p">])</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">folium</span><span class="o">.</span><span class="n">Popup</span><span class="p">(</span><span class="s2">"&lt;br&gt;"</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">lines</span><span class="p">),</span> <span class="n">max_width</span><span class="o">=</span><span class="mi">300</span><span class="p">)</span>
+
+<span class="c1"># --- 6) Создаём folium-карту ---</span>
+<span class="n">center</span> <span class="o">=</span> <span class="p">[</span><span class="n">polys</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">polys</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">centroid</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">()]</span>
+<span class="n">m</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">Map</span><span class="p">(</span><span class="n">location</span><span class="o">=</span><span class="n">center</span><span class="p">,</span> <span class="n">zoom_start</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">tiles</span><span class="o">=</span><span class="s1">'cartodbpositron'</span><span class="p">)</span>
+
+<span class="c1"># --- 7) Слой полигонов ---</span>
+<span class="n">poly_layer</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">FeatureGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"Полигоны"</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">polys</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">val</span> <span class="o">=</span> <span class="n">row</span><span class="p">[</span><span class="s1">'best_ineq'</span><span class="p">]</span>
+    <span class="n">fill_color</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">mcolors</span><span class="o">.</span><span class="n">to_hex</span><span class="p">(</span><span class="n">cmap_p</span><span class="p">(</span><span class="n">norm_p</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">else</span> <span class="s1">'#cccccc'</span>
+    <span class="p">)</span>
+    <span class="n">grp</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">group_attr</span><span class="p">)</span>
+    <span class="n">edge_color</span> <span class="o">=</span> <span class="n">group_colors</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">grp</span><span class="p">,</span> <span class="s1">'black'</span><span class="p">)</span>
+    <span class="n">gj</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">GeoJson</span><span class="p">(</span>
+        <span class="n">data</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">__geo_interface__</span><span class="p">,</span>
+        <span class="n">style_function</span><span class="o">=</span><span class="k">lambda</span> <span class="n">feat</span><span class="p">,</span> <span class="n">fc</span><span class="o">=</span><span class="n">fill_color</span><span class="p">,</span> <span class="n">ec</span><span class="o">=</span><span class="n">edge_color</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">'fillColor'</span><span class="p">:</span> <span class="n">fc</span><span class="p">,</span>
+            <span class="s1">'color'</span><span class="p">:</span> <span class="n">ec</span><span class="p">,</span>
+            <span class="s1">'weight'</span><span class="p">:</span> <span class="mf">1.5</span><span class="p">,</span>
+            <span class="s1">'fillOpacity'</span><span class="p">:</span> <span class="mf">0.7</span>
+        <span class="p">},</span>
+        <span class="n">tooltip</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'anchor_name'</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">gj</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">popup_poly</span><span class="p">(</span><span class="n">row</span><span class="p">))</span>
+    <span class="n">poly_layer</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">gj</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">poly_layer</span><span class="p">)</span>
+
+<span class="c1"># --- 8) Слой городов (все) ---</span>
+<span class="n">city_layer</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">FeatureGroup</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"Города"</span><span class="p">,</span> <span class="n">show</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">cities</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+    <span class="n">si</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'Пространственное неравенство'</span><span class="p">)</span>
+    <span class="n">fill_color</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">mcolors</span><span class="o">.</span><span class="n">to_hex</span><span class="p">(</span><span class="n">cmap_c</span><span class="p">(</span><span class="n">norm_c</span><span class="p">(</span><span class="n">si</span><span class="p">)))</span> <span class="k">if</span> <span class="n">pd</span><span class="o">.</span><span class="n">notna</span><span class="p">(</span><span class="n">si</span><span class="p">)</span> <span class="k">else</span> <span class="s1">'#666666'</span>
+    <span class="p">)</span>
+    <span class="n">marker</span> <span class="o">=</span> <span class="n">folium</span><span class="o">.</span><span class="n">CircleMarker</span><span class="p">(</span>
+        <span class="n">location</span><span class="o">=</span><span class="p">[</span><span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">x</span><span class="p">],</span>
+        <span class="n">radius</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span>
+        <span class="n">fill</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+        <span class="n">fill_color</span><span class="o">=</span><span class="n">fill_color</span><span class="p">,</span>
+        <span class="n">color</span><span class="o">=</span><span class="s1">'white'</span><span class="p">,</span>
+        <span class="n">weight</span><span class="o">=</span><span class="mf">0.3</span><span class="p">,</span>
+        <span class="n">fill_opacity</span><span class="o">=</span><span class="mf">0.9</span><span class="p">,</span>
+        <span class="n">tooltip</span><span class="o">=</span><span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'name'</span><span class="p">)</span> <span class="ow">or</span> <span class="n">row</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'anchor_name'</span><span class="p">),</span>
+        <span class="n">popup</span><span class="o">=</span><span class="n">popup_city</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">city_layer</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">marker</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">city_layer</span><span class="p">)</span>
+
+<span class="c1"># --- 9) Добавляем контрол слоёв ---</span>
+<span class="n">folium</span><span class="o">.</span><span class="n">LayerControl</span><span class="p">()</span><span class="o">.</span><span class="n">add_to</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+
+<span class="c1"># --- 10) Добавляем легенду для обводки полигонов ---</span>
+<span class="n">legend_html</span> <span class="o">=</span> <span class="s2">"""</span>
+<span class="s2">&lt;div style="</span>
+<span class="s2">    position: fixed;</span>
+<span class="s2">    bottom: 50px;</span>
+<span class="s2">    left: 10px;</span>
+<span class="s2">    width: 180px;</span>
+<span class="s2">    background: white;</span>
+<span class="s2">    border: 1px solid #ccc;</span>
+<span class="s2">    padding: 10px;</span>
+<span class="s2">    font-size: 12px;</span>
+<span class="s2">    z-index:9999;</span>
+<span class="s2">"&gt;</span>
+<span class="s2">&lt;strong&gt;Наиболее обеспеченные соц-группы&lt;/strong&gt;&lt;br&gt;</span>
+<span class="s2">"""</span>
+<span class="k">for</span> <span class="n">grp</span><span class="p">,</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">group_colors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+    <span class="n">legend_html</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">"""</span>
+<span class="s2">    &lt;i style="background:</span><span class="si">{</span><span class="n">color</span><span class="si">}</span><span class="s2">;width:12px;height:12px;display:inline-block;margin-right:5px;"&gt;&lt;/i&gt;</span>
+<span class="s2">    </span><span class="si">{</span><span class="n">grp</span><span class="si">}</span><span class="s2">&lt;br&gt;</span>
+<span class="s2">    """</span>
+<span class="n">legend_html</span> <span class="o">+=</span> <span class="s2">"&lt;/div&gt;"</span>
+
+<span class="n">m</span><span class="o">.</span><span class="n">get_root</span><span class="p">()</span><span class="o">.</span><span class="n">html</span><span class="o">.</span><span class="n">add_child</span><span class="p">(</span><span class="n">folium</span><span class="o">.</span><span class="n">Element</span><span class="p">(</span><span class="n">legend_html</span><span class="p">))</span>
+
+<span class="c1"># --- 11) Сохраняем карту ---</span>
+<span class="n">m</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s1">'map.html'</span><span class="p">)</span>
+<br/><br/></pre></div>
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="engineer.html" class="btn btn-neutral float-left" title="Инженерная инфраструктура" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="territory_evaluation.html" class="btn btn-neutral float-right" title="Оценка территории по критериям" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

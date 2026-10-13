@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.agglomeration &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="popframe.method.anchor_settlement" href="popframe.method.anchor_settlement.html" />
+    <link rel="prev" title="popframe.method" href="popframe.method.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation / Документация по API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="popframe.preprocessing.html">popframe.preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.models.html">popframe.models</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="popframe.method.html">popframe.method</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">popframe.method.agglomeration</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.method.agglomeration.AgglomerationBuilder"><code class="docutils literal notranslate"><span class="pre">AgglomerationBuilder</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.anchor_settlement.html">popframe.method.anchor_settlement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.base_method.html">popframe.method.base_method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.city_evaluation.html">popframe.method.city_evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.engineer.html">popframe.method.engineer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.landuse_assessment.html">popframe.method.landuse_assessment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.popuation_frame.html">popframe.method.popuation_frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.spatial_inequality.html">popframe.method.spatial_inequality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.territory_evaluation.html">popframe.method.territory_evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.utils.html">popframe.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API documentation / Документация по API</a></li>
+          <li class="breadcrumb-item"><a href="popframe.method.html">popframe.method</a></li>
+      <li class="breadcrumb-item active">popframe.method.agglomeration</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/popframe.method.agglomeration.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-popframe.method.agglomeration">
+<span id="popframe-method-agglomeration"></span><h1>popframe.method.agglomeration<a class="headerlink" href="#module-popframe.method.agglomeration" title="Permalink to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.method.agglomeration.AgglomerationBuilder" title="popframe.method.agglomeration.AgglomerationBuilder"><code class="xref py py-obj docutils literal notranslate"><span class="pre">AgglomerationBuilder</span></code></a>(*, region[, ...])</p></td>
+<td><p>Build urban agglomerations from a towns layer and a travel-time matrix.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="popframe.method.agglomeration.AgglomerationBuilder">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">popframe.method.agglomeration.</span></span><span class="sig-name descname"><span class="pre">AgglomerationBuilder</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="popframe.models.region.Region.html#popframe.models.region.Region" title="popframe.models.region.Region"><span class="pre">Region</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_m_per_min</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">400</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">min_population</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">15000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/agglomeration.html#AgglomerationBuilder"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.agglomeration.AgglomerationBuilder" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="popframe.method.base_method.html#popframe.method.base_method.BaseMethod" title="popframe.method.base_method.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<p>Build urban agglomerations from a towns layer and a travel-time matrix.</p>
+<section id="notes">
+<h2>Notes<a class="headerlink" href="#notes" title="Permalink to this heading"></a></h2>
+<p>The algorithm:
+1) Iterates city levels from largest to smallest and selects candidate centers.
+2) For each center, takes all towns reachable within a time threshold and</p>
+<blockquote>
+<div><p>buffers them by the remaining time (converted to meters).</p>
+</div></blockquote>
+<ol class="arabic simple" start="3">
+<li><p>Unifies buffers to produce proto-agglomerations.</p></li>
+<li><p>Merges intersecting proto-agglomerations and aggregates attributes.</p></li>
+<li><p>Clips to the region boundary and simplifies MultiPolygons.</p></li>
+</ol>
+</section>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>radius_m_per_min<span class="classifier">int</span></dt><dd><p>Conversion factor from minutes of travel time to meters of buffer radius.</p>
+</dd>
+<dt>min_population<span class="classifier">int</span></dt><dd><p>Minimal population for a town to be considered as a center or member.</p>
+</dd>
+<dt>_in_agglomeration<span class="classifier">Dict[int, bool]</span></dt><dd><p>Registry of nodes already assigned to an agglomeration.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.method.agglomeration.AgglomerationBuilder.radius_m_per_min">
+<span class="sig-name descname"><span class="pre">radius_m_per_min</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#popframe.method.agglomeration.AgglomerationBuilder.radius_m_per_min" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.method.agglomeration.AgglomerationBuilder.min_population">
+<span class="sig-name descname"><span class="pre">min_population</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#popframe.method.agglomeration.AgglomerationBuilder.min_population" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.agglomeration.AgglomerationBuilder._build_agglomeration">
+<span class="sig-name descname"><span class="pre">_build_agglomeration</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/agglomeration.html#AgglomerationBuilder._build_agglomeration"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.agglomeration.AgglomerationBuilder._build_agglomeration" title="Permalink to this definition"></a></dt>
+<dd><p>Build proto-agglomerations for eligible centers by level and time threshold.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>towns<span class="classifier">GeoDataFrame</span></dt><dd><p>Towns with columns: <code class="docutils literal notranslate"><span class="pre">id</span></code>, <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">population</span></code>, <code class="docutils literal notranslate"><span class="pre">level</span></code>, <code class="docutils literal notranslate"><span class="pre">geometry</span></code> (Points).
+CRS must match <code class="docutils literal notranslate"><span class="pre">self.region.crs</span></code>.</p>
+</dd>
+<dt>time<span class="classifier">int</span></dt><dd><p>Global time budget in minutes. Effective per-level budget decreases by 10 minutes
+per level step when iterating from largest to smallest.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>GeoDataFrame</dt><dd><p>Columns: <code class="docutils literal notranslate"><span class="pre">name</span></code>, <code class="docutils literal notranslate"><span class="pre">geometry</span></code>. Geometry is Polygon or MultiPolygon.
+Always has active geometry and CRS.</p>
+</dd>
+</dl>
+</section>
+<section id="id1">
+<h3>Notes<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h3>
+<p>Centers are filtered by <code class="docutils literal notranslate"><span class="pre">level</span> <span class="pre">in</span> <span class="pre">CITY_LEVELS</span></code> and <code class="docutils literal notranslate"><span class="pre">population</span> <span class="pre">&gt;=</span> <span class="pre">min_population</span></code>.
+Remaining-time buffers are computed as
+<code class="docutils literal notranslate"><span class="pre">(time_center</span> <span class="pre">-</span> <span class="pre">distance_minutes)</span> <span class="pre">*</span> <span class="pre">radius_m_per_min</span></code>.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.agglomeration.AgglomerationBuilder._get_agglomeration_around_node">
+<span class="sig-name descname"><span class="pre">_get_agglomeration_around_node</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">start_node</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">dict</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span></span><a class="reference internal" href="../../_modules/popframe/method/agglomeration.html#AgglomerationBuilder._get_agglomeration_around_node"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.agglomeration.AgglomerationBuilder._get_agglomeration_around_node" title="Permalink to this definition"></a></dt>
+<dd><p>Build a single proto-agglomeration around a candidate center.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>start_node<span class="classifier">int</span></dt><dd><p>ID of the center town.</p>
+</dd>
+<dt>max_time<span class="classifier">int</span></dt><dd><p>Maximum travel time (minutes) from <code class="docutils literal notranslate"><span class="pre">start_node</span></code> to include towns.</p>
+</dd>
+<dt>towns<span class="classifier">GeoDataFrame</span></dt><dd><p>Towns table aligned with the accessibility matrix index.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>dict or None</dt><dd><p><code class="docutils literal notranslate"><span class="pre">{&quot;geometry&quot;:</span> <span class="pre">Polygon|MultiPolygon,</span> <span class="pre">&quot;nodes_in_agglomeration&quot;:</span> <span class="pre">List[int]}</span></code>
+or <code class="docutils literal notranslate"><span class="pre">None</span></code> if no towns are reachable within <code class="docutils literal notranslate"><span class="pre">max_time</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h3>Notes<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<p>Uses <code class="docutils literal notranslate"><span class="pre">self.region.accessibility_matrix</span></code> with minutes as units.
+Guarantees point geometry for towns by coercing to centroid if needed.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.agglomeration.AgglomerationBuilder._merge_intersecting_agglomerations">
+<span class="sig-name descname"><span class="pre">_merge_intersecting_agglomerations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/agglomeration.html#AgglomerationBuilder._merge_intersecting_agglomerations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.agglomeration.AgglomerationBuilder._merge_intersecting_agglomerations" title="Permalink to this definition"></a></dt>
+<dd><p>Merge intersecting proto-agglomerations and compute attributes.</p>
+<section id="id5">
+<h3>Parameters<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>gdf<span class="classifier">GeoDataFrame</span></dt><dd><p>Proto-agglomerations with columns <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">geometry</span></code>.</p>
+</dd>
+<dt>towns<span class="classifier">GeoDataFrame</span></dt><dd><p>Towns layer used to aggregate population.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h3>Returns<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>GeoDataFrame</dt><dd><p>Columns: <code class="docutils literal notranslate"><span class="pre">geometry</span></code>, <code class="docutils literal notranslate"><span class="pre">type</span></code>, <code class="docutils literal notranslate"><span class="pre">core_cities</span></code>, <code class="docutils literal notranslate"><span class="pre">population</span></code>, <code class="docutils literal notranslate"><span class="pre">agglomeration_level</span></code>.
+Always has active geometry and CRS.</p>
+</dd>
+</dl>
+</section>
+<section id="id7">
+<h3>Notes<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h3>
+<p>Intersection is tested geometrically. Geometries are unioned via <code class="docutils literal notranslate"><span class="pre">unary_union</span></code>.
+Invalid geometries are repaired with <code class="docutils literal notranslate"><span class="pre">buffer(0)</span></code>.
+Agglomeration level is derived from total population thresholds.</p>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.agglomeration.AgglomerationBuilder._simplify_multipolygons">
+<span class="sig-name descname"><span class="pre">_simplify_multipolygons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/agglomeration.html#AgglomerationBuilder._simplify_multipolygons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.agglomeration.AgglomerationBuilder._simplify_multipolygons" title="Permalink to this definition"></a></dt>
+<dd><p>Keep only the largest polygon for MultiPolygon geometries.</p>
+<section id="id8">
+<h3>Parameters<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>gdf<span class="classifier">GeoDataFrame</span></dt><dd><p>Input geometries.</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h3>Returns<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>GeoDataFrame</dt><dd><p>Copy with simplified geometries. Empty input is returned unchanged.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.agglomeration.AgglomerationBuilder.evaluate_city_agglomeration_status">
+<span class="sig-name descname"><span class="pre">evaluate_city_agglomeration_status</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">agglomeration_gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/agglomeration.html#AgglomerationBuilder.evaluate_city_agglomeration_status"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.agglomeration.AgglomerationBuilder.evaluate_city_agglomeration_status" title="Permalink to this definition"></a></dt>
+<dd><p>Label towns by agglomeration membership and level.</p>
+<section id="id10">
+<h3>Parameters<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>towns<span class="classifier">GeoDataFrame</span></dt><dd><p>Towns layer with point geometries and columns <code class="docutils literal notranslate"><span class="pre">name</span></code> and <code class="docutils literal notranslate"><span class="pre">geometry</span></code>.</p>
+</dd>
+<dt>agglomeration_gdf<span class="classifier">GeoDataFrame</span></dt><dd><p>Agglomerations with columns <code class="docutils literal notranslate"><span class="pre">geometry</span></code>, <code class="docutils literal notranslate"><span class="pre">core_cities</span></code>, <code class="docutils literal notranslate"><span class="pre">agglomeration_level</span></code>.</p>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h3>Returns<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>GeoDataFrame</dt><dd><p><code class="docutils literal notranslate"><span class="pre">towns</span></code> copy with two columns added:
+- <code class="docutils literal notranslate"><span class="pre">agglomeration_status</span></code>: {“Вне агломерации”,”В агломерации”,”Центр агломерации”}
+- <code class="docutils literal notranslate"><span class="pre">agglomeration_level</span></code>: int in {0..5}</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.agglomeration.AgglomerationBuilder.get_agglomerations">
+<span class="sig-name descname"><span class="pre">get_agglomerations</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">update_df</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">DataFrame</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">time</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">80</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">raise_on_empty</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/agglomeration.html#AgglomerationBuilder.get_agglomerations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.agglomeration.AgglomerationBuilder.get_agglomerations" title="Permalink to this definition"></a></dt>
+<dd><p>Build, merge, clip, and finalize urban agglomerations.</p>
+<section id="id12">
+<h3>Parameters<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>update_df<span class="classifier">DataFrame, optional</span></dt><dd><p>If provided, used by <code class="docutils literal notranslate"><span class="pre">self.region.get_update_towns_gdf</span></code> to update towns.</p>
+</dd>
+<dt>time<span class="classifier">int, default 80</span></dt><dd><p>Global time budget in minutes. Values &lt; 50 are coerced to 50.</p>
+</dd>
+<dt>raise_on_empty<span class="classifier">bool, default True</span></dt><dd><p>If True, raise an error when no eligible towns or no agglomerations are produced.</p>
+</dd>
+</dl>
+</section>
+<section id="id13">
+<h3>Returns<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>GeoDataFrame</dt><dd><p>Final agglomerations after merge, clip, and simplification.</p>
+</dd>
+</dl>
+</section>
+<section id="raises">
+<h3>Raises<a class="headerlink" href="#raises" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>ValueError</dt><dd><p>If there are fewer than two towns or fewer than two towns with valid population.</p>
+</dd>
+<dt>RuntimeError</dt><dd><p>If no towns pass level/population filters or no agglomerations can be built
+and <code class="docutils literal notranslate"><span class="pre">raise_on_empty</span></code> is True.</p>
+</dd>
+<dt>RuntimeError</dt><dd><p>On any unexpected error inside the pipeline, with original exception chained.</p>
+</dd>
+</dl>
+</section>
+<section id="id14">
+<h3>Notes<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h3>
+<p>The function validates candidates by
+<code class="docutils literal notranslate"><span class="pre">towns['level'].isin(CITY_LEVELS)</span></code> and
+<code class="docutils literal notranslate"><span class="pre">towns['population']</span> <span class="pre">&gt;=</span> <span class="pre">self.min_population</span></code> before building.</p>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="popframe.method.html" class="btn btn-neutral float-left" title="popframe.method" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="popframe.method.anchor_settlement.html" class="btn btn-neutral float-right" title="popframe.method.anchor_settlement" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

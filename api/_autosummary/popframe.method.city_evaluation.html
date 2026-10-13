@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.city_evaluation &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="popframe.method.engineer" href="popframe.method.engineer.html" />
+    <link rel="prev" title="popframe.method.base_method" href="popframe.method.base_method.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation / Документация по API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="popframe.preprocessing.html">popframe.preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.models.html">popframe.models</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="popframe.method.html">popframe.method</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.agglomeration.html">popframe.method.agglomeration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.anchor_settlement.html">popframe.method.anchor_settlement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.base_method.html">popframe.method.base_method</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">popframe.method.city_evaluation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.method.city_evaluation.CityPopulationScorer"><code class="docutils literal notranslate"><span class="pre">CityPopulationScorer</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.engineer.html">popframe.method.engineer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.landuse_assessment.html">popframe.method.landuse_assessment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.popuation_frame.html">popframe.method.popuation_frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.spatial_inequality.html">popframe.method.spatial_inequality</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.territory_evaluation.html">popframe.method.territory_evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.utils.html">popframe.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API documentation / Документация по API</a></li>
+          <li class="breadcrumb-item"><a href="popframe.method.html">popframe.method</a></li>
+      <li class="breadcrumb-item active">popframe.method.city_evaluation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/popframe.method.city_evaluation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-popframe.method.city_evaluation">
+<span id="popframe-method-city-evaluation"></span><h1>popframe.method.city_evaluation<a class="headerlink" href="#module-popframe.method.city_evaluation" title="Permalink to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.method.city_evaluation.CityPopulationScorer" title="popframe.method.city_evaluation.CityPopulationScorer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">CityPopulationScorer</span></code></a>(gdf_mo, gdf_hex[, ...])</p></td>
+<td><p>Calculates population-based scores for hexagonal grid cells based on municipal data.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="popframe.method.city_evaluation.CityPopulationScorer">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">popframe.method.city_evaluation.</span></span><span class="sig-name descname"><span class="pre">CityPopulationScorer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf_mo</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdf_hex</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target_crs</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">3857</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/city_evaluation.html#CityPopulationScorer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.city_evaluation.CityPopulationScorer" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Calculates population-based scores for hexagonal grid cells based on municipal data.</p>
+<dl class="simple">
+<dt>This class takes two GeoDataFrames:</dt><dd><ul class="simple">
+<li><p>gdf_mo: municipal polygons with population attributes.</p></li>
+<li><p>gdf_hex: hexagonal grid cells with unique identifiers.</p></li>
+</ul>
+</dd>
+<dt>The scoring is performed by:</dt><dd><ol class="arabic simple">
+<li><p>Computing area and density for each municipality.</p></li>
+<li><p>Assigning each hexagon to the municipality it overlaps the most.</p></li>
+<li><p>Normalizing population and density values across all hexagons.</p></li>
+<li><p>Aggregating normalized values into a score between 1 and 5.</p></li>
+<li><p>Providing textual interpretations for each score.</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.method.city_evaluation.CityPopulationScorer.INTERPRETATIONS">
+<span class="sig-name descname"><span class="pre">INTERPRETATIONS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{0:</span> <span class="pre">'Территория</span> <span class="pre">имеет</span> <span class="pre">нулевые</span> <span class="pre">показатели</span> <span class="pre">численности</span> <span class="pre">и</span> <span class="pre">плотности</span> <span class="pre">населения,</span> <span class="pre">что</span> <span class="pre">затрудняет</span> <span class="pre">развитие</span> <span class="pre">инфраструктуры</span> <span class="pre">и</span> <span class="pre">экономики.',</span> <span class="pre">1:</span> <span class="pre">'Территория</span> <span class="pre">имеет</span> <span class="pre">низкиие</span> <span class="pre">показателяи</span> <span class="pre">численности</span> <span class="pre">и</span> <span class="pre">плотности</span> <span class="pre">населения,</span> <span class="pre">что</span> <span class="pre">ограничивает</span> <span class="pre">возможности</span> <span class="pre">развития</span> <span class="pre">инфраструктуры</span> <span class="pre">и</span> <span class="pre">экономики.',</span> <span class="pre">2:</span> <span class="pre">'Территория</span> <span class="pre">отличается</span> <span class="pre">относительно</span> <span class="pre">низкой</span> <span class="pre">численностью</span> <span class="pre">и</span> <span class="pre">плотностью</span> <span class="pre">населения,</span> <span class="pre">что</span> <span class="pre">ограничивает</span> <span class="pre">возможности</span> <span class="pre">развитие</span> <span class="pre">инфраструктуры</span> <span class="pre">и</span> <span class="pre">экономики.',</span> <span class="pre">3:</span> <span class="pre">'Территория</span> <span class="pre">имеет</span> <span class="pre">средние</span> <span class="pre">показатели</span> <span class="pre">численности</span> <span class="pre">и</span> <span class="pre">плотности</span> <span class="pre">населения,</span> <span class="pre">что</span> <span class="pre">создаёт</span> <span class="pre">возможность</span> <span class="pre">развитие</span> <span class="pre">инфраструктуры</span> <span class="pre">и</span> <span class="pre">экономики.',</span> <span class="pre">4:</span> <span class="pre">'Территория</span> <span class="pre">имеет</span> <span class="pre">высокие</span> <span class="pre">показатели</span> <span class="pre">численности</span> <span class="pre">и</span> <span class="pre">плотности</span> <span class="pre">населения,</span> <span class="pre">что</span> <span class="pre">способствует</span> <span class="pre">развитие</span> <span class="pre">инфраструктуры</span> <span class="pre">и</span> <span class="pre">экономики.',</span> <span class="pre">5:</span> <span class="pre">'Территория</span> <span class="pre">имеет</span> <span class="pre">очень</span> <span class="pre">высокими</span> <span class="pre">показателями</span> <span class="pre">численности</span> <span class="pre">и</span> <span class="pre">плотности,</span> <span class="pre">что</span> <span class="pre">указывает</span> <span class="pre">на</span> <span class="pre">высокий</span> <span class="pre">потенциал</span> <span class="pre">развития</span> <span class="pre">инфраструктуры</span> <span class="pre">и</span> <span class="pre">экономики.'}</span></em><a class="headerlink" href="#popframe.method.city_evaluation.CityPopulationScorer.INTERPRETATIONS" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.city_evaluation.CityPopulationScorer.compute_mo_density">
+<span class="sig-name descname"><span class="pre">compute_mo_density</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/city_evaluation.html#CityPopulationScorer.compute_mo_density"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.city_evaluation.CityPopulationScorer.compute_mo_density" title="Permalink to this definition"></a></dt>
+<dd><p>Computes area and population density for each municipality.</p>
+<p>Converts gdf_mo to a metric CRS, calculates polygon areas in square meters
+(and then in square kilometers), and computes population density (people per km²).</p>
+<dl class="simple">
+<dt>Modifies:</dt><dd><p>self.gdf_mo: Adds columns ‘area_m2’, ‘area_km2’, and ‘density_mo’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.city_evaluation.CityPopulationScorer.assign_hex_to_mo">
+<span class="sig-name descname"><span class="pre">assign_hex_to_mo</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/city_evaluation.html#CityPopulationScorer.assign_hex_to_mo"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.city_evaluation.CityPopulationScorer.assign_hex_to_mo" title="Permalink to this definition"></a></dt>
+<dd><p>Assigns each hexagon to the municipality it overlaps the most.</p>
+<dl class="simple">
+<dt>Steps:</dt><dd><ol class="arabic simple">
+<li><p>Reprojects hexagons to the same metric CRS as municipalities.</p></li>
+<li><p>Computes the geometric intersection between each hexagon and municipality.</p></li>
+<li><p>For each hexagon, selects the municipality with the largest intersection area.</p></li>
+<li><p>Merges population and density data from the selected municipality back into gdf_hex.</p></li>
+</ol>
+</dd>
+<dt>Modifies:</dt><dd><p>self.gdf_hex: Adds columns ‘territory_id’, ‘population’, and ‘density’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.city_evaluation.CityPopulationScorer.normalize_and_score">
+<span class="sig-name descname"><span class="pre">normalize_and_score</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/city_evaluation.html#CityPopulationScorer.normalize_and_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.city_evaluation.CityPopulationScorer.normalize_and_score" title="Permalink to this definition"></a></dt>
+<dd><p>Нормализует population и density, считает combined_norm,
+присваивает score = 1–5 для ячеек с данными и 0 для ячеек без данных.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.city_evaluation.CityPopulationScorer.assign_interpretations">
+<span class="sig-name descname"><span class="pre">assign_interpretations</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/city_evaluation.html#CityPopulationScorer.assign_interpretations"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.city_evaluation.CityPopulationScorer.assign_interpretations" title="Permalink to this definition"></a></dt>
+<dd><p>Assigns textual interpretations to each hexagon’s score.</p>
+<dl class="simple">
+<dt>For each hexagon:</dt><dd><ul class="simple">
+<li><p>If ‘score’ is not NaN, retrieves the corresponding interpretation string.</p></li>
+<li><p>If ‘score’ is NaN, sets interpretation to None.</p></li>
+</ul>
+</dd>
+<dt>Modifies:</dt><dd><p>self.gdf_hex: Adds column ‘interpretation’.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.city_evaluation.CityPopulationScorer.generate_output">
+<span class="sig-name descname"><span class="pre">generate_output</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/popframe/method/city_evaluation.html#CityPopulationScorer.generate_output"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.city_evaluation.CityPopulationScorer.generate_output" title="Permalink to this definition"></a></dt>
+<dd><p>Constructs the final output list of dictionaries for JSON serialization.</p>
+<dl class="simple">
+<dt>Each dictionary contains:</dt><dd><ul class="simple">
+<li><p>‘hexagon_id’ (unique identifier of the hexagon)</p></li>
+<li><p>‘project’ (always None)</p></li>
+<li><p>‘average_population_density’ (rounded to one decimal place, or None)</p></li>
+<li><p>‘total_population’ (integer population, or None)</p></li>
+<li><p>‘score’ (float score in [1, 5], or None)</p></li>
+<li><p>‘interpretation’ (string or None)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of dictionaries ready for JSON export.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.city_evaluation.CityPopulationScorer.run">
+<span class="sig-name descname"><span class="pre">run</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">list</span></span></span><a class="reference internal" href="../../_modules/popframe/method/city_evaluation.html#CityPopulationScorer.run"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.city_evaluation.CityPopulationScorer.run" title="Permalink to this definition"></a></dt>
+<dd><p>Executes the full scoring workflow and returns the result.</p>
+<dl class="simple">
+<dt>Steps executed in order:</dt><dd><ol class="arabic simple">
+<li><p>compute_mo_density</p></li>
+<li><p>assign_hex_to_mo</p></li>
+<li><p>normalize_and_score</p></li>
+<li><p>assign_interpretations</p></li>
+<li><p>generate_output</p></li>
+</ol>
+</dd>
+</dl>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>The final list of dictionaries for JSON serialization.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="popframe.method.base_method.html" class="btn btn-neutral float-left" title="popframe.method.base_method" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="popframe.method.engineer.html" class="btn btn-neutral float-right" title="popframe.method.engineer" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

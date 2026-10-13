@@ -1,0 +1,1513 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Оценка территории по критерию для гексагональной сетки &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/nbsphinx-code-cells.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Инженерная инфраструктура" href="engineer.html" />
+    <link rel="prev" title="Опорные населенные пункты" href="anchor_settelment.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aglomeration.html">Построение границ агломераций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="anchor_settelment.html">Построени границ опорных населенных пунктов</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Оценка критериев для гексагональной сетки</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#Население">Население</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="engineer.html">Оценка инженерной инфраструктуры</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spatial_inequality.html">Оценка пространственного неравенства</a></li>
+<li class="toctree-l2"><a class="reference internal" href="territory_evaluation.html">Оценка территории</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Оценка территории по критерию для гексагональной сетки</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/criterion_hex.nblink.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Оценка-территории-по-критерию-для-гексагональной-сетки">
+<h1>Оценка территории по критерию для гексагональной сетки<a class="headerlink" href="#Оценка-территории-по-критерию-для-гексагональной-сетки" title="Permalink to this heading"></a></h1>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">warnings</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="n">warnings</span><span class="o">.</span><span class="n">filterwarnings</span><span class="p">(</span><span class="s2">"ignore"</span><span class="p">)</span>
+<span class="n">sys</span><span class="o">.</span><span class="n">stderr</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">devnull</span><span class="p">,</span> <span class="s1">'w'</span><span class="p">)</span>
+
+<span class="c1"># local crs</span>
+<span class="n">local_crs</span> <span class="o">=</span> <span class="mi">32636</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">popframe.models.region</span><span class="w"> </span><span class="kn">import</span> <span class="n">Region</span>
+
+<span class="n">region_model</span> <span class="o">=</span> <span class="n">Region</span><span class="o">.</span><span class="n">from_pickle</span><span class="p">(</span><span class="s1">'data/__popframe_model_cache__/3138.pkl'</span><span class="p">)</span>
+<span class="c1"># grid = gpd.read_file('/Users/mvin/Code/PopFrame/examples/data/level_3.geojson', engine="pyogrio")</span>
+<span class="c1"># grid</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_hexagons</span><span class="p">(</span>
+    <span class="n">territory_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">centers_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'https://urban-api.idu.kanootoko.org/api/v1/territory/</span><span class="si">{territory_id}</span><span class="s1">/hexagons'</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Запрос гексагонов для заданного territory_id и возвращает их в виде GeoDataFrame.</span>
+
+<span class="sd">    :param territory_id: ID территории</span>
+<span class="sd">    :param centers_only: если True — вернуть только центральные точки гексагонов</span>
+<span class="sd">    :param base_url: шаблон URL с {territory_id}</span>
+<span class="sd">    :return: GeoDataFrame с колонками geometry, hexagon_id и свойствами</span>
+<span class="sd">    """</span>
+    <span class="c1"># Подставляем ID в URL</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">base_url</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">territory_id</span><span class="o">=</span><span class="n">territory_id</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">'centers_only'</span><span class="p">:</span> <span class="n">centers_only</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Выполняем запрос</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># вызовет исключение, если код != 200</span>
+
+    <span class="c1"># Парсим GeoJSON</span>
+    <span class="n">geojson</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">geojson</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'features'</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="c1"># Строим GeoDataFrame</span>
+    <span class="c1"># from_features автоматически извлечёт geometry и все свойства</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_features</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+    <span class="c1"># Устанавливаем CRS (WGS84)</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">4326</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gdf</span>
+
+<span class="n">territory_id</span> <span class="o">=</span> <span class="mi">3138</span>  <span class="c1"># ID территории для Санкт-Петербурга</span>
+<span class="n">gdf_hex</span> <span class="o">=</span> <span class="n">fetch_hexagons</span><span class="p">(</span><span class="n">territory_id</span><span class="p">,</span> <span class="n">centers_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">gdf_hex</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[2]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>geometry</th>
+      <th>hexagon_id</th>
+      <th>properties</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>POLYGON ((30.06574 59.67090, 30.07379 59.67194...</td>
+      <td>157558</td>
+      <td>{}</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>POLYGON ((30.08770 60.08939, 30.09047 60.09382...</td>
+      <td>157559</td>
+      <td>{}</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>POLYGON ((30.37948 59.79270, 30.38759 59.79372...</td>
+      <td>157560</td>
+      <td>{}</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>POLYGON ((30.66727 59.76362, 30.66198 59.76704...</td>
+      <td>157561</td>
+      <td>{}</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>POLYGON ((30.24918 60.02467, 30.25198 60.02910...</td>
+      <td>157562</td>
+      <td>{}</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2529</th>
+      <td>POLYGON ((30.45791 60.02272, 30.46608 60.02376...</td>
+      <td>160087</td>
+      <td>{}</td>
+    </tr>
+    <tr>
+      <th>2530</th>
+      <td>POLYGON ((30.23231 59.84322, 30.23764 59.83983...</td>
+      <td>160088</td>
+      <td>{}</td>
+    </tr>
+    <tr>
+      <th>2531</th>
+      <td>POLYGON ((29.50097 60.20315, 29.49286 60.20206...</td>
+      <td>160089</td>
+      <td>{}</td>
+    </tr>
+    <tr>
+      <th>2532</th>
+      <td>POLYGON ((30.74536 59.75700, 30.74007 59.76043...</td>
+      <td>160090</td>
+      <td>{}</td>
+    </tr>
+    <tr>
+      <th>2533</th>
+      <td>POLYGON ((30.17198 60.10435, 30.17477 60.10878...</td>
+      <td>160091</td>
+      <td>{}</td>
+    </tr>
+  </tbody>
+</table>
+<p>2534 rows × 3 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">requests</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">fetch_mo</span><span class="p">(</span>
+    <span class="n">territory_id</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+    <span class="n">centers_only</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">'https://urban-api.idu.kanootoko.org/api/v1/territory/indicator_values'</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Запрос гексагонов для заданного territory_id и возвращает их в виде GeoDataFrame.</span>
+
+<span class="sd">    :param territory_id: ID территории</span>
+<span class="sd">    :param centers_only: если True — вернуть только центральные точки гексагонов</span>
+<span class="sd">    :param base_url: шаблон URL с {territory_id}</span>
+<span class="sd">    :return: GeoDataFrame с колонками geometry, hexagon_id и свойствами</span>
+<span class="sd">    """</span>
+    <span class="c1"># Подставляем ID в URL</span>
+    <span class="n">url</span> <span class="o">=</span> <span class="n">base_url</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">territory_id</span><span class="o">=</span><span class="n">territory_id</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">'parent_id'</span><span class="p">:</span> <span class="n">territory_id</span><span class="p">,</span>  <span class="c1"># ID родительской территории (1 для МО)</span>
+        <span class="s1">'indicator_ids'</span> <span class="p">:</span> <span class="mi">1</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Выполняем запрос</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="n">requests</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">response</span><span class="o">.</span><span class="n">raise_for_status</span><span class="p">()</span>  <span class="c1"># вызовет исключение, если код != 200</span>
+
+    <span class="c1"># Парсим GeoJSON</span>
+    <span class="n">geojson</span> <span class="o">=</span> <span class="n">response</span><span class="o">.</span><span class="n">json</span><span class="p">()</span>
+    <span class="n">features</span> <span class="o">=</span> <span class="n">geojson</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'features'</span><span class="p">,</span> <span class="p">[])</span>
+
+    <span class="c1"># Строим GeoDataFrame</span>
+    <span class="c1"># from_features автоматически извлечёт geometry и все свойства</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="o">.</span><span class="n">from_features</span><span class="p">(</span><span class="n">features</span><span class="p">)</span>
+    <span class="c1"># Устанавливаем CRS (WGS84)</span>
+    <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">4326</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">gdf</span>
+
+<span class="n">territory_id</span> <span class="o">=</span> <span class="mi">3138</span>  <span class="c1"># ID территории для Санкт-Петербурга</span>
+<span class="n">gdf_mo</span> <span class="o">=</span> <span class="n">fetch_mo</span><span class="p">(</span><span class="n">territory_id</span><span class="p">,</span> <span class="n">centers_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="n">gdf_mo</span><span class="p">[</span><span class="s1">'population'</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf_mo</span><span class="p">[</span><span class="s1">'indicators'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">lst</span><span class="p">:</span> <span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'value'</span><span class="p">))</span>
+
+
+<span class="n">gdf_mo</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[3]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>geometry</th>
+      <th>territory_id</th>
+      <th>name</th>
+      <th>indicators</th>
+      <th>population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>MULTIPOLYGON (((30.25023 59.90129, 30.25112 59...</td>
+      <td>3153</td>
+      <td>Адмиралтейский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>155981.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>MULTIPOLYGON (((30.17787 59.94437, 30.17790 59...</td>
+      <td>3145</td>
+      <td>Василеостровский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>206680.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>MULTIPOLYGON (((30.07078 60.09625, 30.07421 60...</td>
+      <td>3144</td>
+      <td>Выборгский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>541590.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>MULTIPOLYGON (((30.34398 59.97727, 30.34399 59...</td>
+      <td>3152</td>
+      <td>Калининский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>536794.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>MULTIPOLYGON (((30.16152 59.87428, 30.16152 59...</td>
+      <td>3151</td>
+      <td>Кировский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>335774.0</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>MULTIPOLYGON (((30.43875 59.82757, 30.44219 59...</td>
+      <td>3156</td>
+      <td>Колпинский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>186169.0</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>MULTIPOLYGON (((30.39428 59.92902, 30.39591 59...</td>
+      <td>3150</td>
+      <td>Красногвардейский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>366971.0</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>MULTIPOLYGON (((30.03496 59.71785, 30.04047 59...</td>
+      <td>3155</td>
+      <td>Красносельский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>431546.0</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>MULTIPOLYGON (((29.54157 60.04248, 29.54184 60...</td>
+      <td>3141</td>
+      <td>Кронштадтский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>44414.0</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>MULTIPOLYGON (((29.42576 60.19074, 29.42719 60...</td>
+      <td>3140</td>
+      <td>Курортный район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>83491.0</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>MULTIPOLYGON (((30.19877 59.80161, 30.19888 59...</td>
+      <td>3148</td>
+      <td>Московский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>335221.0</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>MULTIPOLYGON (((30.36331 59.91387, 30.36350 59...</td>
+      <td>3146</td>
+      <td>Невский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>547896.0</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>MULTIPOLYGON (((30.21013 59.97234, 30.21024 59...</td>
+      <td>3142</td>
+      <td>Петроградский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>115757.0</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>MULTIPOLYGON (((29.64754 59.92986, 29.64792 59...</td>
+      <td>3147</td>
+      <td>Петродворцовый район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>134148.0</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>MULTIPOLYGON (((29.95527 60.03782, 29.95528 60...</td>
+      <td>3139</td>
+      <td>Приморский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>699243.0</td>
+    </tr>
+    <tr>
+      <th>15</th>
+      <td>MULTIPOLYGON (((30.21822 59.67307, 30.22257 59...</td>
+      <td>3149</td>
+      <td>Пушкинский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>263732.0</td>
+    </tr>
+    <tr>
+      <th>16</th>
+      <td>MULTIPOLYGON (((30.33258 59.91305, 30.33284 59...</td>
+      <td>3154</td>
+      <td>Фрунзенский район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>413983.0</td>
+    </tr>
+    <tr>
+      <th>17</th>
+      <td>MULTIPOLYGON (((30.30827 59.94106, 30.30908 59...</td>
+      <td>3143</td>
+      <td>Центральный район</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>200654.0</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="n">all_gdfs</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="c1"># 2. Перебираем все territory_id из уже имеющегося gdf_mo:</span>
+<span class="k">for</span> <span class="n">parent_tid</span> <span class="ow">in</span> <span class="n">gdf_mo</span><span class="p">[</span><span class="s1">'territory_id'</span><span class="p">]:</span>
+    <span class="c1"># вызываем вашу функцию fetch_mo для каждого района:</span>
+    <span class="n">child_gdf</span> <span class="o">=</span> <span class="n">fetch_mo</span><span class="p">(</span><span class="n">parent_tid</span><span class="p">,</span> <span class="n">centers_only</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+    <span class="c1"># При желании можно сохранить «родительский» ID (т. е. ID района из gdf_mo),</span>
+    <span class="c1"># чтобы потом понимать, к какому району относится каждая запись:</span>
+    <span class="n">child_gdf</span><span class="p">[</span><span class="s1">'parent_territory_id'</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_tid</span>
+
+    <span class="c1"># При необходимости можно добавить и название «родительского» района:</span>
+    <span class="c1"># например, найдём строку в gdf_mo с данным parent_tid и вытащим её name:</span>
+    <span class="n">parent_name</span> <span class="o">=</span> <span class="n">gdf_mo</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">gdf_mo</span><span class="p">[</span><span class="s1">'territory_id'</span><span class="p">]</span> <span class="o">==</span> <span class="n">parent_tid</span><span class="p">,</span> <span class="s1">'name'</span><span class="p">]</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">child_gdf</span><span class="p">[</span><span class="s1">'parent_name'</span><span class="p">]</span> <span class="o">=</span> <span class="n">parent_name</span>
+
+    <span class="c1"># Добавляем полученный GeoDataFrame в список:</span>
+    <span class="n">all_gdfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">child_gdf</span><span class="p">)</span>
+
+<span class="c1"># 3. После цикла объединяем все GeoDataFrame в один:</span>
+<span class="c1">#    ignore_index=True — чтобы сбросить индексы и получить «плоскую» таблицу.</span>
+<span class="n">combined_gdf</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">all_gdfs</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="n">combined_gdf</span><span class="p">[</span><span class="s1">'population'</span><span class="p">]</span> <span class="o">=</span> <span class="n">combined_gdf</span><span class="p">[</span><span class="s1">'indicators'</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">lst</span><span class="p">:</span> <span class="n">lst</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'value'</span><span class="p">))</span>
+<span class="n">combined_gdf</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[4]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>geometry</th>
+      <th>territory_id</th>
+      <th>name</th>
+      <th>indicators</th>
+      <th>parent_territory_id</th>
+      <th>parent_name</th>
+      <th>population</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>MULTIPOLYGON (((30.28180 59.93306, 30.28272 59...</td>
+      <td>3249</td>
+      <td>Адмиралтейский округ</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3153</td>
+      <td>Адмиралтейский район</td>
+      <td>24189.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>MULTIPOLYGON (((30.25023 59.90129, 30.25112 59...</td>
+      <td>3252</td>
+      <td>Екатерингофский округ</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3153</td>
+      <td>Адмиралтейский район</td>
+      <td>21890.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>MULTIPOLYGON (((30.29074 59.90313, 30.29090 59...</td>
+      <td>3251</td>
+      <td>округ Измайловское</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3153</td>
+      <td>Адмиралтейский район</td>
+      <td>32807.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>MULTIPOLYGON (((30.26049 59.91726, 30.26152 59...</td>
+      <td>3253</td>
+      <td>округ Коломна</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3153</td>
+      <td>Адмиралтейский район</td>
+      <td>34026.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>MULTIPOLYGON (((30.31777 59.92170, 30.31781 59...</td>
+      <td>3250</td>
+      <td>округ Семеновский</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3153</td>
+      <td>Адмиралтейский район</td>
+      <td>22414.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>136</th>
+      <td>MULTIPOLYGON (((30.30827 59.94106, 30.30908 59...</td>
+      <td>3169</td>
+      <td>Дворцовый округ</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3143</td>
+      <td>Центральный район</td>
+      <td>7348.0</td>
+    </tr>
+    <tr>
+      <th>137</th>
+      <td>MULTIPOLYGON (((30.33489 59.95015, 30.33642 59...</td>
+      <td>3166</td>
+      <td>Литейный округ</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3143</td>
+      <td>Центральный район</td>
+      <td>40151.0</td>
+    </tr>
+    <tr>
+      <th>138</th>
+      <td>MULTIPOLYGON (((30.31013 59.93647, 30.31023 59...</td>
+      <td>3165</td>
+      <td>округ № 78</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3143</td>
+      <td>Центральный район</td>
+      <td>9085.0</td>
+    </tr>
+    <tr>
+      <th>139</th>
+      <td>MULTIPOLYGON (((30.35063 59.91524, 30.35178 59...</td>
+      <td>3168</td>
+      <td>округ Лиговка-Ямская</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3143</td>
+      <td>Центральный район</td>
+      <td>19563.0</td>
+    </tr>
+    <tr>
+      <th>140</th>
+      <td>MULTIPOLYGON (((30.35920 59.94408, 30.35920 59...</td>
+      <td>3170</td>
+      <td>округ Смольнинское</td>
+      <td>[{'name_full': 'Численность населения', 'measu...</td>
+      <td>3143</td>
+      <td>Центральный район</td>
+      <td>74205.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>141 rows × 7 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">popframe.method.city_evaluation</span><span class="w"> </span><span class="kn">import</span> <span class="n">CityPopulationScorer</span>
+
+<span class="n">scorer</span> <span class="o">=</span> <span class="n">CityPopulationScorer</span><span class="p">(</span><span class="n">combined_gdf</span><span class="p">,</span> <span class="n">gdf_hex</span><span class="p">)</span>
+
+
+<span class="n">output_list</span> <span class="o">=</span> <span class="n">scorer</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+<span class="n">scores_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">output_list</span><span class="p">)</span>
+<span class="n">gdf_hex</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores_df</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span>
+<span class="n">gdf_hex</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[5]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>geometry</th>
+      <th>hexagon_id</th>
+      <th>properties</th>
+      <th>score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>POLYGON ((30.06574 59.67090, 30.07379 59.67194...</td>
+      <td>157558</td>
+      <td>{}</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>POLYGON ((30.08770 60.08939, 30.09047 60.09382...</td>
+      <td>157559</td>
+      <td>{}</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>POLYGON ((30.37948 59.79270, 30.38759 59.79372...</td>
+      <td>157560</td>
+      <td>{}</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>POLYGON ((30.66727 59.76362, 30.66198 59.76704...</td>
+      <td>157561</td>
+      <td>{}</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>POLYGON ((30.24918 60.02467, 30.25198 60.02910...</td>
+      <td>157562</td>
+      <td>{}</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2529</th>
+      <td>POLYGON ((30.45791 60.02272, 30.46608 60.02376...</td>
+      <td>160087</td>
+      <td>{}</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2530</th>
+      <td>POLYGON ((30.23231 59.84322, 30.23764 59.83983...</td>
+      <td>160088</td>
+      <td>{}</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>2531</th>
+      <td>POLYGON ((29.50097 60.20315, 29.49286 60.20206...</td>
+      <td>160089</td>
+      <td>{}</td>
+      <td>1.0</td>
+    </tr>
+    <tr>
+      <th>2532</th>
+      <td>POLYGON ((30.74536 59.75700, 30.74007 59.76043...</td>
+      <td>160090</td>
+      <td>{}</td>
+      <td>3.0</td>
+    </tr>
+    <tr>
+      <th>2533</th>
+      <td>POLYGON ((30.17198 60.10435, 30.17477 60.10878...</td>
+      <td>160091</td>
+      <td>{}</td>
+      <td>1.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>2534 rows × 4 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">scores_df</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[6]:
+</pre></div>
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>hexagon_id</th>
+      <th>project</th>
+      <th>average_population_density</th>
+      <th>total_population</th>
+      <th>score</th>
+      <th>interpretation</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>157558</td>
+      <td>None</td>
+      <td>774.7</td>
+      <td>58652.0</td>
+      <td>2.0</td>
+      <td>Территория отличается относительно низкой числ...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>157559</td>
+      <td>None</td>
+      <td>43.9</td>
+      <td>6021.0</td>
+      <td>1.0</td>
+      <td>Территория имеет низкиие показателяи численнос...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>157560</td>
+      <td>None</td>
+      <td>318.5</td>
+      <td>132978.0</td>
+      <td>3.0</td>
+      <td>Территория имеет средние показатели численност...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>157561</td>
+      <td>None</td>
+      <td>631.2</td>
+      <td>143914.0</td>
+      <td>3.0</td>
+      <td>Территория имеет средние показатели численност...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>157562</td>
+      <td>None</td>
+      <td>2387.6</td>
+      <td>114257.0</td>
+      <td>3.0</td>
+      <td>Территория имеет средние показатели численност...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2529</th>
+      <td>160087</td>
+      <td>None</td>
+      <td>904.0</td>
+      <td>75180.0</td>
+      <td>2.0</td>
+      <td>Территория отличается относительно низкой числ...</td>
+    </tr>
+    <tr>
+      <th>2530</th>
+      <td>160088</td>
+      <td>None</td>
+      <td>4223.5</td>
+      <td>71589.0</td>
+      <td>4.0</td>
+      <td>Территория имеет высокие показатели численност...</td>
+    </tr>
+    <tr>
+      <th>2531</th>
+      <td>160089</td>
+      <td>None</td>
+      <td>33.4</td>
+      <td>1668.0</td>
+      <td>1.0</td>
+      <td>Территория имеет низкиие показателяи численнос...</td>
+    </tr>
+    <tr>
+      <th>2532</th>
+      <td>160090</td>
+      <td>None</td>
+      <td>631.2</td>
+      <td>143914.0</td>
+      <td>3.0</td>
+      <td>Территория имеет средние показатели численност...</td>
+    </tr>
+    <tr>
+      <th>2533</th>
+      <td>160091</td>
+      <td>None</td>
+      <td>43.9</td>
+      <td>6021.0</td>
+      <td>1.0</td>
+      <td>Территория имеет низкиие показателяи численнос...</td>
+    </tr>
+  </tbody>
+</table>
+<p>2534 rows × 6 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[7]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="n">gdf_hex</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s1">'score'</span><span class="p">,</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+    <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">15</span><span class="p">,</span><span class="mi">15</span><span class="p">),</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlGn'</span>
+<span class="p">)</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">' Санкт-Петербурга (оценка населения)'</span><span class="p">)</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_criterion_hex_7_0.png" src="../_images/examples_criterion_hex_7_0.png" />
+</div>
+</div>
+<section id="Население">
+<h2>Население<a class="headerlink" href="#Население" title="Permalink to this heading"></a></h2>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">popframe.method.territory_evaluation</span><span class="w"> </span><span class="kn">import</span> <span class="n">TerritoryEvaluation</span>
+
+<span class="n">evaluation</span> <span class="o">=</span> <span class="n">TerritoryEvaluation</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region_model</span><span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation</span><span class="o">.</span><span class="n">population_criterion</span><span class="p">(</span><span class="n">territories_gdf</span><span class="o">=</span><span class="n">gdf_hex</span><span class="p">)</span>
+<span class="n">scores_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="n">scores_df</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf_hex</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores_df</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span>
+<span class="n">gdf_hex</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>geometry</th>
+      <th>hexagon_id</th>
+      <th>properties</th>
+      <th>score</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>POLYGON ((30.06574 59.6709, 30.07379 59.67194,...</td>
+      <td>157558</td>
+      <td>{}</td>
+      <td>4.0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>POLYGON ((30.0877 60.08939, 30.09047 60.09382,...</td>
+      <td>157559</td>
+      <td>{}</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>POLYGON ((30.37948 59.7927, 30.38759 59.79372,...</td>
+      <td>157560</td>
+      <td>{}</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>POLYGON ((30.66727 59.76362, 30.66198 59.76704...</td>
+      <td>157561</td>
+      <td>{}</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>POLYGON ((30.24918 60.02467, 30.25198 60.0291,...</td>
+      <td>157562</td>
+      <td>{}</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2529</th>
+      <td>POLYGON ((30.45791 60.02272, 30.46608 60.02376...</td>
+      <td>160087</td>
+      <td>{}</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2530</th>
+      <td>POLYGON ((30.23231 59.84322, 30.23764 59.83983...</td>
+      <td>160088</td>
+      <td>{}</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <th>2531</th>
+      <td>POLYGON ((29.50097 60.20315, 29.49286 60.20206...</td>
+      <td>160089</td>
+      <td>{}</td>
+      <td>2.0</td>
+    </tr>
+    <tr>
+      <th>2532</th>
+      <td>POLYGON ((30.74536 59.757, 30.74007 59.76043, ...</td>
+      <td>160090</td>
+      <td>{}</td>
+      <td>5.0</td>
+    </tr>
+    <tr>
+      <th>2533</th>
+      <td>POLYGON ((30.17198 60.10435, 30.17477 60.10878...</td>
+      <td>160091</td>
+      <td>{}</td>
+      <td>5.0</td>
+    </tr>
+  </tbody>
+</table>
+<p>2534 rows × 4 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># допустим, ваш GeoDataFrame называется gdf и в нём есть колонки 'geometry' и 'score'</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="n">gdf_hex</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s1">'score'</span><span class="p">,</span>          <span class="c1"># раскраска по score</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlGn'</span><span class="p">,</span>           <span class="c1"># палитра от Red → Yellow → Green</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>           <span class="c1"># толщина границ</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'grey'</span><span class="p">,</span>        <span class="c1"># цвет границ</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>             <span class="c1"># вывод легенды</span>
+    <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">'label'</span><span class="p">:</span> <span class="s2">"Оценка score"</span><span class="p">,</span>
+        <span class="s1">'shrink'</span><span class="p">:</span> <span class="mf">0.6</span>
+    <span class="p">},</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Санкт-Петербург: оценка территорий по критерию населения"</span><span class="p">,</span> <span class="n">fontsize</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>  <span class="c1"># убираем оси</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<br/><br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_criterion_hex_11_0.png" src="../_images/examples_criterion_hex_11_0.png" />
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput nblast docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># grid.to_file("grid_population_score.geojson", driver="GeoJSON")</span>
+</pre></div>
+</div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">popframe.method.territory_evaluation</span><span class="w"> </span><span class="kn">import</span> <span class="n">TerritoryEvaluation</span>
+
+<span class="n">evaluation</span> <span class="o">=</span> <span class="n">TerritoryEvaluation</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">region_model</span><span class="p">)</span>
+
+<span class="n">results</span> <span class="o">=</span> <span class="n">evaluation</span><span class="o">.</span><span class="n">evaluate_territory_location</span><span class="p">(</span><span class="n">territories_gdf</span><span class="o">=</span><span class="n">gdf_hex</span><span class="p">)</span>
+<span class="n">scores_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span>
+<span class="n">scores_df</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>territory</th>
+      <th>score</th>
+      <th>interpretation</th>
+      <th>closest_settlement</th>
+      <th>closest_settlement1</th>
+      <th>closest_settlement2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>None</td>
+      <td>0</td>
+      <td>Территория находится за границей агломерации</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>None</td>
+      <td>5</td>
+      <td>Территория находится внутри или непосредственн...</td>
+      <td>поселок Левашово</td>
+      <td>None</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>None</td>
+      <td>7</td>
+      <td>Территория находится внутри или непосредственн...</td>
+      <td>поселок Шушары</td>
+      <td>None</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>None</td>
+      <td>7</td>
+      <td>Территория находится внутри или непосредственн...</td>
+      <td>город Колпино</td>
+      <td>None</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>None</td>
+      <td>1</td>
+      <td>Территория находится между основными ядрами си...</td>
+      <td>None</td>
+      <td>поселок Парголово</td>
+      <td>поселок Лисий Нос</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2529</th>
+      <td>None</td>
+      <td>0</td>
+      <td>Территория находится за границей агломерации</td>
+      <td>None</td>
+      <td>None</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>2530</th>
+      <td>None</td>
+      <td>1</td>
+      <td>Территория находится между основными ядрами си...</td>
+      <td>None</td>
+      <td>поселок Стрельна</td>
+      <td>поселок Александровская</td>
+    </tr>
+    <tr>
+      <th>2531</th>
+      <td>None</td>
+      <td>3</td>
+      <td>Территория находится внутри или непосредственн...</td>
+      <td>поселок Молодежное</td>
+      <td>None</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>2532</th>
+      <td>None</td>
+      <td>3</td>
+      <td>Территория находится внутри или непосредственн...</td>
+      <td>поселок Саперный</td>
+      <td>None</td>
+      <td>None</td>
+    </tr>
+    <tr>
+      <th>2533</th>
+      <td>None</td>
+      <td>5</td>
+      <td>Территория находится внутри или непосредственн...</td>
+      <td>поселок Левашово</td>
+      <td>None</td>
+      <td>None</td>
+    </tr>
+  </tbody>
+</table>
+<p>2534 rows × 6 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">gdf_hex</span><span class="p">[</span><span class="s1">'score_2'</span><span class="p">]</span> <span class="o">=</span> <span class="n">scores_df</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span>
+<span class="n">gdf_hex</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>geometry</th>
+      <th>hexagon_id</th>
+      <th>properties</th>
+      <th>score</th>
+      <th>score_2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>POLYGON ((30.06574 59.6709, 30.07379 59.67194,...</td>
+      <td>157558</td>
+      <td>{}</td>
+      <td>4.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>POLYGON ((30.0877 60.08939, 30.09047 60.09382,...</td>
+      <td>157559</td>
+      <td>{}</td>
+      <td>5.0</td>
+      <td>5</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>POLYGON ((30.37948 59.7927, 30.38759 59.79372,...</td>
+      <td>157560</td>
+      <td>{}</td>
+      <td>5.0</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>POLYGON ((30.66727 59.76362, 30.66198 59.76704...</td>
+      <td>157561</td>
+      <td>{}</td>
+      <td>5.0</td>
+      <td>7</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>POLYGON ((30.24918 60.02467, 30.25198 60.0291,...</td>
+      <td>157562</td>
+      <td>{}</td>
+      <td>5.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>2529</th>
+      <td>POLYGON ((30.45791 60.02272, 30.46608 60.02376...</td>
+      <td>160087</td>
+      <td>{}</td>
+      <td>0.0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2530</th>
+      <td>POLYGON ((30.23231 59.84322, 30.23764 59.83983...</td>
+      <td>160088</td>
+      <td>{}</td>
+      <td>0.0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>2531</th>
+      <td>POLYGON ((29.50097 60.20315, 29.49286 60.20206...</td>
+      <td>160089</td>
+      <td>{}</td>
+      <td>2.0</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2532</th>
+      <td>POLYGON ((30.74536 59.757, 30.74007 59.76043, ...</td>
+      <td>160090</td>
+      <td>{}</td>
+      <td>5.0</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <th>2533</th>
+      <td>POLYGON ((30.17198 60.10435, 30.17477 60.10878...</td>
+      <td>160091</td>
+      <td>{}</td>
+      <td>5.0</td>
+      <td>5</td>
+    </tr>
+  </tbody>
+</table>
+<p>2534 rows × 5 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+
+<span class="c1"># допустим, ваш GeoDataFrame называется gdf и в нём есть колонки 'geometry' и 'score'</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">))</span>
+
+<span class="n">gdf_hex</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+    <span class="n">column</span><span class="o">=</span><span class="s1">'score_2'</span><span class="p">,</span>          <span class="c1"># раскраска по score</span>
+    <span class="n">cmap</span><span class="o">=</span><span class="s1">'RdYlGn'</span><span class="p">,</span>           <span class="c1"># палитра от Red → Yellow → Green</span>
+    <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span>           <span class="c1"># толщина границ</span>
+    <span class="n">edgecolor</span><span class="o">=</span><span class="s1">'grey'</span><span class="p">,</span>        <span class="c1"># цвет границ</span>
+    <span class="n">legend</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>             <span class="c1"># вывод легенды</span>
+    <span class="n">legend_kwds</span><span class="o">=</span><span class="p">{</span>
+        <span class="s1">'label'</span><span class="p">:</span> <span class="s2">"Оценка score"</span><span class="p">,</span>
+        <span class="s1">'shrink'</span><span class="p">:</span> <span class="mf">0.6</span>
+    <span class="p">},</span>
+    <span class="n">ax</span><span class="o">=</span><span class="n">ax</span>
+<span class="p">)</span>
+
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">"Карта оценки score_2"</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>  <span class="c1"># убираем оси</span>
+
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<br/></pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area docutils container">
+<img alt="../_images/examples_criterion_hex_16_0.png" src="../_images/examples_criterion_hex_16_0.png" />
+</div>
+</div>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="anchor_settelment.html" class="btn btn-neutral float-left" title="Опорные населенные пункты" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="engineer.html" class="btn btn-neutral float-right" title="Инженерная инфраструктура" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

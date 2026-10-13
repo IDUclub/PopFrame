@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.spatial_inequality &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">popframe.method.spatial_inequality</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for popframe.method.spatial_inequality</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">Dict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">popframe.method.base_method</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseMethod</span>
+
+
+<div class="viewcode-block" id="SpatialInequalityCalculator"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.spatial_inequality.html#popframe.method.spatial_inequality.SpatialInequalityCalculator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">SpatialInequalityCalculator</span><span class="p">(</span><span class="n">BaseMethod</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Calculator for spatial inequality metrics.</span>
+<span class="sd">    Contains methods for transferring inequality metrics from points to polygons,</span>
+<span class="sd">    finding the optimal territory, and determining the "best" group.</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="SpatialInequalityCalculator.transfer_inequality_metrics_to_polygons"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.spatial_inequality.html#popframe.method.spatial_inequality.SpatialInequalityCalculator.transfer_inequality_metrics_to_polygons">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">transfer_inequality_metrics_to_polygons</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">gdf_cities</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">gdf_polygons</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">inequality_keyword</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Неравенство"</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">float</span><span class="p">]]]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Transfer all columns containing inequality metrics from points (cities) to polygons (agglomerations)</span>
+<span class="sd">        by averaging over the territory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf_cities : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with city points and inequality metrics.</span>
+<span class="sd">        gdf_polygons : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with polygons (agglomerations).</span>
+<span class="sd">        inequality_keyword : str, optional</span>
+<span class="sd">            Keyword to identify inequality metric columns. Default is "Нерaвенство".</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            (gdf_polygons_with_metrics, stats)</span>
+<span class="sd">            gdf_polygons_with_metrics : geopandas.GeoDataFrame</span>
+<span class="sd">                Polygons with new metric columns.</span>
+<span class="sd">            stats : dict</span>
+<span class="sd">                Dictionary with mean values inside and outside polygons.</span>
+<span class="sd">        """</span>
+        <span class="c1"># 1) Колонки с нужным ключевым словом</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">rf</span><span class="s2">".*\b</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">inequality_keyword</span><span class="p">)</span><span class="si">}</span><span class="s2">\b.*"</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+        <span class="n">metric_cols</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">gdf_cities</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">c</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">metric_cols</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Не найдено колонок с '</span><span class="si">{</span><span class="n">inequality_keyword</span><span class="si">}</span><span class="s2">'"</span><span class="p">)</span>
+        <span class="c1"># 2) Гео‑объединение точек и полигонов</span>
+        <span class="n">cities_with_idx</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">sjoin</span><span class="p">(</span>
+            <span class="n">gdf_cities</span><span class="p">[</span><span class="n">metric_cols</span> <span class="o">+</span> <span class="p">[</span><span class="s2">"geometry"</span><span class="p">]],</span> <span class="n">gdf_polygons</span><span class="p">[[</span><span class="s2">"geometry"</span><span class="p">]],</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">,</span> <span class="n">predicate</span><span class="o">=</span><span class="s2">"within"</span>
+        <span class="p">)</span>
+        <span class="c1"># 3) Усреднение по индексам полигонов</span>
+        <span class="n">grouped</span> <span class="o">=</span> <span class="n">cities_with_idx</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="s2">"index_right"</span><span class="p">)[</span><span class="n">metric_cols</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="s2">"poly_index"</span><span class="p">)</span>
+        <span class="c1"># 4) Присоединяем к полигонам</span>
+        <span class="n">gdf_polygons_with_metrics</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">gdf_polygons</span><span class="o">.</span><span class="n">reset_index</span><span class="p">()</span>
+            <span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">{</span><span class="s2">"index"</span><span class="p">:</span> <span class="s2">"poly_index"</span><span class="p">})</span>
+            <span class="o">.</span><span class="n">merge</span><span class="p">(</span><span class="n">grouped</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(),</span> <span class="n">on</span><span class="o">=</span><span class="s2">"poly_index"</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"left"</span><span class="p">)</span>
+            <span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"poly_index"</span><span class="p">)</span>
+        <span class="p">)</span>
+        <span class="c1"># 5) Статистика внутри/вне</span>
+        <span class="n">inside</span> <span class="o">=</span> <span class="n">cities_with_idx</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"index_right"</span><span class="p">])</span>
+        <span class="n">outside</span> <span class="o">=</span> <span class="n">cities_with_idx</span><span class="p">[</span><span class="n">cities_with_idx</span><span class="p">[</span><span class="s2">"index_right"</span><span class="p">]</span><span class="o">.</span><span class="n">isna</span><span class="p">()]</span>
+        <span class="n">mean_within</span> <span class="o">=</span> <span class="n">inside</span><span class="p">[</span><span class="n">metric_cols</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">mean_outside</span> <span class="o">=</span> <span class="n">outside</span><span class="p">[</span><span class="n">metric_cols</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="n">stats</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"mean_within"</span><span class="p">:</span> <span class="n">mean_within</span><span class="p">,</span> <span class="s2">"mean_outside"</span><span class="p">:</span> <span class="n">mean_outside</span><span class="p">}</span>
+        <span class="k">return</span> <span class="n">gdf_polygons_with_metrics</span><span class="p">,</span> <span class="n">stats</span></div>
+
+<div class="viewcode-block" id="SpatialInequalityCalculator.get_best_territory"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.spatial_inequality.html#popframe.method.spatial_inequality.SpatialInequalityCalculator.get_best_territory">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_best_territory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">group_name</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">spatial_suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">" - Неравенство"</span><span class="p">,</span>
+        <span class="n">default_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Пространственное неравенство"</span><span class="p">,</span>
+        <span class="n">top_n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">5</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Return up to `top_n` territories (rows) with the minimum spatial inequality value.</span>
+
+<span class="sd">        If a group is specified, selects only:</span>
+<span class="sd">        - all columns with "Неравенство" for this group</span>
+<span class="sd">        - all other columns NOT containing "Неравенство"</span>
+<span class="sd">        If no group is specified, returns the first `top_n` by the overall metric.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame containing geometry and columns with the spatial_suffix.</span>
+<span class="sd">        group_name : str or None, optional</span>
+<span class="sd">            Name of the social group without suffix.</span>
+<span class="sd">        spatial_suffix : str, optional</span>
+<span class="sd">            Suffix for searching the main metric. Default is " - Неравенство".</span>
+<span class="sd">        default_col : str, optional</span>
+<span class="sd">            Name of the overall inequality column. Default is "Пространственное неравенство".</span>
+<span class="sd">        top_n : int, optional</span>
+<span class="sd">            How many best territories to return (by ascending metric). Default is 5.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            Up to `top_n` rows with the minimum values.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">top_n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Параметр top_n должен быть &gt;= 1"</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">group_name</span><span class="p">:</span>
+            <span class="n">primary_col</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">group_name</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="si">}{</span><span class="n">spatial_suffix</span><span class="si">}</span><span class="s2">"</span>
+            <span class="k">if</span> <span class="n">primary_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"В GeoDataFrame нет колонки «</span><span class="si">{</span><span class="n">primary_col</span><span class="si">}</span><span class="s2">»"</span><span class="p">)</span>
+            <span class="n">top_df</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">primary_col</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_n</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">compile</span><span class="p">(</span><span class="sa">rf</span><span class="s2">"^</span><span class="si">{</span><span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">group_name</span><span class="o">.</span><span class="n">strip</span><span class="p">())</span><span class="si">}</span><span class="s2">.*\bНеравенство\b"</span><span class="p">,</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span><span class="p">)</span>
+            <span class="n">group_metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">top_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="n">pattern</span><span class="o">.</span><span class="n">match</span><span class="p">(</span><span class="n">c</span><span class="p">)]</span>
+            <span class="n">non_metrics</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">top_df</span><span class="o">.</span><span class="n">columns</span> <span class="k">if</span> <span class="s2">"Неравенство"</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">c</span><span class="p">]</span>
+            <span class="n">keep_cols</span> <span class="o">=</span> <span class="n">non_metrics</span> <span class="o">+</span> <span class="n">group_metrics</span>
+            <span class="k">return</span> <span class="n">top_df</span><span class="p">[</span><span class="n">keep_cols</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">default_col</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">columns</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"В GeoDataFrame нет колонки «</span><span class="si">{</span><span class="n">default_col</span><span class="si">}</span><span class="s2">»"</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">gdf</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">default_col</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="n">top_n</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="SpatialInequalityCalculator.get_best_group_for_territory"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.spatial_inequality.html#popframe.method.spatial_inequality.SpatialInequalityCalculator.get_best_group_for_territory">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_best_group_for_territory</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">suffix</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">" - Неравенство"</span><span class="p">,</span>
+        <span class="n">new_col</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"Наименьшее неравенство для соц‑группы"</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Add a column with the name of the social group with the minimum inequality metric.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with group inequality metrics.</span>
+<span class="sd">        suffix : str, optional</span>
+<span class="sd">            Suffix for group metric columns. Default is " - Неравенство".</span>
+<span class="sd">        new_col : str, optional</span>
+<span class="sd">            Name of the new column to add. Default is "Наименьшее неравенство для соц‑группы".</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with an added column for the group with the minimum inequality.</span>
+<span class="sd">        """</span>
+        <span class="n">all_cols</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="n">c</span>
+            <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">columns</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="nb">str</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span> <span class="ow">and</span> <span class="n">c</span><span class="p">[:</span> <span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">suffix</span><span class="p">)]</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">"итоговое"</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">all_cols</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Колонки с суффиксом '</span><span class="si">{</span><span class="n">suffix</span><span class="si">}</span><span class="s2">' не найдены"</span><span class="p">)</span>
+        <span class="n">df_vals</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="n">all_cols</span><span class="p">]</span>
+        <span class="n">best_col</span> <span class="o">=</span> <span class="n">df_vals</span><span class="o">.</span><span class="n">idxmin</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pattern</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">escape</span><span class="p">(</span><span class="n">suffix</span><span class="p">)</span> <span class="o">+</span> <span class="sa">r</span><span class="s2">"$"</span>
+        <span class="n">best_group</span> <span class="o">=</span> <span class="n">best_col</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="n">pattern</span><span class="p">,</span> <span class="s2">""</span><span class="p">,</span> <span class="n">regex</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span><span class="o">.</span><span class="n">str</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">result</span><span class="p">[</span><span class="n">new_col</span><span class="p">]</span> <span class="o">=</span> <span class="n">best_group</span>
+        <span class="k">return</span> <span class="n">result</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

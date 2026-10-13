@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.preprocessing.level_filler &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="popframe.preprocessing.population_filler" href="popframe.preprocessing.population_filler.html" />
+    <link rel="prev" title="popframe.preprocessing.adjacency_calculator" href="popframe.preprocessing.adjacency_calculator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation / Документация по API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="popframe.preprocessing.html">popframe.preprocessing</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="popframe.preprocessing.adjacency_calculator.html">popframe.preprocessing.adjacency_calculator</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">popframe.preprocessing.level_filler</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.preprocessing.level_filler.TownRow"><code class="docutils literal notranslate"><span class="pre">TownRow</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.preprocessing.level_filler.LevelFiller"><code class="docutils literal notranslate"><span class="pre">LevelFiller</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.preprocessing.population_filler.html">popframe.preprocessing.population_filler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.preprocessing.utils.html">popframe.preprocessing.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.models.html">popframe.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.method.html">popframe.method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.utils.html">popframe.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API documentation / Документация по API</a></li>
+          <li class="breadcrumb-item"><a href="popframe.preprocessing.html">popframe.preprocessing</a></li>
+      <li class="breadcrumb-item active">popframe.preprocessing.level_filler</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/popframe.preprocessing.level_filler.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-popframe.preprocessing.level_filler">
+<span id="popframe-preprocessing-level-filler"></span><h1>popframe.preprocessing.level_filler<a class="headerlink" href="#module-popframe.preprocessing.level_filler" title="Permalink to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.preprocessing.level_filler.LevelFiller" title="popframe.preprocessing.level_filler.LevelFiller"><code class="xref py py-obj docutils literal notranslate"><span class="pre">LevelFiller</span></code></a>(*, towns)</p></td>
+<td><p>A class for automatically assigning administrative levels to towns based on population thresholds.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#popframe.preprocessing.level_filler.TownRow" title="popframe.preprocessing.level_filler.TownRow"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TownRow</span></code></a>(*, geometry, index, id, name, population)</p></td>
+<td><p>A model representing a town's data row in a GeoDataFrame.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.TownRow">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">popframe.preprocessing.level_filler.</span></span><span class="sig-name descname"><span class="pre">TownRow</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">Point</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">index</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">id</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Нет</span> <span class="pre">уровня'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/preprocessing/level_filler.html#TownRow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.level_filler.TownRow" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="popframe.models.geodataframe.html#popframe.models.geodataframe.BaseRow" title="popframe.models.geodataframe.BaseRow"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseRow</span></code></a></p>
+<p>A model representing a town’s data row in a GeoDataFrame.</p>
+<section id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geometry<span class="classifier">shapely.geometry.Point</span></dt><dd><p>The geographic location of the town.</p>
+</dd>
+<dt>name<span class="classifier">str</span></dt><dd><p>The name of the town.</p>
+</dd>
+<dt>population<span class="classifier">int</span></dt><dd><p>The population of the town. Must be greater than zero.</p>
+</dd>
+<dt>level<span class="classifier">str, optional</span></dt><dd><p>The administrative level of the town, defaults to “Нет уровня” (no level).</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.TownRow.id">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#popframe.preprocessing.level_filler.TownRow.id" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.TownRow.geometry">
+<span class="sig-name descname"><span class="pre">geometry</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">Point</span></em><a class="headerlink" href="#popframe.preprocessing.level_filler.TownRow.geometry" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.TownRow.name">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#popframe.preprocessing.level_filler.TownRow.name" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.TownRow.population">
+<span class="sig-name descname"><span class="pre">population</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">int</span></em><a class="headerlink" href="#popframe.preprocessing.level_filler.TownRow.population" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.TownRow.level">
+<span class="sig-name descname"><span class="pre">level</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">str</span></em><a class="headerlink" href="#popframe.preprocessing.level_filler.TownRow.level" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.LevelFiller">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">popframe.preprocessing.level_filler.</span></span><span class="sig-name descname"><span class="pre">LevelFiller</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="popframe.models.geodataframe.html#popframe.models.geodataframe.GeoDataFrame" title="popframe.models.geodataframe.GeoDataFrame"><span class="pre">GeoDataFrame</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#popframe.preprocessing.level_filler.TownRow" title="popframe.preprocessing.level_filler.TownRow"><span class="pre">TownRow</span></a><span class="p"><span class="pre">]</span></span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/preprocessing/level_filler.html#LevelFiller"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.level_filler.LevelFiller" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">BaseModel</span></code></p>
+<p>A class for automatically assigning administrative levels to towns based on population thresholds.</p>
+<section id="id1">
+<h2>Attributes<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>towns<span class="classifier">GeoDataFrame[TownRow]</span></dt><dd><p>A GeoDataFrame containing town data that includes name, population, and level.</p>
+</dd>
+<dt>population_thresholds<span class="classifier">dict</span></dt><dd><p>A class-level attribute defining population ranges for different administrative levels.</p>
+</dd>
+</dl>
+</section>
+<section id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>_assign_level(row) -&gt; str</dt><dd><p>A static method that assigns the correct administrative level to a town based on its population.</p>
+</dd>
+<dt>validate_towns(gdf)</dt><dd><p>A Pydantic validator that ensures town levels are correctly assigned before processing the GeoDataFrame.</p>
+</dd>
+<dt>fill_levels() -&gt; GeoDataFrame[TownRow]</dt><dd><p>Fills in the levels for all towns in the GeoDataFrame based on population and returns the updated GeoDataFrame.</p>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.LevelFiller.towns">
+<span class="sig-name descname"><span class="pre">towns</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference internal" href="popframe.models.geodataframe.html#popframe.models.geodataframe.GeoDataFrame" title="popframe.models.geodataframe.GeoDataFrame"><span class="pre">GeoDataFrame</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#popframe.preprocessing.level_filler.TownRow" title="popframe.preprocessing.level_filler.TownRow"><span class="pre">TownRow</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#popframe.preprocessing.level_filler.LevelFiller.towns" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.LevelFiller.population_thresholds">
+<span class="sig-name descname"><span class="pre">population_thresholds</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="pre">ClassVar</span><span class="p"><span class="pre">[</span></span><span class="pre">dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">int</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">int</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">{'Большое</span> <span class="pre">сельское</span> <span class="pre">поселение':</span> <span class="pre">(1000,</span> <span class="pre">3000),</span> <span class="pre">'Большой</span> <span class="pre">город':</span> <span class="pre">(100000,</span> <span class="pre">250000),</span> <span class="pre">'Крупнейший</span> <span class="pre">город':</span> <span class="pre">(1000000,</span> <span class="pre">3000000),</span> <span class="pre">'Крупное</span> <span class="pre">сельское</span> <span class="pre">поселение':</span> <span class="pre">(3000,</span> <span class="pre">5000),</span> <span class="pre">'Крупный</span> <span class="pre">город':</span> <span class="pre">(250000,</span> <span class="pre">1000000),</span> <span class="pre">'Малое</span> <span class="pre">сельское</span> <span class="pre">поселение':</span> <span class="pre">(0,</span> <span class="pre">200),</span> <span class="pre">'Малый</span> <span class="pre">город':</span> <span class="pre">(5000,</span> <span class="pre">50000),</span> <span class="pre">'Сверхкрупный</span> <span class="pre">город':</span> <span class="pre">(3000000,</span> <span class="pre">inf),</span> <span class="pre">'Среднее</span> <span class="pre">сельское</span> <span class="pre">поселение':</span> <span class="pre">(200,</span> <span class="pre">1000),</span> <span class="pre">'Средний</span> <span class="pre">город':</span> <span class="pre">(50000,</span> <span class="pre">100000)}</span></em><a class="headerlink" href="#popframe.preprocessing.level_filler.LevelFiller.population_thresholds" title="Permalink to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.LevelFiller._assign_level">
+<em class="property"><span class="pre">static</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_assign_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">row</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">str</span></span></span><a class="reference internal" href="../../_modules/popframe/preprocessing/level_filler.html#LevelFiller._assign_level"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.level_filler.LevelFiller._assign_level" title="Permalink to this definition"></a></dt>
+<dd><p>Assigns a level to a town based on its population.</p>
+<section id="parameters">
+<h3>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>row<span class="classifier">pd.Series</span></dt><dd><p>A row from the GeoDataFrame containing town data.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h3>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>str</dt><dd><p>The administrative level of the town.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.LevelFiller.validate_towns">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">validate_towns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/preprocessing/level_filler.html#LevelFiller.validate_towns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.level_filler.LevelFiller.validate_towns" title="Permalink to this definition"></a></dt>
+<dd><p>Validates and assigns levels to towns in the provided GeoDataFrame.</p>
+<section id="id2">
+<h3>Parameters<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>gdf<span class="classifier">GeoDataFrame</span></dt><dd><p>A GeoDataFrame containing town data.</p>
+</dd>
+</dl>
+</section>
+<section id="id3">
+<h3>Returns<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>GeoDataFrame[TownRow]</dt><dd><p>A validated GeoDataFrame with assigned administrative levels.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.preprocessing.level_filler.LevelFiller.fill_levels">
+<span class="sig-name descname"><span class="pre">fill_levels</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="popframe.models.geodataframe.html#popframe.models.geodataframe.GeoDataFrame" title="popframe.models.geodataframe.GeoDataFrame"><span class="pre">GeoDataFrame</span></a><span class="p"><span class="pre">[</span></span><a class="reference internal" href="#popframe.preprocessing.level_filler.TownRow" title="popframe.preprocessing.level_filler.TownRow"><span class="pre">TownRow</span></a><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/popframe/preprocessing/level_filler.html#LevelFiller.fill_levels"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.level_filler.LevelFiller.fill_levels" title="Permalink to this definition"></a></dt>
+<dd><p>Fills in the administrative levels for the towns based on their population.</p>
+<section id="id4">
+<h3>Returns<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h3>
+<dl class="simple">
+<dt>GeoDataFrame[TownRow]</dt><dd><p>An updated GeoDataFrame with filled levels for each town.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</section>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="popframe.preprocessing.adjacency_calculator.html" class="btn btn-neutral float-left" title="popframe.preprocessing.adjacency_calculator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="popframe.preprocessing.population_filler.html" class="btn btn-neutral float-right" title="popframe.preprocessing.population_filler" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

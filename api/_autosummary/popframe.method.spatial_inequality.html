@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.spatial_inequality &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="popframe.method.territory_evaluation" href="popframe.method.territory_evaluation.html" />
+    <link rel="prev" title="popframe.method.popuation_frame" href="popframe.method.popuation_frame.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation / Документация по API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="popframe.preprocessing.html">popframe.preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.models.html">popframe.models</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="popframe.method.html">popframe.method</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.agglomeration.html">popframe.method.agglomeration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.anchor_settlement.html">popframe.method.anchor_settlement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.base_method.html">popframe.method.base_method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.city_evaluation.html">popframe.method.city_evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.engineer.html">popframe.method.engineer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.landuse_assessment.html">popframe.method.landuse_assessment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.popuation_frame.html">popframe.method.popuation_frame</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">popframe.method.spatial_inequality</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.method.spatial_inequality.SpatialInequalityCalculator"><code class="docutils literal notranslate"><span class="pre">SpatialInequalityCalculator</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.territory_evaluation.html">popframe.method.territory_evaluation</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.utils.html">popframe.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API documentation / Документация по API</a></li>
+          <li class="breadcrumb-item"><a href="popframe.method.html">popframe.method</a></li>
+      <li class="breadcrumb-item active">popframe.method.spatial_inequality</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/popframe.method.spatial_inequality.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-popframe.method.spatial_inequality">
+<span id="popframe-method-spatial-inequality"></span><h1>popframe.method.spatial_inequality<a class="headerlink" href="#module-popframe.method.spatial_inequality" title="Permalink to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.method.spatial_inequality.SpatialInequalityCalculator" title="popframe.method.spatial_inequality.SpatialInequalityCalculator"><code class="xref py py-obj docutils literal notranslate"><span class="pre">SpatialInequalityCalculator</span></code></a>(*, region)</p></td>
+<td><p>Calculator for spatial inequality metrics.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="popframe.method.spatial_inequality.SpatialInequalityCalculator">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">popframe.method.spatial_inequality.</span></span><span class="sig-name descname"><span class="pre">SpatialInequalityCalculator</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="popframe.models.region.Region.html#popframe.models.region.Region" title="popframe.models.region.Region"><span class="pre">Region</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/spatial_inequality.html#SpatialInequalityCalculator"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.spatial_inequality.SpatialInequalityCalculator" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="popframe.method.base_method.html#popframe.method.base_method.BaseMethod" title="popframe.method.base_method.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<p>Calculator for spatial inequality metrics.
+Contains methods for transferring inequality metrics from points to polygons,
+finding the optimal territory, and determining the “best” group.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.spatial_inequality.SpatialInequalityCalculator.transfer_inequality_metrics_to_polygons">
+<span class="sig-name descname"><span class="pre">transfer_inequality_metrics_to_polygons</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf_cities</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gdf_polygons</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">inequality_keyword</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Неравенство'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Tuple</span><span class="p"><span class="pre">[</span></span><span class="pre">GeoDataFrame</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">Dict</span><span class="p"><span class="pre">[</span></span><span class="pre">str</span><span class="p"><span class="pre">,</span></span><span class="w"> </span><span class="pre">float</span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span><span class="p"><span class="pre">]</span></span></span></span><a class="reference internal" href="../../_modules/popframe/method/spatial_inequality.html#SpatialInequalityCalculator.transfer_inequality_metrics_to_polygons"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.spatial_inequality.SpatialInequalityCalculator.transfer_inequality_metrics_to_polygons" title="Permalink to this definition"></a></dt>
+<dd><p>Transfer all columns containing inequality metrics from points (cities) to polygons (agglomerations)
+by averaging over the territory.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>gdf_cities<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame with city points and inequality metrics.</p>
+</dd>
+<dt>gdf_polygons<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame with polygons (agglomerations).</p>
+</dd>
+<dt>inequality_keyword<span class="classifier">str, optional</span></dt><dd><p>Keyword to identify inequality metric columns. Default is “Нерaвенство”.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
+<dl>
+<dt>tuple</dt><dd><p>(gdf_polygons_with_metrics, stats)
+gdf_polygons_with_metrics : geopandas.GeoDataFrame</p>
+<blockquote>
+<div><p>Polygons with new metric columns.</p>
+</div></blockquote>
+<dl class="simple">
+<dt>stats<span class="classifier">dict</span></dt><dd><p>Dictionary with mean values inside and outside polygons.</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.spatial_inequality.SpatialInequalityCalculator.get_best_territory">
+<span class="sig-name descname"><span class="pre">get_best_territory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">group_name</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">None</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">spatial_suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'</span> <span class="pre">-</span> <span class="pre">Неравенство'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">default_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Пространственное</span> <span class="pre">неравенство'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">top_n</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">5</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/spatial_inequality.html#SpatialInequalityCalculator.get_best_territory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.spatial_inequality.SpatialInequalityCalculator.get_best_territory" title="Permalink to this definition"></a></dt>
+<dd><p>Return up to <cite>top_n</cite> territories (rows) with the minimum spatial inequality value.</p>
+<p>If a group is specified, selects only:
+- all columns with “Неравенство” for this group
+- all other columns NOT containing “Неравенство”
+If no group is specified, returns the first <cite>top_n</cite> by the overall metric.</p>
+<section id="id1">
+<h2>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame containing geometry and columns with the spatial_suffix.</p>
+</dd>
+<dt>group_name<span class="classifier">str or None, optional</span></dt><dd><p>Name of the social group without suffix.</p>
+</dd>
+<dt>spatial_suffix<span class="classifier">str, optional</span></dt><dd><p>Suffix for searching the main metric. Default is ” - Неравенство”.</p>
+</dd>
+<dt>default_col<span class="classifier">str, optional</span></dt><dd><p>Name of the overall inequality column. Default is “Пространственное неравенство”.</p>
+</dd>
+<dt>top_n<span class="classifier">int, optional</span></dt><dd><p>How many best territories to return (by ascending metric). Default is 5.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h2>Returns<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>Up to <cite>top_n</cite> rows with the minimum values.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.spatial_inequality.SpatialInequalityCalculator.get_best_group_for_territory">
+<span class="sig-name descname"><span class="pre">get_best_group_for_territory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suffix</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'</span> <span class="pre">-</span> <span class="pre">Неравенство'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">new_col</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'Наименьшее</span> <span class="pre">неравенство</span> <span class="pre">для</span> <span class="pre">соц‑группы'</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/method/spatial_inequality.html#SpatialInequalityCalculator.get_best_group_for_territory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.spatial_inequality.SpatialInequalityCalculator.get_best_group_for_territory" title="Permalink to this definition"></a></dt>
+<dd><p>Add a column with the name of the social group with the minimum inequality metric.</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame with group inequality metrics.</p>
+</dd>
+<dt>suffix<span class="classifier">str, optional</span></dt><dd><p>Suffix for group metric columns. Default is ” - Неравенство”.</p>
+</dd>
+<dt>new_col<span class="classifier">str, optional</span></dt><dd><p>Name of the new column to add. Default is “Наименьшее неравенство для соц‑группы”.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Returns<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>geopandas.GeoDataFrame</dt><dd><p>GeoDataFrame with an added column for the group with the minimum inequality.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="popframe.method.popuation_frame.html" class="btn btn-neutral float-left" title="popframe.method.popuation_frame" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="popframe.method.territory_evaluation.html" class="btn btn-neutral float-right" title="popframe.method.territory_evaluation" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Инженерная инфраструктура &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
+      <link rel="stylesheet" href="../_static/nbsphinx-code-cells.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../_static/jquery.js"></script>
+        <script src="../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../" id="documentation_options" src="../_static/documentation_options.js"></script>
+        <script src="../_static/doctools.js"></script>
+        <script src="../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+        <script>window.MathJax = {"tex": {"inlineMath": [["$", "$"], ["\\(", "\\)"]], "processEscapes": true}, "options": {"ignoreHtmlClass": "tex2jax_ignore|mathjax_ignore|document", "processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+        <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Пространственное неравенство" href="spatial_inequality.html" />
+    <link rel="prev" title="Оценка территории по критерию для гексагональной сетки" href="criterion_hex.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">Examples</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="aglomeration.html">Построение границ агломераций</a></li>
+<li class="toctree-l2"><a class="reference internal" href="anchor_settelment.html">Построени границ опорных населенных пунктов</a></li>
+<li class="toctree-l2"><a class="reference internal" href="criterion_hex.html">Оценка критериев для гексагональной сетки</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">Оценка инженерной инфраструктуры</a></li>
+<li class="toctree-l2"><a class="reference internal" href="spatial_inequality.html">Оценка пространственного неравенства</a></li>
+<li class="toctree-l2"><a class="reference internal" href="territory_evaluation.html">Оценка территории</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Examples</a></li>
+      <li class="breadcrumb-item active">Инженерная инфраструктура</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/examples/engineer.nblink.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="Инженерная-инфраструктура">
+<h1>Инженерная инфраструктура<a class="headerlink" href="#Инженерная-инфраструктура" title="Permalink to this heading"></a></h1>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">popframe.method.engineer</span><span class="w"> </span><span class="kn">import</span> <span class="n">InfrastructureAnalyzer</span>
+
+<span class="n">analyzer</span> <span class="o">=</span> <span class="n">InfrastructureAnalyzer</span><span class="p">(</span><span class="n">combined_gdf</span><span class="p">,</span> <span class="n">spb_hex</span><span class="p">)</span>
+<span class="n">results</span> <span class="o">=</span> <span class="n">analyzer</span><span class="o">.</span><span class="n">get_results</span><span class="p">()</span>
+<span class="n">results</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>score</th>
+      <th>types_in_radius</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>1</td>
+      <td>[Энергоснабжение]</td>
+      <td>POLYGON ((30.12453 60.01677, 30.14338 60.01106...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>1</td>
+      <td>[Энергоснабжение]</td>
+      <td>POLYGON ((30.23961 60.09269, 30.2585 60.08696,...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>1</td>
+      <td>[Энергоснабжение]</td>
+      <td>POLYGON ((30.40522 59.85712, 30.42398 59.85134...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>1</td>
+      <td>[Энергоснабжение]</td>
+      <td>POLYGON ((30.19969 59.98166, 30.21852 59.97593...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>1</td>
+      <td>[Энергоснабжение]</td>
+      <td>POLYGON ((30.3715 60.04029, 30.39036 60.03454,...</td>
+    </tr>
+    <tr>
+      <th>...</th>
+      <td>...</td>
+      <td>...</td>
+      <td>...</td>
+    </tr>
+    <tr>
+      <th>611</th>
+      <td>1</td>
+      <td>[Энергоснабжение]</td>
+      <td>POLYGON ((30.3081 59.72653, 30.3268 59.72075, ...</td>
+    </tr>
+    <tr>
+      <th>612</th>
+      <td>2</td>
+      <td>[Водоснабжение, Энергоснабжение]</td>
+      <td>POLYGON ((30.26976 59.689, 30.28843 59.68323, ...</td>
+    </tr>
+    <tr>
+      <th>613</th>
+      <td>1</td>
+      <td>[Энергоснабжение]</td>
+      <td>POLYGON ((30.27763 60.09348, 30.29652 60.08775...</td>
+    </tr>
+    <tr>
+      <th>614</th>
+      <td>1</td>
+      <td>[Энергоснабжение]</td>
+      <td>POLYGON ((30.06399 59.73999, 30.08269 59.73426...</td>
+    </tr>
+    <tr>
+      <th>615</th>
+      <td>1</td>
+      <td>[Энергоснабжение]</td>
+      <td>POLYGON ((30.04687 59.8682, 30.06564 59.86248,...</td>
+    </tr>
+  </tbody>
+</table>
+<p>616 rows × 3 columns</p>
+</div></div>
+</div>
+<div class="nbinput docutils container">
+<div class="prompt highlight-none notranslate"><div class="highlight"><pre><span></span>[ ]:
+</pre></div>
+</div>
+<div class="input_area highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">results</span><span class="p">[</span><span class="n">results</span><span class="p">[</span><span class="s1">'score'</span><span class="p">]</span><span class="o">&gt;</span><span class="mi">1</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="nboutput nblast docutils container">
+<div class="prompt empty docutils container">
+</div>
+<div class="output_area rendered_html docutils container">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>score</th>
+      <th>types_in_radius</th>
+      <th>geometry</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>75</th>
+      <td>2</td>
+      <td>[Водоснабжение, Энергоснабжение]</td>
+      <td>POLYGON ((30.1021 59.77753, 30.12082 59.7718, ...</td>
+    </tr>
+    <tr>
+      <th>200</th>
+      <td>2</td>
+      <td>[Водоснабжение, Энергоснабжение]</td>
+      <td>POLYGON ((30.25131 59.70704, 30.27 59.70127, 3...</td>
+    </tr>
+    <tr>
+      <th>212</th>
+      <td>2</td>
+      <td>[Водоснабжение, Энергоснабжение]</td>
+      <td>POLYGON ((30.12118 59.79631, 30.13991 59.79057...</td>
+    </tr>
+    <tr>
+      <th>429</th>
+      <td>2</td>
+      <td>[Энергоснабжение, Водоотведение]</td>
+      <td>POLYGON ((30.02734 59.81268, 30.04608 59.80696...</td>
+    </tr>
+    <tr>
+      <th>527</th>
+      <td>2</td>
+      <td>[Водоснабжение, Энергоснабжение]</td>
+      <td>POLYGON ((30.13972 59.77832, 30.15844 59.77258...</td>
+    </tr>
+    <tr>
+      <th>532</th>
+      <td>2</td>
+      <td>[Водоснабжение, Энергоснабжение]</td>
+      <td>POLYGON ((30.47995 59.82172, 30.49869 59.81593...</td>
+    </tr>
+    <tr>
+      <th>537</th>
+      <td>2</td>
+      <td>[Энергоснабжение, Водоотведение]</td>
+      <td>POLYGON ((30.06498 59.81349, 30.08372 59.80777...</td>
+    </tr>
+    <tr>
+      <th>612</th>
+      <td>2</td>
+      <td>[Водоснабжение, Энергоснабжение]</td>
+      <td>POLYGON ((30.26976 59.689, 30.28843 59.68323, ...</td>
+    </tr>
+  </tbody>
+</table>
+</div></div>
+</div>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="criterion_hex.html" class="btn btn-neutral float-left" title="Оценка территории по критерию для гексагональной сетки" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="spatial_inequality.html" class="btn btn-neutral float-right" title="Пространственное неравенство" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
