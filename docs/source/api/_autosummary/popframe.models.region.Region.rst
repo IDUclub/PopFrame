@@ -17,6 +17,7 @@
       ~Region.from_pickle
       ~Region.get_towns_gdf
       ~Region.get_update_towns_gdf
+      ~Region.prepare_for_analysis
       ~Region.to_pickle
       ~Region.validate_accessibility_matrix
       ~Region.validate_region
