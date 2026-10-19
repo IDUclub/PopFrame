@@ -80,6 +80,14 @@ Below are examples for the main modules of PopFrame.
 **RU:**
 Ниже приведены примеры для основных модулей PopFrame.
 
+Подготовка Region из OSM через Nominatim и Overpass:
+`examples/region_from_osm.ipynb <examples/region_from_osm.ipynb>`_.
+Загрузчик находится в ``popframe.preprocessing.data_loader``; итог — один pickle модели.
+``RegionDataLoader`` загружает границу, пункты и дорожный граф с повторами и служебным кэшем.
+Запускайте ноутбук из ``examples``. Пропуски населения нужно дополнить перед сборкой;
+``build_region`` рассчитывает матрицу в минутах, ``save_region`` сохраняет модель
+без перезаписи существующего файла. Дополнительные зависимости не нужны.
+
 **1. Region (models):**
 ```python
 from popframe.models.region import Region

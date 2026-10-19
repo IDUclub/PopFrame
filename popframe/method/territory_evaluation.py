@@ -63,7 +63,7 @@ class TerritoryEvaluation(BaseMethod):
             return 0
         return max(0, criterion_value - profile_value)
 
-    def calculate_potential(self, criteria_values):
+    def calculate_potential(self, criteria_values, *, detailed=False):
         """
         Calculate the potential scores for different profiles based on criteria values.
 
@@ -71,11 +71,18 @@ class TerritoryEvaluation(BaseMethod):
         ----------
         criteria_values : dict
             Dictionary of criterion names and their values.
+        detailed : bool, default False
+            Return an explained ranking using all five named criteria. Profiles
+            are ordered by more satisfied criteria, then fewer missing points.
+            Equal results share a rank; no profile receives special priority.
 
         Returns
         -------
-        list of tuple
-            Sorted list of profiles and their scores.
+        list of tuple or list of dict
+            By default, the existing profile names and score tuples. With
+            ``detailed=True``, each result includes ``rank``, ``profile``,
+            ``satisfied_criteria``, ``total_criteria``, ``missing_criteria``
+            (criterion names mapped to missing points), and ``total_deficit``.
         """
         profiles = {
             "Жилая застройка - ИЖС": {
@@ -120,7 +127,11 @@ class TerritoryEvaluation(BaseMethod):
             },
         }
 
+        if detailed and set(criteria_values) != set(next(iter(profiles.values()))["criteria"]):
+            raise ValueError("Задайте все пять критериев: Население, Транспорт, Экология, Соц-об, Инж инф.")
+
         potential_scores = {}
+        profile_details = []
         for profile, data in profiles.items():
             criteria = data["criteria"]
             weights = data["weights"]
@@ -133,6 +144,33 @@ class TerritoryEvaluation(BaseMethod):
                 for criterion, value in criteria_values.items()
             )
             potential_scores[profile] = (potential, weighted_score)
+
+            if detailed:
+                missing = {
+                    criterion: criteria[criterion] - value
+                    for criterion, value in criteria_values.items()
+                    if not self._is_criterion_satisfied(criteria[criterion], value)
+                }
+                profile_details.append(
+                    {
+                        "profile": profile,
+                        "satisfied_criteria": potential,
+                        "total_criteria": len(criteria),
+                        "missing_criteria": missing,
+                        "total_deficit": sum(missing.values()),
+                    }
+                )
+
+        if detailed:
+            profile_details.sort(key=lambda row: (-row["satisfied_criteria"], row["total_deficit"]))
+            previous_score = None
+            for position, row in enumerate(profile_details, start=1):
+                score = (row["satisfied_criteria"], row["total_deficit"])
+                if score != previous_score:
+                    rank = position
+                row["rank"] = rank
+                previous_score = score
+            return profile_details
 
         ranked_profiles = sorted(
             potential_scores.items(), key=lambda x: (x[0] != "Рекреационная", x[1][0], x[1][1]), reverse=True
@@ -155,7 +193,10 @@ class TerritoryEvaluation(BaseMethod):
         Returns
         -------
         list of dict
-            List of evaluation results for each territory.
+            List of evaluation results for each territory. Nearby results include
+            ``closest_settlement``; results between two centers include
+            ``closest_settlement1`` and ``closest_settlement2``. Settlement fields
+            are omitted when no relevant settlements are found.
         """
         settlements_gdf = self.region.get_towns_gdf()
 
@@ -261,8 +302,6 @@ class TerritoryEvaluation(BaseMethod):
             "score": max_score,
             "interpretation": interpretation,
             "closest_settlement": closest_settlement_name,
-            "closest_settlement1": None,
-            "closest_settlement2": None,
         }
 
     def _evaluate_between_settlements(self, territory_geom, territory_name, settlements_gdf):
@@ -297,7 +336,6 @@ class TerritoryEvaluation(BaseMethod):
                     "territory": territory_name,
                     "score": 1,
                     "interpretation": interpretation,
-                    "closest_settlement": None,
                     "closest_settlement1": closest_settlement1.name,
                     "closest_settlement2": closest_settlement2.name,
                 }
@@ -306,9 +344,6 @@ class TerritoryEvaluation(BaseMethod):
             "territory": territory_name,
             "score": 0,
             "interpretation": "Территория находится за границей агломерации",
-            "closest_settlement": None,
-            "closest_settlement1": None,
-            "closest_settlement2": None,
         }
 
     def _find_closest_settlement_pair(self, territory_geom, nearby_settlements):

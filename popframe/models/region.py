@@ -141,7 +141,8 @@ class Region:
             gdf.update(update_df[["population"]])
 
             level_filler = LevelFiller(towns=gdf)
-            gdf = level_filler.fill_levels()
+            # Return a regular GeoDataFrame so empty slices retain their geometry column.
+            gdf = gpd.GeoDataFrame(level_filler.fill_levels())
         return gdf
 
     def get_towns_gdf(self) -> gpd.GeoDataFrame:
