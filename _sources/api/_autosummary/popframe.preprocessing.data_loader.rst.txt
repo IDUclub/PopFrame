@@ -1,0 +1,40 @@
+popframe.preprocessing.data\_loader
+===================================
+
+.. automodule:: popframe.preprocessing.data_loader
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Functions
+
+   .. autosummary::
+   
+      apply_population_updates
+      build_region
+      calculate_accessibility
+      prepare_boundary
+      prepare_towns
+      save_region
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      RegionDataLoader
+   
+   
+
+   
+   
+   
+
+
+

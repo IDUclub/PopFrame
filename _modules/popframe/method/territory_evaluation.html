@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.territory_evaluation &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">popframe.method.territory_evaluation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for popframe.method.territory_evaluation</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">List</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Point</span><span class="p">,</span> <span class="n">MultiPolygon</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">nearest_points</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">itertools</span><span class="w"> </span><span class="kn">import</span> <span class="n">combinations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models.region</span><span class="w"> </span><span class="kn">import</span> <span class="n">Town</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.const</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">BUFFER_NEARBY_SETTLEMENT_M</span><span class="p">,</span>
+    <span class="n">BUFFER_BETWEEN_SETTLEMENTS_M</span><span class="p">,</span>
+    <span class="n">BETWEEN_SETTLEMENT_RATIO</span><span class="p">,</span>
+    <span class="n">DENSITY_SCORE_TABLE</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base_method</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseMethod</span>
+
+
+<div class="viewcode-block" id="TerritoryEvaluation"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">TerritoryEvaluation</span><span class="p">(</span><span class="n">BaseMethod</span><span class="p">):</span>
+<div class="viewcode-block" id="TerritoryEvaluation._is_criterion_satisfied"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._is_criterion_satisfied">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_is_criterion_satisfied</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">profile_value</span><span class="p">,</span> <span class="n">criterion_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Check if the criterion is satisfied for a given profile value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        profile_value : int or tuple</span>
+<span class="sd">            The value or range of values for the profile criterion.</span>
+<span class="sd">        criterion_value : int or float</span>
+<span class="sd">            The value to check against the profile criterion.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        bool</span>
+<span class="sd">            True if the criterion is satisfied, False otherwise.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile_value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">profile_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">criterion_value</span> <span class="o">&lt;=</span> <span class="n">profile_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">criterion_value</span> <span class="o">&gt;=</span> <span class="n">profile_value</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation._calculate_exceedance"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._calculate_exceedance">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_exceedance</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">profile_value</span><span class="p">,</span> <span class="n">criterion_value</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate the exceedance of the criterion value over the profile value.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        profile_value : int or tuple</span>
+<span class="sd">            The value or range of values for the profile criterion.</span>
+<span class="sd">        criterion_value : int or float</span>
+<span class="sd">            The value to check against the profile criterion.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The amount by which the criterion value exceeds the profile value.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">profile_value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">profile_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">criterion_value</span> <span class="o">&lt;=</span> <span class="n">profile_value</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">criterion_value</span> <span class="o">-</span> <span class="n">profile_value</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">criterion_value</span> <span class="o">-</span> <span class="n">profile_value</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation.calculate_potential"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation.calculate_potential">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_potential</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">criteria_values</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">detailed</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate the potential scores for different profiles based on criteria values.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        criteria_values : dict</span>
+<span class="sd">            Dictionary of criterion names and their values.</span>
+<span class="sd">        detailed : bool, default False</span>
+<span class="sd">            Return an explained ranking using all five named criteria. Profiles</span>
+<span class="sd">            are ordered by more satisfied criteria, then fewer missing points.</span>
+<span class="sd">            Equal results share a rank; no profile receives special priority.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of tuple or list of dict</span>
+<span class="sd">            By default, the existing profile names and score tuples. With</span>
+<span class="sd">            ``detailed=True``, each result includes ``rank``, ``profile``,</span>
+<span class="sd">            ``satisfied_criteria``, ``total_criteria``, ``missing_criteria``</span>
+<span class="sd">            (criterion names mapped to missing points), and ``total_deficit``.</span>
+<span class="sd">        """</span>
+        <span class="n">profiles</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">"Жилая застройка - ИЖС"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">"Жилая застройка - Малоэтажная"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">4</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">"Жилая застройка - Среднеэтажная"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">"Жилая застройка - Многоэтажная"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">5</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">"Общественно-деловая"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">4</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">"Рекреационная"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">"Специального назначения"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">"Промышленная"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">4</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">"Сельско-хозяйственная"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">3</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">1</span><span class="p">},</span>
+            <span class="p">},</span>
+            <span class="s2">"Транспортная инженерная"</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">"criteria"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">2</span><span class="p">},</span>
+                <span class="s2">"weights"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"Население"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Транспорт"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Экология"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Соц-об"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">"Инж инф"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+
+        <span class="k">if</span> <span class="n">detailed</span> <span class="ow">and</span> <span class="nb">set</span><span class="p">(</span><span class="n">criteria_values</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="nb">next</span><span class="p">(</span><span class="nb">iter</span><span class="p">(</span><span class="n">profiles</span><span class="o">.</span><span class="n">values</span><span class="p">()))[</span><span class="s2">"criteria"</span><span class="p">]):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Задайте все пять критериев: Население, Транспорт, Экология, Соц-об, Инж инф."</span><span class="p">)</span>
+
+        <span class="n">potential_scores</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">profile_details</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">profile</span><span class="p">,</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">profiles</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">criteria</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"criteria"</span><span class="p">]</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s2">"weights"</span><span class="p">]</span>
+            <span class="n">potential</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_is_criterion_satisfied</span><span class="p">(</span><span class="n">criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">criterion</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">criteria_values</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="n">weighted_score</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_exceedance</span><span class="p">(</span><span class="n">criteria</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">criterion</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">value</span><span class="p">)</span> <span class="o">*</span> <span class="n">weights</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">criterion</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">criteria_values</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+            <span class="p">)</span>
+            <span class="n">potential_scores</span><span class="p">[</span><span class="n">profile</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">potential</span><span class="p">,</span> <span class="n">weighted_score</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
+                <span class="n">missing</span> <span class="o">=</span> <span class="p">{</span>
+                    <span class="n">criterion</span><span class="p">:</span> <span class="n">criteria</span><span class="p">[</span><span class="n">criterion</span><span class="p">]</span> <span class="o">-</span> <span class="n">value</span>
+                    <span class="k">for</span> <span class="n">criterion</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="n">criteria_values</span><span class="o">.</span><span class="n">items</span><span class="p">()</span>
+                    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_is_criterion_satisfied</span><span class="p">(</span><span class="n">criteria</span><span class="p">[</span><span class="n">criterion</span><span class="p">],</span> <span class="n">value</span><span class="p">)</span>
+                <span class="p">}</span>
+                <span class="n">profile_details</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                    <span class="p">{</span>
+                        <span class="s2">"profile"</span><span class="p">:</span> <span class="n">profile</span><span class="p">,</span>
+                        <span class="s2">"satisfied_criteria"</span><span class="p">:</span> <span class="n">potential</span><span class="p">,</span>
+                        <span class="s2">"total_criteria"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">criteria</span><span class="p">),</span>
+                        <span class="s2">"missing_criteria"</span><span class="p">:</span> <span class="n">missing</span><span class="p">,</span>
+                        <span class="s2">"total_deficit"</span><span class="p">:</span> <span class="nb">sum</span><span class="p">(</span><span class="n">missing</span><span class="o">.</span><span class="n">values</span><span class="p">()),</span>
+                    <span class="p">}</span>
+                <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">detailed</span><span class="p">:</span>
+            <span class="n">profile_details</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="p">(</span><span class="o">-</span><span class="n">row</span><span class="p">[</span><span class="s2">"satisfied_criteria"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"total_deficit"</span><span class="p">]))</span>
+            <span class="n">previous_score</span> <span class="o">=</span> <span class="kc">None</span>
+            <span class="k">for</span> <span class="n">position</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">profile_details</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">score</span> <span class="o">=</span> <span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"satisfied_criteria"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"total_deficit"</span><span class="p">])</span>
+                <span class="k">if</span> <span class="n">score</span> <span class="o">!=</span> <span class="n">previous_score</span><span class="p">:</span>
+                    <span class="n">rank</span> <span class="o">=</span> <span class="n">position</span>
+                <span class="n">row</span><span class="p">[</span><span class="s2">"rank"</span><span class="p">]</span> <span class="o">=</span> <span class="n">rank</span>
+                <span class="n">previous_score</span> <span class="o">=</span> <span class="n">score</span>
+            <span class="k">return</span> <span class="n">profile_details</span>
+
+        <span class="n">ranked_profiles</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="n">potential_scores</span><span class="o">.</span><span class="n">items</span><span class="p">(),</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s2">"Рекреационная"</span><span class="p">,</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]),</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span>
+        <span class="p">)</span>
+        <span class="n">ranked_profiles</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ranked_profiles</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span>
+            <span class="n">item</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">ranked_profiles</span> <span class="k">if</span> <span class="n">item</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span>
+        <span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">ranked_profiles</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation.evaluate_territory_location"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation.evaluate_territory_location">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_territory_location</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">territories_gdf</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Evaluate the location of each territory relative to settlements.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        territories_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            Geospatial data with territories.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of dict</span>
+<span class="sd">            List of evaluation results for each territory. Nearby results include</span>
+<span class="sd">            ``closest_settlement``; results between two centers include</span>
+<span class="sd">            ``closest_settlement1`` and ``closest_settlement2``. Settlement fields</span>
+<span class="sd">            are omitted when no relevant settlements are found.</span>
+<span class="sd">        """</span>
+        <span class="n">settlements_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">get_towns_gdf</span><span class="p">()</span>
+
+        <span class="c1"># Coordinate system transformation</span>
+        <span class="n">settlements_gdf</span> <span class="o">=</span> <span class="n">settlements_gdf</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+        <span class="n">territories_gdf</span> <span class="o">=</span> <span class="n">territories_gdf</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+
+        <span class="c1"># Dictionary with settlement level scores</span>
+        <span class="n">level_scores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_level_scores</span><span class="p">()</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Process each territory</span>
+        <span class="k">for</span> <span class="n">territory</span> <span class="ow">in</span> <span class="n">territories_gdf</span><span class="o">.</span><span class="n">itertuples</span><span class="p">():</span>
+            <span class="n">territory_name</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">territory</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">,</span> <span class="s2">"None"</span><span class="p">)</span>
+            <span class="n">territory_geom</span> <span class="o">=</span> <span class="n">territory</span><span class="o">.</span><span class="n">geometry</span>
+
+            <span class="c1"># Territory evaluation</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_single_territory</span><span class="p">(</span><span class="n">territory_geom</span><span class="p">,</span> <span class="n">territory_name</span><span class="p">,</span> <span class="n">settlements_gdf</span><span class="p">,</span> <span class="n">level_scores</span><span class="p">)</span>
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation._get_level_scores"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._get_level_scores">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_level_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the scores for different levels of settlements.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            Dictionary where the key is the settlement level and the value is the score.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"Сверхкрупный город"</span><span class="p">:</span> <span class="mi">10</span><span class="p">,</span>
+            <span class="s2">"Крупнейший город"</span><span class="p">:</span> <span class="mi">9</span><span class="p">,</span>
+            <span class="s2">"Крупный город"</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="s2">"Большой город"</span><span class="p">:</span> <span class="mi">7</span><span class="p">,</span>
+            <span class="s2">"Средний город"</span><span class="p">:</span> <span class="mi">6</span><span class="p">,</span>
+            <span class="s2">"Малый город"</span><span class="p">:</span> <span class="mi">5</span><span class="p">,</span>
+            <span class="s2">"Крупное сельское поселение"</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s2">"Большое сельское поселение"</span><span class="p">:</span> <span class="mi">3</span><span class="p">,</span>
+            <span class="s2">"Среднее сельское поселение"</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s2">"Малое сельское поселение"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation._evaluate_single_territory"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._evaluate_single_territory">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_single_territory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">territory_geom</span><span class="p">,</span> <span class="n">territory_name</span><span class="p">,</span> <span class="n">settlements_gdf</span><span class="p">,</span> <span class="n">level_scores</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Evaluate a single territory, determining its nearest settlements and interpretation.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        territory_geom : shapely.geometry.base.BaseGeometry</span>
+<span class="sd">            The geometry of the territory.</span>
+<span class="sd">        territory_name : str</span>
+<span class="sd">            The name of the territory.</span>
+<span class="sd">        settlements_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            Geospatial data with settlements.</span>
+<span class="sd">        level_scores : dict</span>
+<span class="sd">            Dictionary with settlement level scores.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The results of the territory evaluation.</span>
+<span class="sd">        """</span>
+        <span class="n">buffer</span> <span class="o">=</span> <span class="n">territory_geom</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">BUFFER_NEARBY_SETTLEMENT_M</span><span class="p">)</span>
+        <span class="n">settlements_in_buffer</span> <span class="o">=</span> <span class="n">settlements_gdf</span><span class="p">[</span><span class="n">settlements_gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">buffer</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">settlements_in_buffer</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_nearby_settlement</span><span class="p">(</span><span class="n">territory_name</span><span class="p">,</span> <span class="n">settlements_in_buffer</span><span class="p">,</span> <span class="n">level_scores</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_evaluate_between_settlements</span><span class="p">(</span><span class="n">territory_geom</span><span class="p">,</span> <span class="n">territory_name</span><span class="p">,</span> <span class="n">settlements_gdf</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation._evaluate_nearby_settlement"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._evaluate_nearby_settlement">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_nearby_settlement</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">territory_name</span><span class="p">,</span> <span class="n">settlements_in_buffer</span><span class="p">,</span> <span class="n">level_scores</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Evaluate the territory if it is near settlements.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        territory_name : str</span>
+<span class="sd">            The name of the territory.</span>
+<span class="sd">        settlements_in_buffer : geopandas.GeoDataFrame</span>
+<span class="sd">            The settlements within the buffer.</span>
+<span class="sd">        level_scores : dict</span>
+<span class="sd">            Dictionary with settlement level scores.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The results of the territory evaluation.</span>
+<span class="sd">        """</span>
+        <span class="n">settlements_in_buffer</span> <span class="o">=</span> <span class="n">settlements_in_buffer</span><span class="o">.</span><span class="n">assign</span><span class="p">(</span><span class="n">score</span><span class="o">=</span><span class="n">settlements_in_buffer</span><span class="p">[</span><span class="s2">"level"</span><span class="p">]</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">level_scores</span><span class="p">))</span>
+        <span class="n">max_settlement</span> <span class="o">=</span> <span class="n">settlements_in_buffer</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">settlements_in_buffer</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span><span class="o">.</span><span class="n">idxmax</span><span class="p">()]</span>
+        <span class="n">max_level</span> <span class="o">=</span> <span class="n">max_settlement</span><span class="p">[</span><span class="s2">"level"</span><span class="p">]</span>
+        <span class="n">max_score</span> <span class="o">=</span> <span class="n">max_settlement</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span>
+        <span class="n">closest_settlement_name</span> <span class="o">=</span> <span class="n">max_settlement</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
+
+        <span class="n">interpretation</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="sa">f</span><span class="s2">"Территория находится внутри или непосредственной близости населенного пункта уровня </span><span class="si">{</span><span class="n">max_level</span><span class="si">}</span><span class="s2">"</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"territory"</span><span class="p">:</span> <span class="n">territory_name</span><span class="p">,</span>
+            <span class="s2">"score"</span><span class="p">:</span> <span class="n">max_score</span><span class="p">,</span>
+            <span class="s2">"interpretation"</span><span class="p">:</span> <span class="n">interpretation</span><span class="p">,</span>
+            <span class="s2">"closest_settlement"</span><span class="p">:</span> <span class="n">closest_settlement_name</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation._evaluate_between_settlements"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._evaluate_between_settlements">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_evaluate_between_settlements</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">territory_geom</span><span class="p">,</span> <span class="n">territory_name</span><span class="p">,</span> <span class="n">settlements_gdf</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Evaluate the territory if it is located between settlements.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        territory_geom : shapely.geometry.base.BaseGeometry</span>
+<span class="sd">            The geometry of the territory.</span>
+<span class="sd">        territory_name : str</span>
+<span class="sd">            The name of the territory.</span>
+<span class="sd">        settlements_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            Geospatial data with settlements.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict</span>
+<span class="sd">            The results of the territory evaluation.</span>
+<span class="sd">        """</span>
+        <span class="n">buffer_20km</span> <span class="o">=</span> <span class="n">territory_geom</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">BUFFER_BETWEEN_SETTLEMENTS_M</span><span class="p">)</span>
+        <span class="n">nearby_settlements</span> <span class="o">=</span> <span class="n">settlements_gdf</span><span class="p">[</span><span class="n">settlements_gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">buffer_20km</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">nearby_settlements</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">closest_settlement1</span><span class="p">,</span> <span class="n">closest_settlement2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_find_closest_settlement_pair</span><span class="p">(</span>
+                <span class="n">territory_geom</span><span class="p">,</span> <span class="n">nearby_settlements</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">closest_settlement1</span> <span class="ow">and</span> <span class="n">closest_settlement2</span><span class="p">:</span>
+                <span class="n">interpretation</span> <span class="o">=</span> <span class="s2">"Территория находится между основными ядрами системы расселения"</span>
+                <span class="k">return</span> <span class="p">{</span>
+                    <span class="s2">"territory"</span><span class="p">:</span> <span class="n">territory_name</span><span class="p">,</span>
+                    <span class="s2">"score"</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+                    <span class="s2">"interpretation"</span><span class="p">:</span> <span class="n">interpretation</span><span class="p">,</span>
+                    <span class="s2">"closest_settlement1"</span><span class="p">:</span> <span class="n">closest_settlement1</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                    <span class="s2">"closest_settlement2"</span><span class="p">:</span> <span class="n">closest_settlement2</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="p">}</span>
+
+        <span class="k">return</span> <span class="p">{</span>
+            <span class="s2">"territory"</span><span class="p">:</span> <span class="n">territory_name</span><span class="p">,</span>
+            <span class="s2">"score"</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s2">"interpretation"</span><span class="p">:</span> <span class="s2">"Территория находится за границей агломерации"</span><span class="p">,</span>
+        <span class="p">}</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation._find_closest_settlement_pair"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._find_closest_settlement_pair">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_find_closest_settlement_pair</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">territory_geom</span><span class="p">,</span> <span class="n">nearby_settlements</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Find the pair of nearest settlements around the territory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        territory_geom : shapely.geometry.base.BaseGeometry</span>
+<span class="sd">            The geometry of the territory.</span>
+<span class="sd">        nearby_settlements : geopandas.GeoDataFrame</span>
+<span class="sd">            The nearby settlements.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            The pair of nearest settlements and the minimum distance.</span>
+<span class="sd">        """</span>
+
+        <span class="n">min_distance</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s2">"inf"</span><span class="p">)</span>
+        <span class="n">closest_settlement1</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">closest_settlement2</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">for</span> <span class="n">settlement1</span><span class="p">,</span> <span class="n">settlement2</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="n">nearby_settlements</span><span class="o">.</span><span class="n">itertuples</span><span class="p">(),</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="n">distance_between_settlements</span> <span class="o">=</span> <span class="n">settlement1</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">settlement2</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+            <span class="n">distance_to_settlement1</span> <span class="o">=</span> <span class="n">territory_geom</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">settlement1</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+            <span class="n">distance_to_settlement2</span> <span class="o">=</span> <span class="n">territory_geom</span><span class="o">.</span><span class="n">distance</span><span class="p">(</span><span class="n">settlement2</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+            <span class="n">total_distance</span> <span class="o">=</span> <span class="n">distance_to_settlement1</span> <span class="o">+</span> <span class="n">distance_to_settlement2</span>
+
+            <span class="k">if</span> <span class="p">(</span>
+                <span class="n">distance_to_settlement1</span> <span class="o">&gt;</span> <span class="n">BUFFER_NEARBY_SETTLEMENT_M</span>
+                <span class="ow">and</span> <span class="n">distance_to_settlement2</span> <span class="o">&gt;</span> <span class="n">BUFFER_NEARBY_SETTLEMENT_M</span>
+                <span class="ow">and</span> <span class="n">total_distance</span> <span class="o">&lt;=</span> <span class="n">BETWEEN_SETTLEMENT_RATIO</span> <span class="o">*</span> <span class="n">distance_between_settlements</span>
+                <span class="ow">and</span> <span class="n">total_distance</span> <span class="o">&lt;</span> <span class="n">min_distance</span>
+            <span class="p">):</span>
+                <span class="n">min_distance</span> <span class="o">=</span> <span class="n">total_distance</span>
+                <span class="n">closest_settlement1</span> <span class="o">=</span> <span class="n">settlement1</span>
+                <span class="n">closest_settlement2</span> <span class="o">=</span> <span class="n">settlement2</span>
+
+        <span class="k">return</span> <span class="n">closest_settlement1</span><span class="p">,</span> <span class="n">closest_settlement2</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation.population_criterion"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation.population_criterion">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">population_criterion</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">territories_gdf</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate population density and assess territories based on demographic characteristics.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        territories_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of territories.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of dict</span>
+<span class="sd">            List of dictionaries containing the assessment results for each territory.</span>
+<span class="sd">        """</span>
+        <span class="n">gdf_territory</span> <span class="o">=</span> <span class="n">territories_gdf</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+        <span class="n">towns_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">get_towns_gdf</span><span class="p">()</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">epsg</span><span class="o">=</span><span class="mi">3857</span><span class="p">)</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_calculate_density_population</span><span class="p">(</span><span class="n">gdf_territory</span><span class="p">,</span> <span class="n">towns_gdf</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">result</span> <span class="ow">in</span> <span class="n">results</span><span class="p">:</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_assess_territory</span><span class="p">(</span><span class="n">result</span><span class="p">[</span><span class="s2">"average_population_density"</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="s2">"total_population"</span><span class="p">])</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"score"</span><span class="p">]</span> <span class="o">=</span> <span class="n">score</span>
+            <span class="n">result</span><span class="p">[</span><span class="s2">"interpretation"</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_interpret_score</span><span class="p">(</span><span class="n">score</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation._calculate_density_population"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._calculate_density_population">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_calculate_density_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gdf_territory</span><span class="p">,</span> <span class="n">towns_gdf</span><span class="p">,</span> <span class="n">radius_m</span><span class="o">=</span><span class="mi">20000</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate population density within a specified buffer radius for each territory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf_territory : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of territories.</span>
+<span class="sd">        towns_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of towns with population data.</span>
+<span class="sd">        radius_m : int, optional</span>
+<span class="sd">            Radius in meters for the buffer around each territory. Default is 20000.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of dict</span>
+<span class="sd">            List of dictionaries containing population density and total population for each territory.</span>
+<span class="sd">        """</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">territory</span> <span class="ow">in</span> <span class="n">gdf_territory</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">buffer</span> <span class="o">=</span> <span class="n">territory</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">radius_m</span><span class="p">)</span>
+            <span class="n">towns_in_buffer</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">sjoin</span><span class="p">(</span>
+                <span class="n">towns_gdf</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">geometry</span><span class="o">=</span><span class="p">[</span><span class="n">buffer</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="n">towns_gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">),</span> <span class="n">predicate</span><span class="o">=</span><span class="s2">"intersects"</span>
+            <span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">towns_in_buffer</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">total_population</span> <span class="o">=</span> <span class="n">towns_in_buffer</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+                <span class="n">buffer_area</span> <span class="o">=</span> <span class="n">buffer</span><span class="o">.</span><span class="n">area</span> <span class="o">/</span> <span class="mf">1e6</span>  <span class="c1"># in square kilometers</span>
+                <span class="n">population_density</span> <span class="o">=</span> <span class="n">total_population</span> <span class="o">/</span> <span class="n">buffer_area</span> <span class="k">if</span> <span class="n">buffer_area</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">0</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">total_population</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">population_density</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">"project"</span><span class="p">:</span> <span class="n">territory</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"name"</span><span class="p">),</span>
+                    <span class="s2">"average_population_density"</span><span class="p">:</span> <span class="nb">round</span><span class="p">(</span><span class="n">population_density</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span>
+                    <span class="s2">"total_population"</span><span class="p">:</span> <span class="n">total_population</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation._assess_territory"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._assess_territory">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_assess_territory</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="p">,</span> <span class="n">population</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Assess the territory based on population density and total population.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        density : float</span>
+<span class="sd">            The average population density of the territory.</span>
+<span class="sd">        population : int</span>
+<span class="sd">            The total population of the territory.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        int</span>
+<span class="sd">            The score representing the assessment of the territory.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">density</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">population</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+        <span class="n">score_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">DENSITY_SCORE_TABLE</span><span class="p">)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">score_df</span><span class="p">[</span>
+            <span class="p">(</span><span class="n">score_df</span><span class="p">[</span><span class="s2">"min_dens"</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">density</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">density</span> <span class="o">&lt;</span> <span class="n">score_df</span><span class="p">[</span><span class="s2">"max_dens"</span><span class="p">])</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">score_df</span><span class="p">[</span><span class="s2">"min_pop"</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="n">population</span><span class="p">)</span>
+            <span class="o">&amp;</span> <span class="p">(</span><span class="n">population</span> <span class="o">&lt;</span> <span class="n">score_df</span><span class="p">[</span><span class="s2">"max_pop"</span><span class="p">])</span>
+        <span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">result</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"score"</span><span class="p">]</span>
+        <span class="k">return</span> <span class="mi">0</span></div>
+
+<div class="viewcode-block" id="TerritoryEvaluation._interpret_score"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.territory_evaluation.html#popframe.method.territory_evaluation.TerritoryEvaluation._interpret_score">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_interpret_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Interpret the score assigned to a territory.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        score : int</span>
+<span class="sd">            The score representing the assessment of the territory.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        str</span>
+<span class="sd">            The interpretation of the score.</span>
+<span class="sd">        """</span>
+        <span class="n">interpretations</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="mi">0</span><span class="p">:</span> <span class="s2">"Территория имеет нулевые показатели численности и плотности населения, что может усложнить ее развитие."</span><span class="p">,</span>
+            <span class="mi">1</span><span class="p">:</span> <span class="s2">"Территория имеет малые показатели численности и плотности населения для активного развития."</span><span class="p">,</span>
+            <span class="mi">2</span><span class="p">:</span> <span class="s2">"Территория имеет умеренные показатели численности и плотности населения, что указывает на потенциал для развития."</span><span class="p">,</span>
+            <span class="mi">3</span><span class="p">:</span> <span class="s2">"Территория имеет показатели численности и плотности населения выше среднего, что указывает на возможность развития территории."</span><span class="p">,</span>
+            <span class="mi">4</span><span class="p">:</span> <span class="s2">"Территория имеет хорошие показатели численности и плотности населения, что способствует ее активному развитию."</span><span class="p">,</span>
+            <span class="mi">5</span><span class="p">:</span> <span class="s2">"Территория с высокими показателями численности и плотности населения, что указывает высокий потенциал развития."</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">interpretations</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="s2">"Неизвестный показатель."</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

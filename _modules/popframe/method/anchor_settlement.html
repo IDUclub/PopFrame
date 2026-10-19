@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.anchor_settlement &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">popframe.method.anchor_settlement</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for popframe.method.anchor_settlement</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.base_method</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseMethod</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">MultiPolygon</span><span class="p">,</span> <span class="n">LineString</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">unary_union</span><span class="p">,</span> <span class="n">split</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">geovoronoi</span><span class="w"> </span><span class="kn">import</span> <span class="n">voronoi_regions_from_coords</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">popframe.utils.const</span><span class="w"> </span><span class="kn">import</span> <span class="n">TIME_TO_METERS_FACTOR</span>
+
+
+<div class="viewcode-block" id="AnchorSettlementBuilder"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AnchorSettlementBuilder</span><span class="p">(</span><span class="n">BaseMethod</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""Build boundaries for anchor (опорные) settlements using travel-time buffers."""</span>
+
+    <span class="n">radius_m_per_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">TIME_TO_METERS_FACTOR</span>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder._build_anchor_settlement_boundaries"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder._build_anchor_settlement_boundaries">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_build_anchor_settlement_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Builds boundaries for anchor settlements iteratively, starting from the closest town based on travel time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        towns : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of towns.</span>
+<span class="sd">        time : int</span>
+<span class="sd">            Maximum travel time.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of the anchor settlement boundaries.</span>
+<span class="sd">        """</span>
+        <span class="n">anchor_towns</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="n">towns</span><span class="p">[</span><span class="s2">"is_anchor_settlement"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span>
+        <span class="n">boundaries</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">accessibility_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">accessibility_matrix</span>
+
+        <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">anchor_towns</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]:</span>
+            <span class="n">boundary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_boundary_around_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">towns</span><span class="p">,</span> <span class="n">accessibility_matrix</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">boundary</span><span class="p">:</span>
+                <span class="n">boundary</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">towns</span><span class="p">[</span><span class="s2">"id"</span><span class="p">]</span> <span class="o">==</span> <span class="n">node</span><span class="p">,</span> <span class="s2">"name"</span><span class="p">]</span><span class="o">.</span><span class="n">values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">boundaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">boundary</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">boundaries</span><span class="p">:</span>
+            <span class="n">boundary_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">boundaries</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"geometry"</span><span class="p">])</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="s2">"geometry"</span><span class="p">)</span>
+            <span class="n">boundary_gdf</span><span class="o">.</span><span class="n">set_crs</span><span class="p">(</span><span class="n">towns</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">boundary_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"geometry"</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">boundary_gdf</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder._get_boundary_around_node"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder._get_boundary_around_node">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_boundary_around_node</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">start_node</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">max_time</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span>
+        <span class="n">towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">accessibility_matrix</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Get the boundary around a node within a maximum travel time.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start_node : int or str</span>
+<span class="sd">            The starting node (town id).</span>
+<span class="sd">        max_time : int</span>
+<span class="sd">            Maximum travel time.</span>
+<span class="sd">        towns : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of towns.</span>
+<span class="sd">        accessibility_matrix : pandas.DataFrame</span>
+<span class="sd">            Matrix of travel times between towns.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict or None</span>
+<span class="sd">            Dictionary with geometry and nodes in boundary, or None if no nodes found.</span>
+<span class="sd">        """</span>
+        <span class="n">distances_from_start</span> <span class="o">=</span> <span class="n">accessibility_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start_node</span><span class="p">]</span>
+        <span class="n">within_time_nodes</span> <span class="o">=</span> <span class="n">distances_from_start</span><span class="p">[</span><span class="n">distances_from_start</span> <span class="o">&lt;=</span> <span class="n">max_time</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+
+        <span class="k">if</span> <span class="n">within_time_nodes</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">nodes_gdf</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">within_time_nodes</span><span class="p">]</span>
+
+        <span class="n">distance</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">(</span><span class="n">max_time</span> <span class="o">-</span> <span class="n">distances_from_start</span><span class="p">[</span><span class="n">node</span><span class="p">])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius_m_per_min</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">within_time_nodes</span><span class="p">}</span>
+        <span class="c1"># distance = {node: (max_time) * RADIUS for node in within_time_nodes}</span>
+        <span class="n">nodes_gdf</span><span class="p">[</span><span class="s2">"left_distance"</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodes_gdf</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+        <span class="n">boundary_geom</span> <span class="o">=</span> <span class="n">nodes_gdf</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">nodes_gdf</span><span class="p">[</span><span class="s2">"left_distance"</span><span class="p">])</span><span class="o">.</span><span class="n">unary_union</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"geometry"</span><span class="p">:</span> <span class="n">boundary_geom</span><span class="p">,</span> <span class="s2">"nodes_in_boundary"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">within_time_nodes</span><span class="p">)}</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder._simplify_multipolygons"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder._simplify_multipolygons">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_simplify_multipolygons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Simplify MultiPolygon geometries, keeping only those intersecting with anchor towns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with geometries to simplify.</span>
+<span class="sd">        towns : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of towns.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            Simplified GeoDataFrame.</span>
+<span class="sd">        """</span>
+        <span class="n">anchor_towns</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="n">towns</span><span class="p">[</span><span class="s2">"is_anchor_settlement"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span>
+
+        <span class="k">def</span><span class="w"> </span><span class="nf">process_geometry</span><span class="p">(</span><span class="n">geom</span><span class="p">):</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">MultiPolygon</span><span class="p">):</span>
+                <span class="n">polygons</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">geoms</span><span class="p">)</span>
+
+                <span class="c1"># Фильтруем только те полигоны, которые пересекаются с anchor_towns</span>
+                <span class="n">filtered_polygons</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">polygons</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">p</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">anchor_towns</span><span class="o">.</span><span class="n">geometry</span><span class="p">)]</span>
+
+                <span class="k">if</span> <span class="n">filtered_polygons</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">MultiPolygon</span><span class="p">(</span><span class="n">filtered_polygons</span><span class="p">)</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered_polygons</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="n">filtered_polygons</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="kc">None</span>  <span class="c1"># Удаляем геометрию, если ни один полигон не пересекается</span>
+
+            <span class="k">return</span> <span class="n">geom</span> <span class="k">if</span> <span class="nb">any</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">at</span><span class="p">)</span> <span class="k">for</span> <span class="n">at</span> <span class="ow">in</span> <span class="n">anchor_towns</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span> <span class="k">else</span> <span class="kc">None</span>
+
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">process_geometry</span><span class="p">)</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">dropna</span><span class="p">(</span><span class="n">subset</span><span class="o">=</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">])</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>  <span class="c1"># Удаляем строки без геометрии</span>
+        <span class="k">return</span> <span class="n">gdf</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder._merge_intersecting_boundaries"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder._merge_intersecting_boundaries">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_intersecting_boundaries</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Merge intersecting boundaries into single geometries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with boundaries to merge.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with merged boundaries.</span>
+<span class="sd">        """</span>
+        <span class="n">merged_geometries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">processed_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row_i</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">processed_indices</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">overlapping_boundaries</span> <span class="o">=</span> <span class="p">[</span><span class="n">row_i</span><span class="p">]</span>
+            <span class="n">geometry</span> <span class="o">=</span> <span class="n">row_i</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span>
+            <span class="n">merged_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">row_i</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]}</span>
+
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">row_j</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span> <span class="ow">and</span> <span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">processed_indices</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">row_j</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]):</span>
+                        <span class="n">overlapping_boundaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_j</span><span class="p">)</span>
+                        <span class="n">geometry</span> <span class="o">=</span> <span class="n">unary_union</span><span class="p">([</span><span class="n">geometry</span><span class="p">,</span> <span class="n">row_j</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]])</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">merged_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">row_j</span><span class="p">[</span><span class="s2">"name"</span><span class="p">])</span>
+                        <span class="n">processed_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+
+            <span class="n">still_merging</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">while</span> <span class="n">still_merging</span><span class="p">:</span>
+                <span class="n">still_merging</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">row_j</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">processed_indices</span> <span class="ow">and</span> <span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">row_j</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]):</span>
+                        <span class="n">overlapping_boundaries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row_j</span><span class="p">)</span>
+                        <span class="n">geometry</span> <span class="o">=</span> <span class="n">unary_union</span><span class="p">([</span><span class="n">geometry</span><span class="p">,</span> <span class="n">row_j</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]])</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">merged_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">row_j</span><span class="p">[</span><span class="s2">"name"</span><span class="p">])</span>
+                        <span class="n">processed_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+                        <span class="n">still_merging</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">geometry</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
+                <span class="n">geometry</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">merged_boundary</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">"geometry"</span><span class="p">:</span> <span class="n">geometry</span><span class="p">,</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Merged"</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">merged_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">"Single"</span><span class="p">,</span>
+                <span class="s2">"anchor_settlements"</span><span class="p">:</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">merged_names</span><span class="p">),</span>
+            <span class="p">}</span>
+            <span class="n">merged_geometries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">merged_boundary</span><span class="p">)</span>
+
+            <span class="n">processed_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">merged_geometries</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder.split_multipolygons"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder.split_multipolygons">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">split_multipolygons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">geometry</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Split MultiPolygon into individual polygons, marking all but the largest as 'created'.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        geometry : shapely.geometry.MultiPolygon or Polygon</span>
+<span class="sd">            The geometry to split.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list of tuple</span>
+<span class="sd">            List of (polygon, label) tuples.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geometry</span><span class="p">,</span> <span class="n">MultiPolygon</span><span class="p">):</span>
+            <span class="n">sorted_polygons</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">geometry</span><span class="o">.</span><span class="n">geoms</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">p</span><span class="p">:</span> <span class="n">p</span><span class="o">.</span><span class="n">area</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">[(</span><span class="n">sorted_polygons</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s2">"оригинал"</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[(</span><span class="n">poly</span><span class="p">,</span> <span class="s2">"создан"</span><span class="p">)</span> <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">sorted_polygons</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="k">return</span> <span class="p">[(</span><span class="n">geometry</span><span class="p">,</span> <span class="s2">"оригинал"</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder.voronoi_polygons_within_boundaries"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder.voronoi_polygons_within_boundaries">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">voronoi_polygons_within_boundaries</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">boundary_polygon</span><span class="p">:</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">anchor_towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Create a Voronoi diagram within the given boundary polygon for anchor towns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        boundary_polygon : shapely.geometry.Polygon</span>
+<span class="sd">            The boundary polygon.</span>
+<span class="sd">        anchor_towns : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of anchor towns.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with Voronoi polygons and their sources.</span>
+<span class="sd">        """</span>
+
+        <span class="c1"># Фильтруем точки, оставляя только те, которые внутри границы</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[</span><span class="n">p</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">anchor_towns</span><span class="o">.</span><span class="n">geometry</span> <span class="k">if</span> <span class="n">boundary_polygon</span><span class="o">.</span><span class="n">contains</span><span class="p">(</span><span class="n">p</span><span class="p">)]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="n">anchor_towns</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="c1"># Если только 2 точки, делаем разрез границы на две части</span>
+            <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">points</span>
+
+            <span class="c1"># Находим середину отрезка</span>
+            <span class="n">mid_x</span><span class="p">,</span> <span class="n">mid_y</span> <span class="o">=</span> <span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">p2</span><span class="o">.</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">p1</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">p2</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span>
+
+            <span class="c1"># Направление перпендикуляра (90 градусов к прямой P1-P2)</span>
+            <span class="n">dx</span><span class="p">,</span> <span class="n">dy</span> <span class="o">=</span> <span class="n">p2</span><span class="o">.</span><span class="n">x</span> <span class="o">-</span> <span class="n">p1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">p2</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">p1</span><span class="o">.</span><span class="n">y</span>
+            <span class="n">perp_dx</span><span class="p">,</span> <span class="n">perp_dy</span> <span class="o">=</span> <span class="o">-</span><span class="n">dy</span><span class="p">,</span> <span class="n">dx</span>  <span class="c1"># Вектор перпендикуляра</span>
+
+            <span class="c1"># Границы полигона</span>
+            <span class="n">min_x</span><span class="p">,</span> <span class="n">min_y</span><span class="p">,</span> <span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span> <span class="o">=</span> <span class="n">boundary_polygon</span><span class="o">.</span><span class="n">bounds</span>
+
+            <span class="c1"># Определяем длинную разрезающую линию, которая точно пересекает полигон</span>
+            <span class="n">cut_line</span> <span class="o">=</span> <span class="n">LineString</span><span class="p">(</span>
+                <span class="p">[</span>
+                    <span class="p">(</span><span class="n">mid_x</span> <span class="o">-</span> <span class="n">perp_dx</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_x</span> <span class="o">-</span> <span class="n">min_x</span><span class="p">),</span> <span class="n">mid_y</span> <span class="o">-</span> <span class="n">perp_dy</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_y</span> <span class="o">-</span> <span class="n">min_y</span><span class="p">)),</span>
+                    <span class="p">(</span><span class="n">mid_x</span> <span class="o">+</span> <span class="n">perp_dx</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_x</span> <span class="o">-</span> <span class="n">min_x</span><span class="p">),</span> <span class="n">mid_y</span> <span class="o">+</span> <span class="n">perp_dy</span> <span class="o">*</span> <span class="p">(</span><span class="n">max_y</span> <span class="o">-</span> <span class="n">min_y</span><span class="p">)),</span>
+                <span class="p">]</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Проверяем, что cut_line остается LineString</span>
+            <span class="k">if</span> <span class="n">cut_line</span><span class="o">.</span><span class="n">geom_type</span> <span class="o">==</span> <span class="s2">"MultiLineString"</span><span class="p">:</span>
+                <span class="n">cut_line</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">cut_line</span><span class="o">.</span><span class="n">geoms</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Берем первый LineString</span>
+
+            <span class="c1"># Разрезаем границу полигона</span>
+            <span class="n">split_polys</span> <span class="o">=</span> <span class="n">split</span><span class="p">(</span><span class="n">boundary_polygon</span><span class="p">,</span> <span class="n">cut_line</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">split_polys</span><span class="o">.</span><span class="n">geoms</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span>
+                    <span class="p">{</span><span class="s2">"geometry"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">split_polys</span><span class="o">.</span><span class="n">geoms</span><span class="p">),</span> <span class="s2">"source"</span><span class="p">:</span> <span class="p">[</span><span class="s2">"оригинал"</span><span class="p">,</span> <span class="s2">"оригинал"</span><span class="p">]},</span> <span class="n">crs</span><span class="o">=</span><span class="n">anchor_towns</span><span class="o">.</span><span class="n">crs</span>
+                <span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"Ошибка разрезания границы на две части."</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">],</span> <span class="n">crs</span><span class="o">=</span><span class="n">anchor_towns</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+        <span class="c1"># Если точек больше 2, используем стандартную диаграмму Вороного</span>
+        <span class="n">points_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">p</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">p</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">points</span><span class="p">])</span>
+        <span class="n">region_polys</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">voronoi_regions_from_coords</span><span class="p">(</span><span class="n">points_array</span><span class="p">,</span> <span class="n">boundary_polygon</span><span class="p">)</span>
+
+        <span class="n">polygons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">sources</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">poly</span> <span class="ow">in</span> <span class="n">region_polys</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">clipped_poly</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">boundary_polygon</span><span class="p">)</span>  <span class="c1"># Обрезаем полигоны Вороного</span>
+            <span class="n">split_polys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">split_multipolygons</span><span class="p">(</span><span class="n">clipped_poly</span><span class="p">)</span>
+            <span class="n">polygons</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">split_polys</span><span class="p">])</span>
+            <span class="n">sources</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">p</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">split_polys</span><span class="p">])</span>
+
+        <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">({</span><span class="s2">"geometry"</span><span class="p">:</span> <span class="n">polygons</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">:</span> <span class="n">sources</span><span class="p">},</span> <span class="n">crs</span><span class="o">=</span><span class="n">anchor_towns</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder.find_largest_intersection"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder.find_largest_intersection">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">find_largest_intersection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">target_poly</span><span class="p">:</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Find the polygon in gdf with the largest intersection area with the target polygon.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        target_poly : shapely.geometry.Polygon</span>
+<span class="sd">            The target polygon.</span>
+<span class="sd">        gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame to search for intersections.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        tuple</span>
+<span class="sd">            (index, geometry) of the polygon with the largest intersection, or (None, None).</span>
+<span class="sd">        """</span>
+        <span class="n">max_intersection</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="n">max_area</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">max_index</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">intersection</span> <span class="o">=</span> <span class="n">target_poly</span><span class="o">.</span><span class="n">intersection</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">intersection</span><span class="o">.</span><span class="n">is_empty</span> <span class="ow">and</span> <span class="n">intersection</span><span class="o">.</span><span class="n">area</span> <span class="o">&gt;</span> <span class="n">max_area</span><span class="p">:</span>
+                <span class="n">max_intersection</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">geometry</span>
+                <span class="n">max_area</span> <span class="o">=</span> <span class="n">intersection</span><span class="o">.</span><span class="n">area</span>
+                <span class="n">max_index</span> <span class="o">=</span> <span class="n">idx</span>
+        <span class="k">return</span> <span class="n">max_index</span><span class="p">,</span> <span class="n">max_intersection</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder.cluster_and_merge_created_polygons"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder.cluster_and_merge_created_polygons">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">cluster_and_merge_created_polygons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">created_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Cluster and merge all intersecting 'created' polygons.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        created_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of created polygons.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with merged clusters.</span>
+<span class="sd">        """</span>
+        <span class="n">merged_polygons</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">processed</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">created_gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">processed</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">cluster</span> <span class="o">=</span> <span class="n">created_gdf</span><span class="p">[</span><span class="n">created_gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="p">)]</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+            <span class="n">merged_polygons</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">unary_union</span><span class="p">(</span><span class="n">cluster</span><span class="p">))</span>
+            <span class="n">processed</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">created_gdf</span><span class="p">[</span><span class="n">created_gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="p">)]</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">({</span><span class="s2">"geometry"</span><span class="p">:</span> <span class="n">merged_polygons</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">:</span> <span class="s2">"создан"</span><span class="p">},</span> <span class="n">crs</span><span class="o">=</span><span class="n">created_gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder.merge_created_polygons"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder.merge_created_polygons">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">merge_created_polygons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voronoi_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Merge 'created' polygons and then merge with the 'original' polygon with the largest intersection.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        voronoi_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with Voronoi polygons.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with merged polygons.</span>
+<span class="sd">        """</span>
+        <span class="n">created_gdf</span> <span class="o">=</span> <span class="n">voronoi_gdf</span><span class="p">[</span><span class="n">voronoi_gdf</span><span class="p">[</span><span class="s2">"source"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"создан"</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">original_gdf</span> <span class="o">=</span> <span class="n">voronoi_gdf</span><span class="p">[</span><span class="n">voronoi_gdf</span><span class="p">[</span><span class="s2">"source"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"оригинал"</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># Кластеризация созданных полигонов</span>
+        <span class="n">clustered_created_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cluster_and_merge_created_polygons</span><span class="p">(</span><span class="n">created_gdf</span><span class="p">)</span>
+
+        <span class="n">merged_geometries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">original_to_remove</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">clustered_created_gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">buffered_geom</span> <span class="o">=</span> <span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>  <span class="c1"># Буфер перед объединением с оригиналом</span>
+            <span class="n">max_index</span><span class="p">,</span> <span class="n">max_intersection_poly</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">find_largest_intersection</span><span class="p">(</span><span class="n">buffered_geom</span><span class="p">,</span> <span class="n">original_gdf</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">max_intersection_poly</span><span class="p">:</span>
+                <span class="n">merged_geometry</span> <span class="o">=</span> <span class="n">unary_union</span><span class="p">([</span><span class="n">buffered_geom</span><span class="p">,</span> <span class="n">max_intersection_poly</span><span class="p">])</span>
+                <span class="n">original_to_remove</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">max_index</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">merged_geometry</span> <span class="o">=</span> <span class="n">buffered_geom</span>
+
+            <span class="n">merged_geometries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">merged_geometry</span><span class="p">)</span>
+
+        <span class="c1"># Удаляем оригиналы, которые были объединены</span>
+        <span class="n">original_gdf</span> <span class="o">=</span> <span class="n">original_gdf</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="n">original_to_remove</span><span class="p">)</span>
+
+        <span class="n">merged_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">({</span><span class="s2">"geometry"</span><span class="p">:</span> <span class="n">merged_geometries</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">:</span> <span class="s2">"объединён"</span><span class="p">},</span> <span class="n">crs</span><span class="o">=</span><span class="n">voronoi_gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">original_gdf</span><span class="p">,</span> <span class="n">merged_gdf</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder.final_simplification"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder.final_simplification">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">final_simplification</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">merged_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Shrink geometries by a buffer and merge intersecting polygons into one.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        merged_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with merged polygons.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            Final simplified GeoDataFrame.</span>
+<span class="sd">        """</span>
+        <span class="n">shrunk_geometries</span> <span class="o">=</span> <span class="n">merged_gdf</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="o">-</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">final_geometry</span> <span class="o">=</span> <span class="n">unary_union</span><span class="p">(</span><span class="n">shrunk_geometries</span><span class="p">)</span>
+
+        <span class="c1"># Создаем GeoSeries и применяем explode()</span>
+        <span class="n">exploded_geometry</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoSeries</span><span class="p">(</span><span class="n">final_geometry</span><span class="p">)</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="n">index_parts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">exploded_geometry</span> <span class="o">=</span> <span class="n">exploded_geometry</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>
+        <span class="c1"># Создаем GeoDataFrame с разбиением MultiPolygon на отдельные Polygon</span>
+        <span class="n">final_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">({</span><span class="s2">"geometry"</span><span class="p">:</span> <span class="n">exploded_geometry</span><span class="p">,</span> <span class="s2">"source"</span><span class="p">:</span> <span class="s2">"финальный"</span><span class="p">},</span> <span class="n">crs</span><span class="o">=</span><span class="n">merged_gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+        <span class="c1"># Сброс индекса после разбиения</span>
+        <span class="n">final_gdf</span> <span class="o">=</span> <span class="n">final_gdf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">final_gdf</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder.merge_gdfs_excluding_intersections"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder.merge_gdfs_excluding_intersections">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">merge_gdfs_excluding_intersections</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">boundaries_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">final_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">anchor_towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Merge boundaries_gdf and final_gdf, excluding intersecting polygons, and assign names from anchor_towns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        boundaries_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            Initial boundaries GeoDataFrame.</span>
+<span class="sd">        final_gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            Final polygons GeoDataFrame.</span>
+<span class="sd">        anchor_towns : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of anchor towns.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            Merged GeoDataFrame with 'geometry' and 'anchor_name'.</span>
+<span class="sd">        """</span>
+
+        <span class="c1"># Удаляем полигоны из boundaries_gdf, которые пересекаются с final_gdf</span>
+        <span class="n">filtered_boundaries_gdf</span> <span class="o">=</span> <span class="n">boundaries_gdf</span><span class="p">[</span><span class="o">~</span><span class="n">boundaries_gdf</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">final_gdf</span><span class="o">.</span><span class="n">unary_union</span><span class="p">)]</span>
+
+        <span class="c1"># Объединяем оставшиеся полигоны с final_gdf</span>
+        <span class="n">merged_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">filtered_boundaries_gdf</span><span class="p">,</span> <span class="n">final_gdf</span><span class="p">],</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="c1"># Создаем новый столбец 'name', который будет содержать имя города из anchor_towns</span>
+        <span class="n">merged_gdf</span><span class="p">[</span><span class="s2">"anchor_name"</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="c1"># Для каждого полигона ищем, какие объекты из anchor_towns находятся внутри</span>
+        <span class="k">for</span> <span class="n">idx</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">merged_gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="c1"># Выбираем все точки, которые содержатся в полигоне</span>
+            <span class="n">towns_in_poly</span> <span class="o">=</span> <span class="n">anchor_towns</span><span class="p">[</span><span class="n">anchor_towns</span><span class="o">.</span><span class="n">within</span><span class="p">(</span><span class="n">row</span><span class="o">.</span><span class="n">geometry</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">towns_in_poly</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="c1"># Присваиваем имя первого найденного города</span>
+                <span class="n">merged_gdf</span><span class="o">.</span><span class="n">at</span><span class="p">[</span><span class="n">idx</span><span class="p">,</span> <span class="s2">"anchor_name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">towns_in_poly</span><span class="o">.</span><span class="n">iloc</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="s2">"name"</span><span class="p">]</span>
+
+        <span class="c1"># Оставляем только столбцы 'geometry' и 'name'</span>
+        <span class="n">merged_gdf</span> <span class="o">=</span> <span class="n">merged_gdf</span><span class="p">[[</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="s2">"anchor_name"</span><span class="p">]]</span>
+
+        <span class="k">return</span> <span class="n">merged_gdf</span></div>
+
+<div class="viewcode-block" id="AnchorSettlementBuilder.get_anchor_settlement_boundaries"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.anchor_settlement.html#popframe.method.anchor_settlement.AnchorSettlementBuilder.get_anchor_settlement_boundaries">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_anchor_settlement_boundaries</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">update_df</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Main function to orchestrate the creation, merging, and finalization of anchor settlement boundaries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        towns : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame of towns.</span>
+<span class="sd">        update_df : pandas.DataFrame or None, optional</span>
+<span class="sd">            Optional DataFrame for updates.</span>
+<span class="sd">        time : int, optional</span>
+<span class="sd">            Maximum travel time. Default is 50.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with finalized anchor settlement boundaries.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">update_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">towns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">get_update_towns_gdf</span><span class="p">(</span><span class="n">update_df</span><span class="p">)</span>
+
+        <span class="n">region_boundary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">region</span>
+
+        <span class="n">local_crs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">crs</span>
+        <span class="n">towns</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">local_crs</span><span class="p">)</span>
+
+        <span class="n">boundary_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_anchor_settlement_boundaries</span><span class="p">(</span><span class="n">towns</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+        <span class="n">boundary_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simplify_multipolygons</span><span class="p">(</span><span class="n">boundary_gdf</span><span class="p">,</span> <span class="n">towns</span><span class="p">)</span>
+
+        <span class="n">boundary_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_intersecting_boundaries</span><span class="p">(</span><span class="n">boundary_gdf</span><span class="p">)</span>
+
+        <span class="n">boundary_gdf</span> <span class="o">=</span> <span class="n">boundary_gdf</span><span class="o">.</span><span class="n">explode</span><span class="p">(</span><span class="n">index_parts</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="c1"># Сбрасываем индекс (если необходимо)</span>
+        <span class="n">boundary_gdf</span> <span class="o">=</span> <span class="n">boundary_gdf</span><span class="o">.</span><span class="n">reset_index</span><span class="p">(</span><span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="n">boundary_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">boundary_gdf</span><span class="p">,</span> <span class="n">region_boundary</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"intersection"</span><span class="p">)</span>
+
+        <span class="n">boundary_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simplify_multipolygons</span><span class="p">(</span><span class="n">boundary_gdf</span><span class="p">,</span> <span class="n">towns</span><span class="p">)</span>
+
+        <span class="n">boundary_gdf</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span> <span class="o">=</span> <span class="n">boundary_gdf</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">geom</span><span class="p">:</span> <span class="n">Polygon</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">exterior</span><span class="p">)</span> <span class="k">if</span> <span class="n">geom</span><span class="o">.</span><span class="n">is_valid</span> <span class="k">else</span> <span class="n">geom</span>
+        <span class="p">)</span>
+
+        <span class="n">anchor_towns</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="n">towns</span><span class="p">[</span><span class="s2">"is_anchor_settlement"</span><span class="p">]</span> <span class="o">==</span> <span class="kc">True</span><span class="p">]</span>  <span class="c1"># Опорные города</span>
+
+        <span class="n">voronoi_gdfs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">boundary_geom</span> <span class="ow">in</span> <span class="n">boundary_gdf</span><span class="o">.</span><span class="n">geometry</span><span class="p">:</span>  <span class="c1"># Берем только геометрию границ</span>
+            <span class="n">voronoi_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">voronoi_polygons_within_boundaries</span><span class="p">(</span><span class="n">boundary_geom</span><span class="p">,</span> <span class="n">anchor_towns</span><span class="p">)</span>
+            <span class="n">voronoi_gdfs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">voronoi_gdf</span><span class="p">)</span>
+
+        <span class="c1"># Объединяем все полученные геодатафреймы в один</span>
+        <span class="n">voronoi_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">(</span><span class="n">voronoi_gdfs</span><span class="p">,</span> <span class="n">ignore_index</span><span class="o">=</span><span class="kc">True</span><span class="p">))</span>
+
+        <span class="c1"># Объединение полигонов</span>
+        <span class="n">merged_voronoi_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_created_polygons</span><span class="p">(</span><span class="n">voronoi_gdf</span><span class="p">)</span>
+
+        <span class="c1"># Финальная обработка</span>
+        <span class="n">final_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">final_simplification</span><span class="p">(</span><span class="n">merged_voronoi_gdf</span><span class="p">)</span>
+
+        <span class="n">result_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">merge_gdfs_excluding_intersections</span><span class="p">(</span><span class="n">boundary_gdf</span><span class="p">,</span> <span class="n">final_gdf</span><span class="p">,</span> <span class="n">anchor_towns</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result_gdf</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

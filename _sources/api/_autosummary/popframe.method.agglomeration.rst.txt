@@ -1,0 +1,29 @@
+popframe.method.agglomeration
+=============================
+
+.. automodule:: popframe.method.agglomeration
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   .. rubric:: Classes
+
+   .. autosummary::
+   
+      AgglomerationBuilder
+   
+   
+
+   
+   
+   
+
+
+

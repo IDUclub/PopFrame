@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.agglomeration &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">popframe.method.agglomeration</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for popframe.method.agglomeration</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">.base_method</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseMethod</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Point</span><span class="p">,</span> <span class="n">Polygon</span><span class="p">,</span> <span class="n">MultiPolygon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">unary_union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">List</span><span class="p">,</span> <span class="n">Optional</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">popframe.utils.const</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">TIME_TO_METERS_FACTOR</span><span class="p">,</span>
+    <span class="n">MIN_CITY_POPULATION_FOR_AGGLO</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">CITY_LEVELS</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="s2">"Малый город"</span><span class="p">,</span>
+    <span class="s2">"Средний город"</span><span class="p">,</span>
+    <span class="s2">"Большой город"</span><span class="p">,</span>
+    <span class="s2">"Крупный город"</span><span class="p">,</span>
+    <span class="s2">"Крупнейший город"</span><span class="p">,</span>
+    <span class="s2">"Сверхкрупный город"</span><span class="p">,</span>
+<span class="p">]</span>
+
+
+<div class="viewcode-block" id="AgglomerationBuilder"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.agglomeration.html#popframe.method.agglomeration.AgglomerationBuilder">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AgglomerationBuilder</span><span class="p">(</span><span class="n">BaseMethod</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Build urban agglomerations from a towns layer and a travel-time matrix.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The algorithm:</span>
+<span class="sd">    1) Iterates city levels from largest to smallest and selects candidate centers.</span>
+<span class="sd">    2) For each center, takes all towns reachable within a time threshold and</span>
+<span class="sd">       buffers them by the remaining time (converted to meters).</span>
+<span class="sd">    3) Unifies buffers to produce proto-agglomerations.</span>
+<span class="sd">    4) Merges intersecting proto-agglomerations and aggregates attributes.</span>
+<span class="sd">    5) Clips to the region boundary and simplifies MultiPolygons.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    radius_m_per_min : int</span>
+<span class="sd">        Conversion factor from minutes of travel time to meters of buffer radius.</span>
+<span class="sd">    min_population : int</span>
+<span class="sd">        Minimal population for a town to be considered as a center or member.</span>
+<span class="sd">    _in_agglomeration : Dict[int, bool]</span>
+<span class="sd">        Registry of nodes already assigned to an agglomeration.</span>
+<span class="sd">    """</span>
+
+    <span class="n">radius_m_per_min</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">TIME_TO_METERS_FACTOR</span>
+    <span class="n">min_population</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="n">MIN_CITY_POPULATION_FOR_AGGLO</span>
+    <span class="n">_in_agglomeration</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+<div class="viewcode-block" id="AgglomerationBuilder._build_agglomeration"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.agglomeration.html#popframe.method.agglomeration.AgglomerationBuilder._build_agglomeration">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_build_agglomeration</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">time</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Build proto-agglomerations for eligible centers by level and time threshold.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        towns : GeoDataFrame</span>
+<span class="sd">            Towns with columns: ``id``, ``name``, ``population``, ``level``, ``geometry`` (Points).</span>
+<span class="sd">            CRS must match ``self.region.crs``.</span>
+<span class="sd">        time : int</span>
+<span class="sd">            Global time budget in minutes. Effective per-level budget decreases by 10 minutes</span>
+<span class="sd">            per level step when iterating from largest to smallest.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GeoDataFrame</span>
+<span class="sd">            Columns: ``name``, ``geometry``. Geometry is Polygon or MultiPolygon.</span>
+<span class="sd">            Always has active geometry and CRS.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Centers are filtered by ``level in CITY_LEVELS`` and ``population &gt;= min_population``.</span>
+<span class="sd">        Remaining-time buffers are computed as</span>
+<span class="sd">        ``(time_center - distance_minutes) * radius_m_per_min``.</span>
+<span class="sd">        """</span>
+        <span class="n">node_population</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)[</span><span class="s2">"population"</span><span class="p">]</span>
+        <span class="n">node_names</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)[</span><span class="s2">"name"</span><span class="p">]</span>
+        <span class="n">agglomerations</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">level_index</span><span class="p">,</span> <span class="n">level</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">reversed</span><span class="p">(</span><span class="n">CITY_LEVELS</span><span class="p">)):</span>
+            <span class="n">max_time</span> <span class="o">=</span> <span class="n">time</span> <span class="o">-</span> <span class="mi">10</span> <span class="o">*</span> <span class="n">level_index</span>
+            <span class="n">level_nodes</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="n">towns</span><span class="p">[</span><span class="s2">"level"</span><span class="p">]</span> <span class="o">==</span> <span class="n">level</span><span class="p">]</span><span class="o">.</span><span class="n">sort_values</span><span class="p">(</span><span class="n">by</span><span class="o">=</span><span class="s2">"population"</span><span class="p">,</span> <span class="n">ascending</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">node</span><span class="p">,</span> <span class="n">population</span> <span class="ow">in</span> <span class="n">level_nodes</span><span class="p">[[</span><span class="s2">"id"</span><span class="p">,</span> <span class="s2">"population"</span><span class="p">]]</span><span class="o">.</span><span class="n">itertuples</span><span class="p">(</span><span class="n">index</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">node</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_in_agglomeration</span> <span class="ow">or</span> <span class="n">population</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_population</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">agglomeration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_agglomeration_around_node</span><span class="p">(</span><span class="n">node</span><span class="p">,</span> <span class="n">max_time</span><span class="p">,</span> <span class="n">towns</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">agglomeration</span><span class="p">:</span>
+                    <span class="n">agglomeration</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span> <span class="o">=</span> <span class="n">node_names</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+                    <span class="n">agglomerations</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">agglomeration</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">member_node</span> <span class="ow">in</span> <span class="n">agglomeration</span><span class="p">[</span><span class="s2">"nodes_in_agglomeration"</span><span class="p">]:</span>
+                        <span class="k">if</span> <span class="n">node_population</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">member_node</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_population</span><span class="p">:</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">_in_agglomeration</span><span class="p">[</span><span class="n">member_node</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+
+        <span class="k">if</span> <span class="n">agglomerations</span><span class="p">:</span>
+            <span class="n">agglomeration_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span>
+                <span class="n">agglomerations</span><span class="p">,</span>
+                <span class="n">geometry</span><span class="o">=</span><span class="s2">"geometry"</span><span class="p">,</span>
+                <span class="n">crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+            <span class="p">)[[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"geometry"</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">agglomeration_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"name"</span><span class="p">,</span> <span class="s2">"geometry"</span><span class="p">],</span>
+                <span class="n">geometry</span><span class="o">=</span><span class="s2">"geometry"</span><span class="p">,</span>
+                <span class="n">crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">agglomeration_gdf</span></div>
+
+<div class="viewcode-block" id="AgglomerationBuilder._get_agglomeration_around_node"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.agglomeration.html#popframe.method.agglomeration.AgglomerationBuilder._get_agglomeration_around_node">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_agglomeration_around_node</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">start_node</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">max_time</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Build a single proto-agglomeration around a candidate center.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        start_node : int</span>
+<span class="sd">            ID of the center town.</span>
+<span class="sd">        max_time : int</span>
+<span class="sd">            Maximum travel time (minutes) from ``start_node`` to include towns.</span>
+<span class="sd">        towns : GeoDataFrame</span>
+<span class="sd">            Towns table aligned with the accessibility matrix index.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        dict or None</span>
+<span class="sd">            ``{"geometry": Polygon|MultiPolygon, "nodes_in_agglomeration": List[int]}``</span>
+<span class="sd">            or ``None`` if no towns are reachable within ``max_time``.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Uses ``self.region.accessibility_matrix`` with minutes as units.</span>
+<span class="sd">        Guarantees point geometry for towns by coercing to centroid if needed.</span>
+<span class="sd">        """</span>
+        <span class="n">accessibility_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">accessibility_matrix</span>
+
+        <span class="n">distances_from_start</span> <span class="o">=</span> <span class="n">accessibility_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">start_node</span><span class="p">]</span>
+        <span class="n">within_time_nodes</span> <span class="o">=</span> <span class="n">distances_from_start</span><span class="p">[</span><span class="n">distances_from_start</span> <span class="o">&lt;=</span> <span class="n">max_time</span><span class="p">]</span><span class="o">.</span><span class="n">index</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">within_time_nodes</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+
+        <span class="n">nodes_data</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"id"</span><span class="p">)</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">within_time_nodes</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="c1"># ensure point-like geometry</span>
+        <span class="n">nodes_data</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodes_data</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">geom</span><span class="p">:</span> <span class="n">Point</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">geom</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">Point</span><span class="p">)</span> <span class="k">else</span> <span class="n">geom</span><span class="o">.</span><span class="n">centroid</span>
+        <span class="p">)</span>
+
+        <span class="n">nodes_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">nodes_data</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+
+        <span class="c1"># remaining buffer distance in meters</span>
+        <span class="n">distance</span> <span class="o">=</span> <span class="p">{</span><span class="n">node</span><span class="p">:</span> <span class="p">(</span><span class="n">max_time</span> <span class="o">-</span> <span class="n">distances_from_start</span><span class="p">[</span><span class="n">node</span><span class="p">])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">radius_m_per_min</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">within_time_nodes</span><span class="p">}</span>
+        <span class="n">nodes_gdf</span><span class="p">[</span><span class="s2">"left_distance"</span><span class="p">]</span> <span class="o">=</span> <span class="n">nodes_gdf</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">distance</span><span class="p">)</span>
+
+        <span class="n">agglomeration_geom</span> <span class="o">=</span> <span class="n">nodes_gdf</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">nodes_gdf</span><span class="p">[</span><span class="s2">"left_distance"</span><span class="p">])</span><span class="o">.</span><span class="n">unary_union</span>
+
+        <span class="k">return</span> <span class="p">{</span><span class="s2">"geometry"</span><span class="p">:</span> <span class="n">agglomeration_geom</span><span class="p">,</span> <span class="s2">"nodes_in_agglomeration"</span><span class="p">:</span> <span class="nb">list</span><span class="p">(</span><span class="n">within_time_nodes</span><span class="p">)}</span></div>
+
+<div class="viewcode-block" id="AgglomerationBuilder._merge_intersecting_agglomerations"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.agglomeration.html#popframe.method.agglomeration.AgglomerationBuilder._merge_intersecting_agglomerations">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_merge_intersecting_agglomerations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Merge intersecting proto-agglomerations and compute attributes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf : GeoDataFrame</span>
+<span class="sd">            Proto-agglomerations with columns ``name`` and ``geometry``.</span>
+<span class="sd">        towns : GeoDataFrame</span>
+<span class="sd">            Towns layer used to aggregate population.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GeoDataFrame</span>
+<span class="sd">            Columns: ``geometry``, ``type``, ``core_cities``, ``population``, ``agglomeration_level``.</span>
+<span class="sd">            Always has active geometry and CRS.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Intersection is tested geometrically. Geometries are unioned via ``unary_union``.</span>
+<span class="sd">        Invalid geometries are repaired with ``buffer(0)``.</span>
+<span class="sd">        Agglomeration level is derived from total population thresholds.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">gdf</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span>
+                <span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="s2">"type"</span><span class="p">,</span> <span class="s2">"core_cities"</span><span class="p">,</span> <span class="s2">"population"</span><span class="p">,</span> <span class="s2">"agglomeration_level"</span><span class="p">],</span>
+                <span class="n">geometry</span><span class="o">=</span><span class="s2">"geometry"</span><span class="p">,</span>
+                <span class="n">crs</span><span class="o">=</span><span class="n">towns</span><span class="o">.</span><span class="n">crs</span> <span class="k">if</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">towns</span><span class="p">,</span> <span class="s2">"crs"</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span>
+            <span class="p">)</span>
+
+        <span class="n">merged_geometries</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">processed_indices</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">row_i</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">processed_indices</span><span class="p">:</span>
+                <span class="k">continue</span>
+
+            <span class="n">geometry</span> <span class="o">=</span> <span class="n">row_i</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span>
+            <span class="n">merged_names</span> <span class="o">=</span> <span class="p">{</span><span class="n">row_i</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]}</span>
+
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">row_j</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">i</span> <span class="o">!=</span> <span class="n">j</span> <span class="ow">and</span> <span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">processed_indices</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">row_j</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]):</span>
+                        <span class="n">geometry</span> <span class="o">=</span> <span class="n">unary_union</span><span class="p">([</span><span class="n">geometry</span><span class="p">,</span> <span class="n">row_j</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]])</span>
+                        <span class="n">merged_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">row_j</span><span class="p">[</span><span class="s2">"name"</span><span class="p">])</span>
+                        <span class="n">processed_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+
+            <span class="n">still_intersecting</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">while</span> <span class="n">still_intersecting</span><span class="p">:</span>
+                <span class="n">still_intersecting</span> <span class="o">=</span> <span class="kc">False</span>
+                <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">row_j</span> <span class="ow">in</span> <span class="n">gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                    <span class="k">if</span> <span class="n">j</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">processed_indices</span> <span class="ow">and</span> <span class="n">geometry</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">row_j</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]):</span>
+                        <span class="n">geometry</span> <span class="o">=</span> <span class="n">unary_union</span><span class="p">([</span><span class="n">geometry</span><span class="p">,</span> <span class="n">row_j</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]])</span>
+                        <span class="n">merged_names</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">row_j</span><span class="p">[</span><span class="s2">"name"</span><span class="p">])</span>
+                        <span class="n">processed_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">j</span><span class="p">)</span>
+                        <span class="n">still_intersecting</span> <span class="o">=</span> <span class="kc">True</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">geometry</span><span class="o">.</span><span class="n">is_valid</span><span class="p">:</span>
+                <span class="n">geometry</span> <span class="o">=</span> <span class="n">geometry</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+            <span class="n">towns_in_agglomeration</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="n">towns</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">geometry</span><span class="p">)]</span>
+            <span class="n">population_from_towns</span> <span class="o">=</span> <span class="n">towns_in_agglomeration</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="n">population_from_towns</span> <span class="o">&lt;=</span> <span class="mi">250_000</span><span class="p">:</span>
+                <span class="n">agglomeration_level</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="k">elif</span> <span class="n">population_from_towns</span> <span class="o">&lt;=</span> <span class="mi">500_000</span><span class="p">:</span>
+                <span class="n">agglomeration_level</span> <span class="o">=</span> <span class="mi">2</span>
+            <span class="k">elif</span> <span class="n">population_from_towns</span> <span class="o">&lt;=</span> <span class="mi">1_000_000</span><span class="p">:</span>
+                <span class="n">agglomeration_level</span> <span class="o">=</span> <span class="mi">3</span>
+            <span class="k">elif</span> <span class="n">population_from_towns</span> <span class="o">&lt;=</span> <span class="mi">5_000_000</span><span class="p">:</span>
+                <span class="n">agglomeration_level</span> <span class="o">=</span> <span class="mi">4</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">agglomeration_level</span> <span class="o">=</span> <span class="mi">5</span>
+
+            <span class="n">merged_agglomeration</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">"geometry"</span><span class="p">:</span> <span class="n">geometry</span><span class="p">,</span>
+                <span class="s2">"type"</span><span class="p">:</span> <span class="s2">"Polycentric"</span> <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">merged_names</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="k">else</span> <span class="s2">"Monocentric"</span><span class="p">,</span>
+                <span class="s2">"core_cities"</span><span class="p">:</span> <span class="s2">", "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="n">merged_names</span><span class="p">)),</span>
+                <span class="s2">"population"</span><span class="p">:</span> <span class="n">population_from_towns</span><span class="p">,</span>
+                <span class="s2">"agglomeration_level"</span><span class="p">:</span> <span class="n">agglomeration_level</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="n">merged_geometries</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">merged_agglomeration</span><span class="p">)</span>
+
+            <span class="n">processed_indices</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">i</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">merged_geometries</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="s2">"geometry"</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="n">gdf</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AgglomerationBuilder._simplify_multipolygons"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.agglomeration.html#popframe.method.agglomeration.AgglomerationBuilder._simplify_multipolygons">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_simplify_multipolygons</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Keep only the largest polygon for MultiPolygon geometries.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf : GeoDataFrame</span>
+<span class="sd">            Input geometries.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GeoDataFrame</span>
+<span class="sd">            Copy with simplified geometries. Empty input is returned unchanged.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">gdf</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gdf</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">geom</span><span class="p">:</span> <span class="nb">max</span><span class="p">(</span><span class="n">geom</span><span class="o">.</span><span class="n">geoms</span><span class="p">,</span> <span class="n">key</span><span class="o">=</span><span class="k">lambda</span> <span class="n">g</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">area</span><span class="p">)</span> <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">geom</span><span class="p">,</span> <span class="n">MultiPolygon</span><span class="p">)</span> <span class="k">else</span> <span class="n">geom</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span></div>
+
+<div class="viewcode-block" id="AgglomerationBuilder.evaluate_city_agglomeration_status"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.agglomeration.html#popframe.method.agglomeration.AgglomerationBuilder.evaluate_city_agglomeration_status">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">evaluate_city_agglomeration_status</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span> <span class="n">agglomeration_gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Label towns by agglomeration membership and level.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        towns : GeoDataFrame</span>
+<span class="sd">            Towns layer with point geometries and columns ``name`` and ``geometry``.</span>
+<span class="sd">        agglomeration_gdf : GeoDataFrame</span>
+<span class="sd">            Agglomerations with columns ``geometry``, ``core_cities``, ``agglomeration_level``.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GeoDataFrame</span>
+<span class="sd">            ``towns`` copy with two columns added:</span>
+<span class="sd">            - ``agglomeration_status``: {"Вне агломерации","В агломерации","Центр агломерации"}</span>
+<span class="sd">            - ``agglomeration_level``: int in {0..5}</span>
+<span class="sd">        """</span>
+        <span class="n">agglomeration_status</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">agglomeration_level</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">town</span> <span class="ow">in</span> <span class="n">towns</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+            <span class="n">town_point</span> <span class="o">=</span> <span class="n">town</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span>
+            <span class="n">town_name</span> <span class="o">=</span> <span class="n">town</span><span class="p">[</span><span class="s2">"name"</span><span class="p">]</span>
+
+            <span class="n">in_agglomeration</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">is_core_city</span> <span class="o">=</span> <span class="kc">False</span>
+            <span class="n">current_agglomeration_level</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">agg</span> <span class="ow">in</span> <span class="n">agglomeration_gdf</span><span class="o">.</span><span class="n">iterrows</span><span class="p">():</span>
+                <span class="k">if</span> <span class="n">town_point</span><span class="o">.</span><span class="n">intersects</span><span class="p">(</span><span class="n">agg</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]):</span>
+                    <span class="n">in_agglomeration</span> <span class="o">=</span> <span class="kc">True</span>
+                    <span class="n">current_agglomeration_level</span> <span class="o">=</span> <span class="n">agg</span><span class="p">[</span><span class="s2">"agglomeration_level"</span><span class="p">]</span>
+                    <span class="n">core_cities</span> <span class="o">=</span> <span class="n">agg</span><span class="p">[</span><span class="s2">"core_cities"</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">", "</span><span class="p">)</span>
+                    <span class="k">if</span> <span class="n">town_name</span> <span class="ow">in</span> <span class="n">core_cities</span><span class="p">:</span>
+                        <span class="n">is_core_city</span> <span class="o">=</span> <span class="kc">True</span>
+                        <span class="k">break</span>
+
+            <span class="k">if</span> <span class="n">is_core_city</span><span class="p">:</span>
+                <span class="n">agglomeration_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Центр агломерации"</span><span class="p">)</span>
+                <span class="n">agglomeration_level</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_agglomeration_level</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">in_agglomeration</span><span class="p">:</span>
+                <span class="n">agglomeration_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"Вне агломерации"</span><span class="p">)</span>
+                <span class="n">agglomeration_level</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">agglomeration_status</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"В агломерации"</span><span class="p">)</span>
+                <span class="n">agglomeration_level</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">current_agglomeration_level</span><span class="p">)</span>
+
+        <span class="n">towns</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">towns</span><span class="p">[</span><span class="s2">"agglomeration_status"</span><span class="p">]</span> <span class="o">=</span> <span class="n">agglomeration_status</span>
+        <span class="n">towns</span><span class="p">[</span><span class="s2">"agglomeration_level"</span><span class="p">]</span> <span class="o">=</span> <span class="n">agglomeration_level</span>
+        <span class="k">return</span> <span class="n">towns</span></div>
+
+<div class="viewcode-block" id="AgglomerationBuilder.get_agglomerations"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.agglomeration.html#popframe.method.agglomeration.AgglomerationBuilder.get_agglomerations">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_agglomerations</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">update_df</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+        <span class="n">time</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">80</span><span class="p">,</span>
+        <span class="n">raise_on_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Build, merge, clip, and finalize urban agglomerations.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        update_df : DataFrame, optional</span>
+<span class="sd">            If provided, used by ``self.region.get_update_towns_gdf`` to update towns.</span>
+<span class="sd">        time : int, default 80</span>
+<span class="sd">            Global time budget in minutes. Values &lt; 50 are coerced to 50.</span>
+<span class="sd">        raise_on_empty : bool, default True</span>
+<span class="sd">            If True, raise an error when no eligible towns or no agglomerations are produced.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        GeoDataFrame</span>
+<span class="sd">            Final agglomerations after merge, clip, and simplification.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If there are fewer than two towns or fewer than two towns with valid population.</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            If no towns pass level/population filters or no agglomerations can be built</span>
+<span class="sd">            and ``raise_on_empty`` is True.</span>
+<span class="sd">        RuntimeError</span>
+<span class="sd">            On any unexpected error inside the pipeline, with original exception chained.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The function validates candidates by</span>
+<span class="sd">        ``towns['level'].isin(CITY_LEVELS)`` and</span>
+<span class="sd">        ``towns['population'] &gt;= self.min_population`` before building.</span>
+<span class="sd">        """</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">towns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">get_update_towns_gdf</span><span class="p">(</span><span class="n">update_df</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">towns</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="nb">len</span><span class="p">(</span><span class="n">towns</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Для построения агломерации требуется минимум два города."</span><span class="p">)</span>
+
+            <span class="n">valid_pop</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span><span class="o">.</span><span class="n">notnull</span><span class="p">()</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">towns</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">valid_pop</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Требуются данные о населении минимум у двух разных городов."</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">time</span> <span class="o">&lt;</span> <span class="mi">50</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s2">"Минимально допустимое значение параметра 'time' — 50 минут. Заменяю на 50."</span><span class="p">)</span>
+                <span class="n">time</span> <span class="o">=</span> <span class="mi">50</span>
+
+            <span class="c1"># preliminary eligibility check</span>
+            <span class="n">mask_level</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="s2">"level"</span><span class="p">]</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span><span class="n">CITY_LEVELS</span><span class="p">)</span>
+            <span class="n">mask_pop</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">min_population</span>
+            <span class="n">eligible</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="n">mask_level</span> <span class="o">&amp;</span> <span class="n">mask_pop</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">eligible</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">raise_on_empty</span><span class="p">:</span>
+                <span class="n">levels_sample</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">towns</span><span class="p">[</span><span class="s2">"level"</span><span class="p">]</span><span class="o">.</span><span class="n">value_counts</span><span class="p">()</span><span class="o">.</span><span class="n">head</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="o">.</span><span class="n">items</span><span class="p">())</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span>
+                    <span class="s2">"No towns pass level and population criteria: "</span>
+                    <span class="sa">f</span><span class="s2">"min_population=</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">min_population</span><span class="si">}</span><span class="s2">, allowed levels=</span><span class="si">{</span><span class="n">CITY_LEVELS</span><span class="si">}</span><span class="s2">. "</span>
+                    <span class="sa">f</span><span class="s2">"Levels distribution (top5): </span><span class="si">{</span><span class="n">levels_sample</span><span class="si">}</span><span class="s2">"</span>
+                <span class="p">)</span>
+
+            <span class="n">region_boundary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">region</span>
+
+            <span class="c1"># 1) build proto-agglomerations</span>
+            <span class="n">agglomeration_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_build_agglomeration</span><span class="p">(</span><span class="n">towns</span><span class="p">,</span> <span class="n">time</span><span class="p">)</span>
+
+            <span class="c1"># explicit error if nothing produced</span>
+            <span class="k">if</span> <span class="n">agglomeration_gdf</span><span class="o">.</span><span class="n">empty</span> <span class="ow">and</span> <span class="n">raise_on_empty</span><span class="p">:</span>
+                <span class="n">lvl_ok</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="n">mask_level</span><span class="p">]</span>
+                <span class="n">pop_ok</span> <span class="o">=</span> <span class="n">towns</span><span class="p">[</span><span class="n">mask_pop</span><span class="p">]</span>
+                <span class="n">msg_parts</span> <span class="o">=</span> <span class="p">[]</span>
+                <span class="k">if</span> <span class="n">lvl_ok</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                    <span class="n">msg_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"no towns with allowed levels (CITY_LEVELS)"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">pop_ok</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                    <span class="n">msg_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"no towns reaching min_population"</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">msg_parts</span><span class="p">:</span>
+                    <span class="n">msg_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">"accessibility produced no reachable sets at given time"</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s2">"Agglomerations not built: "</span> <span class="o">+</span> <span class="s2">"; "</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">msg_parts</span><span class="p">))</span>
+
+            <span class="c1"># 2) simplify</span>
+            <span class="n">agglomeration_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simplify_multipolygons</span><span class="p">(</span><span class="n">agglomeration_gdf</span><span class="p">)</span>
+
+            <span class="c1"># 3) merge overlapping and compute attributes</span>
+            <span class="n">agglomeration_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_merge_intersecting_agglomerations</span><span class="p">(</span><span class="n">agglomeration_gdf</span><span class="p">,</span> <span class="n">towns</span><span class="p">)</span>
+
+            <span class="c1"># 4) clip to region boundary</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">agglomeration_gdf</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+                <span class="n">agglomeration_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">overlay</span><span class="p">(</span><span class="n">agglomeration_gdf</span><span class="p">,</span> <span class="n">region_boundary</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"intersection"</span><span class="p">)</span>
+
+            <span class="c1"># 5) final simplify</span>
+            <span class="n">agglomeration_gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_simplify_multipolygons</span><span class="p">(</span><span class="n">agglomeration_gdf</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">agglomeration_gdf</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Ошибка при построении агломераций: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="kc">None</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

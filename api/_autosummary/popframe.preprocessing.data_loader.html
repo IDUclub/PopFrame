@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.preprocessing.data_loader &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="popframe.preprocessing.level_filler" href="popframe.preprocessing.level_filler.html" />
+    <link rel="prev" title="popframe.preprocessing.adjacency_calculator" href="popframe.preprocessing.adjacency_calculator.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation / Документация по API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="popframe.preprocessing.html">popframe.preprocessing</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="popframe.preprocessing.adjacency_calculator.html">popframe.preprocessing.adjacency_calculator</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">popframe.preprocessing.data_loader</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.preprocessing.data_loader.RegionDataLoader"><code class="docutils literal notranslate"><span class="pre">RegionDataLoader</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.preprocessing.data_loader.save_region"><code class="docutils literal notranslate"><span class="pre">save_region()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.preprocessing.data_loader.prepare_boundary"><code class="docutils literal notranslate"><span class="pre">prepare_boundary()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.preprocessing.data_loader.prepare_towns"><code class="docutils literal notranslate"><span class="pre">prepare_towns()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.preprocessing.data_loader.apply_population_updates"><code class="docutils literal notranslate"><span class="pre">apply_population_updates()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.preprocessing.data_loader.calculate_accessibility"><code class="docutils literal notranslate"><span class="pre">calculate_accessibility()</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.preprocessing.data_loader.build_region"><code class="docutils literal notranslate"><span class="pre">build_region()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.preprocessing.level_filler.html">popframe.preprocessing.level_filler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.preprocessing.population_filler.html">popframe.preprocessing.population_filler</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.preprocessing.utils.html">popframe.preprocessing.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.models.html">popframe.models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.method.html">popframe.method</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.utils.html">popframe.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API documentation / Документация по API</a></li>
+          <li class="breadcrumb-item"><a href="popframe.preprocessing.html">popframe.preprocessing</a></li>
+      <li class="breadcrumb-item active">popframe.preprocessing.data_loader</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/popframe.preprocessing.data_loader.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-popframe.preprocessing.data_loader">
+<span id="popframe-preprocessing-data-loader"></span><h1>popframe.preprocessing.data_loader<a class="headerlink" href="#module-popframe.preprocessing.data_loader" title="Permalink to this heading"></a></h1>
+<p>Load OSM data with resumable Overpass caching and build one Region pickle.</p>
+<p class="rubric">Functions</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.preprocessing.data_loader.apply_population_updates" title="popframe.preprocessing.data_loader.apply_population_updates"><code class="xref py py-obj docutils literal notranslate"><span class="pre">apply_population_updates</span></code></a>(towns, updates)</p></td>
+<td><p>Copy towns and apply positive integer population with a named source.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#popframe.preprocessing.data_loader.build_region" title="popframe.preprocessing.data_loader.build_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">build_region</span></code></a>(boundary, towns, graph, *[, ...])</p></td>
+<td><p>Validate population, snap towns and build a Region with directed minutes.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.preprocessing.data_loader.calculate_accessibility" title="popframe.preprocessing.data_loader.calculate_accessibility"><code class="xref py py-obj docutils literal notranslate"><span class="pre">calculate_accessibility</span></code></a>(graph, town_nodes)</p></td>
+<td><p>Return directed minutes between town IDs from road-node assignments.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#popframe.preprocessing.data_loader.prepare_boundary" title="popframe.preprocessing.data_loader.prepare_boundary"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_boundary</span></code></a>(boundary, *[, repair_geometry])</p></td>
+<td><p>Return an independent boundary in local UTM; optionally repair polygons.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.preprocessing.data_loader.prepare_towns" title="popframe.preprocessing.data_loader.prepare_towns"><code class="xref py py-obj docutils literal notranslate"><span class="pre">prepare_towns</span></code></a>(features, local_crs)</p></td>
+<td><p>Copy named OSM place nodes into local CRS; retain missing population.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#popframe.preprocessing.data_loader.save_region" title="popframe.preprocessing.data_loader.save_region"><code class="xref py py-obj docutils literal notranslate"><span class="pre">save_region</span></code></a>(region, destination)</p></td>
+<td><p>Atomically save one Region pickle; never overwrite an existing file.</p></td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.preprocessing.data_loader.RegionDataLoader" title="popframe.preprocessing.data_loader.RegionDataLoader"><code class="xref py py-obj docutils literal notranslate"><span class="pre">RegionDataLoader</span></code></a>(place_query, *[, ...])</p></td>
+<td><p>Download a region's boundary, named place nodes and directed drive graph.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.RegionDataLoader">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">popframe.preprocessing.data_loader.</span></span><span class="sig-name descname"><span class="pre">RegionDataLoader</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">place_query</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">dict</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cache_dir</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'cache/osm'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">overpass_endpoint</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">'https://maps.mail.ru/osm/tools/overpass/api'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">attempts</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">4</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">timeout</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">int</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">300</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_buffer_m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">20000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#RegionDataLoader"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.RegionDataLoader" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Download a region’s boundary, named place nodes and directed drive graph.</p>
+<p>Completed downloads and place tiles are reused from cache_dir. Cache
+parameters are checked to prevent mixing regions. OSMnx’s global settings
+are restored after each network operation, including failed operations.
+Use sequentially: OSMnx itself configures requests through global settings.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.RegionDataLoader.load_boundary">
+<span class="sig-name descname"><span class="pre">load_boundary</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#RegionDataLoader.load_boundary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.RegionDataLoader.load_boundary" title="Permalink to this definition"></a></dt>
+<dd><p>Load the OSM administrative boundary and return a valid copy in local UTM.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.RegionDataLoader.load_towns">
+<span class="sig-name descname"><span class="pre">load_towns</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#RegionDataLoader.load_towns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.RegionDataLoader.load_towns" title="Permalink to this definition"></a></dt>
+<dd><p>Load place nodes by tiles; preserve unknown population as missing values.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.RegionDataLoader.load_graph">
+<span class="sig-name descname"><span class="pre">load_graph</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">MultiDiGraph</span></span></span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#RegionDataLoader.load_graph"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.RegionDataLoader.load_graph" title="Permalink to this definition"></a></dt>
+<dd><p>Load a drive graph, filling boundary holes and adding a metric buffer.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.save_region">
+<span class="sig-prename descclassname"><span class="pre">popframe.preprocessing.data_loader.</span></span><span class="sig-name descname"><span class="pre">save_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="popframe.models.region.Region.html#popframe.models.region.Region" title="popframe.models.region.Region"><span class="pre">Region</span></a></span></em>, <em class="sig-param"><span class="n"><span class="pre">destination</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">str</span><span class="w"> </span><span class="p"><span class="pre">|</span></span><span class="w"> </span><span class="pre">Path</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">Path</span></span></span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#save_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.save_region" title="Permalink to this definition"></a></dt>
+<dd><p>Atomically save one Region pickle; never overwrite an existing file.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.prepare_boundary">
+<span class="sig-prename descclassname"><span class="pre">popframe.preprocessing.data_loader.</span></span><span class="sig-name descname"><span class="pre">prepare_boundary</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">repair_geometry</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">bool</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><span class="pre">GeoDataFrame</span></span></span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#prepare_boundary"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.prepare_boundary" title="Permalink to this definition"></a></dt>
+<dd><p>Return an independent boundary in local UTM; optionally repair polygons.</p>
+<p>When repair is requested, line and point remnants of make_valid are
+discarded, matching Region.prepare_for_analysis’s polygon repair.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.prepare_towns">
+<span class="sig-prename descclassname"><span class="pre">popframe.preprocessing.data_loader.</span></span><span class="sig-name descname"><span class="pre">prepare_towns</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">features</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">local_crs</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#prepare_towns"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.prepare_towns" title="Permalink to this definition"></a></dt>
+<dd><p>Copy named OSM place nodes into local CRS; retain missing population.</p>
+<p>Features use the OSMnx (element_type, osmid) index. OSM node IDs become town IDs.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.apply_population_updates">
+<span class="sig-prename descclassname"><span class="pre">popframe.preprocessing.data_loader.</span></span><span class="sig-name descname"><span class="pre">apply_population_updates</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">towns</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">updates</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#apply_population_updates"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.apply_population_updates" title="Permalink to this definition"></a></dt>
+<dd><p>Copy towns and apply positive integer population with a named source.</p>
+<p>Updates are indexed by town ID and contain population and source columns.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.calculate_accessibility">
+<span class="sig-prename descclassname"><span class="pre">popframe.preprocessing.data_loader.</span></span><span class="sig-name descname"><span class="pre">calculate_accessibility</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">graph</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">town_nodes</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#calculate_accessibility"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.calculate_accessibility" title="Permalink to this definition"></a></dt>
+<dd><p>Return directed minutes between town IDs from road-node assignments.</p>
+<p>Edge travel_time is in seconds; unreachable pairs remain positive infinity.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="popframe.preprocessing.data_loader.build_region">
+<span class="sig-prename descclassname"><span class="pre">popframe.preprocessing.data_loader.</span></span><span class="sig-name descname"><span class="pre">build_region</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">boundary</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">towns</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">GeoDataFrame</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">graph</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">MultiDiGraph</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">max_snap_distance_m</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><span class="pre">float</span></span><span class="w"> </span><span class="o"><span class="pre">=</span></span><span class="w"> </span><span class="default_value"><span class="pre">2000</span></span></em><span class="sig-paren">)</span> <span class="sig-return"><span class="sig-return-icon">&#x2192;</span> <span class="sig-return-typehint"><a class="reference internal" href="popframe.models.region.Region.html#popframe.models.region.Region" title="popframe.models.region.Region"><span class="pre">Region</span></a></span></span><a class="reference internal" href="../../_modules/popframe/preprocessing/data_loader.html#build_region"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.preprocessing.data_loader.build_region" title="Permalink to this definition"></a></dt>
+<dd><p>Validate population, snap towns and build a Region with directed minutes.</p>
+<p>Inputs are not modified. Missing population and remote road attachments
+raise ValueError with town IDs. Unreachable pairs remain positive infinity.
+Travel times exclude congestion and the approach from a town to its road
+node; different towns attached to the same node may have zero travel time.</p>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="popframe.preprocessing.adjacency_calculator.html" class="btn btn-neutral float-left" title="popframe.preprocessing.adjacency_calculator" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="popframe.preprocessing.level_filler.html" class="btn btn-neutral float-right" title="popframe.preprocessing.level_filler" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.models.region &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">popframe.models.region</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for popframe.models.region</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">functools</span><span class="w"> </span><span class="kn">import</span> <span class="n">singledispatchmethod</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">dill</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pickle</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pyproj</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.ops</span><span class="w"> </span><span class="kn">import</span> <span class="n">unary_union</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.town</span><span class="w"> </span><span class="kn">import</span> <span class="n">Town</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">matplotlib.pyplot</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">plt</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">popframe.preprocessing.level_filler</span><span class="w"> </span><span class="kn">import</span> <span class="n">LevelFiller</span>
+
+
+<span class="n">DISTRICTS_PLOT_COLOR</span> <span class="o">=</span> <span class="s2">"#28486d"</span>
+<span class="n">SETTLEMENTS_PLOT_COLOR</span> <span class="o">=</span> <span class="s2">"#ddd"</span>
+<span class="n">TOWNS_PLOT_COLOR</span> <span class="o">=</span> <span class="s2">"#333333"</span>
+<span class="n">TERRITORIES_PLOT_COLOR</span> <span class="o">=</span> <span class="s2">"#893434"</span>
+
+
+<span class="k">class</span><span class="w"> </span><span class="nc">_RegionUnpickler</span><span class="p">(</span><span class="n">pickle</span><span class="o">.</span><span class="n">Unpickler</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">find_class</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="c1"># pandas 2 replaced the numeric index classes used in older region files.</span>
+        <span class="k">if</span> <span class="n">module</span> <span class="o">==</span> <span class="s2">"pandas.core.indexes.numeric"</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"Int64Index"</span><span class="p">,</span> <span class="s2">"UInt64Index"</span><span class="p">,</span> <span class="s2">"Float64Index"</span><span class="p">}:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Index</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">find_class</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Region"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">Region</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    A class representing a geographical region that includes districts, settlements, towns, and optionally territories.</span>
+<span class="sd">    Provides methods for validating and visualizing spatial data, as well as for calculating accessibility between towns.</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    crs : pyproj.CRS</span>
+<span class="sd">        Coordinate Reference System of the region.</span>
+<span class="sd">    region : gpd.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame representing the boundaries of the region.</span>
+<span class="sd">    districts : gpd.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame containing information about districts.</span>
+<span class="sd">    settlements : gpd.GeoDataFrame</span>
+<span class="sd">        GeoDataFrame containing information about settlements.</span>
+<span class="sd">    _towns : dict</span>
+<span class="sd">        Dictionary containing `Town` objects indexed by their IDs.</span>
+<span class="sd">    accessibility_matrix : pd.DataFrame</span>
+<span class="sd">        DataFrame containing accessibility data between towns.</span>
+<span class="sd">    _territories : dict</span>
+<span class="sd">        Dictionary containing `Territory` objects indexed by their IDs (optional).</span>
+<span class="sd">    """</span>
+
+<div class="viewcode-block" id="Region.__init__"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.__init__">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span>
+        <span class="n">region</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">towns</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">,</span>
+        <span class="n">accessibility_matrix</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">,</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Initializes the Region object with GeoDataFrames for region, districts, settlements, and towns.</span>
+<span class="sd">        Optionally includes territories and an accessibility matrix to model transportation between towns.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        region : gpd.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame representing the boundaries of the region.</span>
+<span class="sd">        districts : gpd.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame containing information about districts.</span>
+<span class="sd">        settlements : gpd.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame containing information about settlements.</span>
+<span class="sd">        towns : gpd.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame containing information about towns.</span>
+<span class="sd">        accessibility_matrix : pd.DataFrame</span>
+<span class="sd">            DataFrame containing accessibility data between towns.</span>
+<span class="sd">        territories : gpd.GeoDataFrame, optional</span>
+<span class="sd">            GeoDataFrame containing information about territories (default is None).</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        AssertionError</span>
+<span class="sd">            If the CRS or indices between the towns and the accessibility matrix do not match.</span>
+<span class="sd">        """</span>
+        <span class="n">region</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_region</span><span class="p">(</span><span class="n">region</span><span class="p">)</span>
+        <span class="n">towns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_towns</span><span class="p">(</span><span class="n">towns</span><span class="p">)</span>
+        <span class="n">accessibility_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">validate_accessibility_matrix</span><span class="p">(</span><span class="n">accessibility_matrix</span><span class="p">)</span>
+
+        <span class="k">assert</span> <span class="p">(</span>
+            <span class="n">accessibility_matrix</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">towns</span><span class="o">.</span><span class="n">index</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">"Accessibility matrix indices and towns indices don't match"</span>
+        <span class="k">assert</span> <span class="n">region</span><span class="o">.</span><span class="n">crs</span> <span class="o">==</span> <span class="n">towns</span><span class="o">.</span><span class="n">crs</span><span class="p">,</span> <span class="s2">"CRS should match everywhere"</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">crs</span> <span class="o">=</span> <span class="n">towns</span><span class="o">.</span><span class="n">crs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">region</span> <span class="o">=</span> <span class="n">region</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_towns</span> <span class="o">=</span> <span class="n">Town</span><span class="o">.</span><span class="n">from_gdf</span><span class="p">(</span><span class="n">towns</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">accessibility_matrix</span> <span class="o">=</span> <span class="n">accessibility_matrix</span></div>
+
+<div class="viewcode-block" id="Region.validate_towns"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.validate_towns">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_towns</span><span class="p">(</span><span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validates the towns GeoDataFrame.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">),</span> <span class="s2">"Towns should be instance of gpd.GeoDataFrame"</span>
+        <span class="k">return</span> <span class="n">gdf</span></div>
+
+<div class="viewcode-block" id="Region.validate_region"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.validate_region">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_region</span><span class="p">(</span><span class="n">gdf</span><span class="p">:</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validates the region GeoDataFrame to ensure it has the correct structure and data types.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">),</span> <span class="s2">"Region should be instance of gpd.GeoDataFrame"</span>
+        <span class="k">assert</span> <span class="n">gdf</span><span class="o">.</span><span class="n">geom_type</span><span class="o">.</span><span class="n">isin</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">"Polygon"</span><span class="p">,</span> <span class="s2">"MultiPolygon"</span><span class="p">]</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">"District geometry should be Polygon or MultiPolygon"</span>
+        <span class="k">return</span> <span class="n">gdf</span><span class="p">[[</span><span class="s2">"geometry"</span><span class="p">]]</span></div>
+
+<div class="viewcode-block" id="Region.validate_accessibility_matrix"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.validate_accessibility_matrix">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_accessibility_matrix</span><span class="p">(</span><span class="n">df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Validates the accessibility matrix, ensuring it has non-negative float values</span>
+<span class="sd">        and matching row and column indices.</span>
+<span class="sd">        """</span>
+        <span class="k">assert</span> <span class="n">pd</span><span class="o">.</span><span class="n">api</span><span class="o">.</span><span class="n">types</span><span class="o">.</span><span class="n">is_float_dtype</span><span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span><span class="p">),</span> <span class="s2">"Accessibility matrix values should be float"</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">values</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">"Accessibility matrix values should be greater or equal 0"</span>
+        <span class="k">assert</span> <span class="p">(</span><span class="n">df</span><span class="o">.</span><span class="n">index</span> <span class="o">==</span> <span class="n">df</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(),</span> <span class="s2">"Accessibility matrix indices and columns don't match"</span>
+        <span class="k">return</span> <span class="n">df</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">towns</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="n">Town</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns a list of all towns in the region.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        list[Town]</span>
+<span class="sd">            List of Town objects.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_towns</span><span class="o">.</span><span class="n">values</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Region.get_update_towns_gdf"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.get_update_towns_gdf">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_update_towns_gdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_towns_gdf</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">update_df</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Обновляем значения населения в gdf из update_df</span>
+            <span class="n">gdf</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">update_df</span><span class="p">[[</span><span class="s2">"population"</span><span class="p">]])</span>
+
+            <span class="n">level_filler</span> <span class="o">=</span> <span class="n">LevelFiller</span><span class="p">(</span><span class="n">towns</span><span class="o">=</span><span class="n">gdf</span><span class="p">)</span>
+            <span class="c1"># Return a regular GeoDataFrame so empty slices retain their geometry column.</span>
+            <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">level_filler</span><span class="o">.</span><span class="n">fill_levels</span><span class="p">())</span>
+        <span class="k">return</span> <span class="n">gdf</span></div>
+
+<div class="viewcode-block" id="Region.get_towns_gdf"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.get_towns_gdf">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_towns_gdf</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Returns a GeoDataFrame representing all towns in the region, including their relationships with settlements and districts.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        gpd.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with town data.</span>
+<span class="sd">        """</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">town</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">town</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">towns</span><span class="p">]</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="o">.</span><span class="n">set_index</span><span class="p">(</span><span class="s2">"id"</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">rename_axis</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span><span class="o">.</span><span class="n">fillna</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Region.plot"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.plot">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">territories</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">"Схема расселения"</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""Plot the region outline, towns and optional highlighted territories.</span>
+
+<span class="sd">        Territories are projected to the region CRS for display. Returns the</span>
+<span class="sd">        Matplotlib axes for further annotation or export.</span>
+<span class="sd">        """</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib.lines</span><span class="w"> </span><span class="kn">import</span> <span class="n">Line2D</span>
+
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">boundary</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">DISTRICTS_PLOT_COLOR</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.9</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_towns_gdf</span><span class="p">()</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">TOWNS_PLOT_COLOR</span><span class="p">,</span> <span class="n">markersize</span><span class="o">=</span><span class="mi">9</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.55</span><span class="p">)</span>
+        <span class="n">handles</span> <span class="o">=</span> <span class="p">[</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">color</span><span class="o">=</span><span class="n">TOWNS_PLOT_COLOR</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"o"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+                          <span class="n">markersize</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.6</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Населённые пункты"</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">territories</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">territories</span><span class="o">.</span><span class="n">empty</span><span class="p">:</span>
+            <span class="n">territories</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">crs</span><span class="p">)</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span>
+                <span class="n">ax</span><span class="o">=</span><span class="n">ax</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="n">TERRITORIES_PLOT_COLOR</span><span class="p">,</span> <span class="n">edgecolor</span><span class="o">=</span><span class="n">TERRITORIES_PLOT_COLOR</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.8</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">handles</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">Line2D</span><span class="p">([],</span> <span class="p">[],</span> <span class="n">color</span><span class="o">=</span><span class="n">TERRITORIES_PLOT_COLOR</span><span class="p">,</span> <span class="n">marker</span><span class="o">=</span><span class="s2">"h"</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s2">""</span><span class="p">,</span>
+                                  <span class="n">markersize</span><span class="o">=</span><span class="mi">12</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">"Выбранная территория"</span><span class="p">))</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">handles</span><span class="o">=</span><span class="n">handles</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="s2">"upper right"</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_axis_off</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">ax</span></div>
+
+<div class="viewcode-block" id="Region.prepare_for_analysis"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.prepare_for_analysis">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">prepare_for_analysis</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="p">,</span> <span class="n">repair_geometry</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">"Region"</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""Validate a loaded model and return an independent copy in local UTM.</span>
+
+<span class="sd">        Checks geometries, population, town IDs and the travel-time matrix;</span>
+<span class="sd">        aligns matrix rows and columns with towns and recalculates size levels.</span>
+<span class="sd">        The source model is not modified. Matrix values must already represent</span>
+<span class="sd">        minutes: units cannot be inferred or converted by this method.</span>
+<span class="sd">        Positive infinity is allowed for unreachable pairs; the diagonal must</span>
+<span class="sd">        be zero. At least two towns are required for the analysis workflow.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        repair_geometry : bool, default False</span>
+<span class="sd">            Repair invalid boundary polygons with make_valid. Retain polygonal</span>
+<span class="sd">            parts of resulting geometry collections, discarding line/point</span>
+<span class="sd">            remnants. Empty or non-polygonal results still raise ValueError.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        ValueError</span>
+<span class="sd">            If the model is incomplete, inconsistent or cannot be projected.</span>
+<span class="sd">        """</span>
+        <span class="n">boundary</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">crs</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">boundary</span><span class="o">.</span><span class="n">crs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Не задана система координат региона или населённых пунктов."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_towns</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Для анализа нужны минимум два населённых пункта."</span><span class="p">)</span>
+        <span class="n">towns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_towns_gdf</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">towns</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Идентификаторы населённых пунктов должны быть уникальными."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">towns</span><span class="o">.</span><span class="n">geom_type</span><span class="o">.</span><span class="n">eq</span><span class="p">(</span><span class="s2">"Point"</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Населённые пункты должны быть точками."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">towns</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_valid</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">or</span> <span class="n">towns</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_empty</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"В населённых пунктах есть пустые или некорректные геометрии."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">repair_geometry</span>
+            <span class="ow">and</span> <span class="n">boundary</span><span class="o">.</span><span class="n">geom_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">"Polygon"</span><span class="p">,</span> <span class="s2">"MultiPolygon"</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="ow">and</span> <span class="ow">not</span> <span class="n">boundary</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_valid</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="n">repaired</span> <span class="o">=</span> <span class="n">boundary</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">make_valid</span><span class="p">()</span><span class="o">.</span><span class="n">map</span><span class="p">(</span>
+                <span class="k">lambda</span> <span class="n">geom</span><span class="p">:</span> <span class="n">unary_union</span><span class="p">([</span><span class="n">part</span> <span class="k">for</span> <span class="n">part</span> <span class="ow">in</span> <span class="n">geom</span><span class="o">.</span><span class="n">geoms</span> <span class="k">if</span> <span class="n">part</span><span class="o">.</span><span class="n">geom_type</span> <span class="ow">in</span> <span class="p">{</span><span class="s2">"Polygon"</span><span class="p">,</span> <span class="s2">"MultiPolygon"</span><span class="p">}])</span>
+                <span class="k">if</span> <span class="n">geom</span><span class="o">.</span><span class="n">geom_type</span> <span class="o">==</span> <span class="s2">"GeometryCollection"</span>
+                <span class="k">else</span> <span class="n">geom</span>
+            <span class="p">)</span>
+            <span class="n">boundary</span> <span class="o">=</span> <span class="n">boundary</span><span class="o">.</span><span class="n">set_geometry</span><span class="p">(</span><span class="n">repaired</span><span class="p">)</span>
+        <span class="k">if</span> <span class="p">(</span>
+            <span class="n">boundary</span><span class="o">.</span><span class="n">empty</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">boundary</span><span class="o">.</span><span class="n">geom_type</span><span class="o">.</span><span class="n">isin</span><span class="p">([</span><span class="s2">"Polygon"</span><span class="p">,</span> <span class="s2">"MultiPolygon"</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="ow">not</span> <span class="n">boundary</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_valid</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+            <span class="ow">or</span> <span class="n">boundary</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">is_empty</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+        <span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Граница региона должна содержать непустые корректные полигоны."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isfinite</span><span class="p">(</span><span class="n">towns</span><span class="p">[</span><span class="s2">"population"</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">()</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">towns</span><span class="p">[</span><span class="s2">"population"</span><span class="p">]</span><span class="o">.</span><span class="n">gt</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Население должно быть положительным конечным числом."</span><span class="p">)</span>
+
+        <span class="n">matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">accessibility_matrix</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">matrix</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">is_unique</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"В матрице времени повторяются идентификаторы."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">set</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">towns</span><span class="o">.</span><span class="n">index</span><span class="p">)</span> <span class="ow">or</span> <span class="nb">set</span><span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">columns</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">set</span><span class="p">(</span><span class="n">towns</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Идентификаторы матрицы времени и населённых пунктов различаются."</span><span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">matrix</span> <span class="o">=</span> <span class="n">matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">towns</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">towns</span><span class="o">.</span><span class="n">index</span><span class="p">]</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">TypeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Матрица времени должна содержать числа в минутах."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="k">if</span> <span class="n">matrix</span><span class="o">.</span><span class="n">isna</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span><span class="o">.</span><span class="n">any</span><span class="p">()</span> <span class="ow">or</span> <span class="p">(</span><span class="n">matrix</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"В матрице времени есть пропуски или отрицательные значения."</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">matrix</span><span class="p">),</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Время поездки пункта в самого себя должно быть нулевым."</span><span class="p">)</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">local_crs</span> <span class="o">=</span> <span class="n">boundary</span><span class="o">.</span><span class="n">estimate_utm_crs</span><span class="p">()</span>
+        <span class="k">except</span> <span class="p">(</span><span class="ne">RuntimeError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">)</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Не удалось подобрать локальную проекцию UTM для региона."</span><span class="p">)</span> <span class="kn">from</span><span class="w"> </span><span class="nn">exc</span>
+        <span class="k">if</span> <span class="n">local_crs</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">"Не удалось подобрать локальную проекцию UTM для региона."</span><span class="p">)</span>
+        <span class="n">towns</span> <span class="o">=</span> <span class="n">LevelFiller</span><span class="p">(</span><span class="n">towns</span><span class="o">=</span><span class="n">towns</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">local_crs</span><span class="p">)</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span><span class="o">.</span><span class="n">fill_levels</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">Region</span><span class="p">(</span><span class="n">region</span><span class="o">=</span><span class="n">boundary</span><span class="o">.</span><span class="n">to_crs</span><span class="p">(</span><span class="n">local_crs</span><span class="p">),</span> <span class="n">towns</span><span class="o">=</span><span class="n">towns</span><span class="p">,</span> <span class="n">accessibility_matrix</span><span class="o">=</span><span class="n">matrix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Region.__getitem__"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.__getitem__">[docs]</a>    <span class="nd">@singledispatchmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arg</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Overloaded subscript operator to access a town or accessibility data based on the argument type.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        arg : int or tuple</span>
+<span class="sd">            Integer to access a town by its ID, or tuple to retrieve accessibility data between two towns.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        NotImplementedError</span>
+<span class="sd">            If the argument type is unsupported.</span>
+<span class="sd">        """</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't access object with such argument type </span><span class="si">{</span><span class="nb">type</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span></div>
+
+    <span class="c1"># Make city_model subscriptable, to access block via ID like city_model[123]</span>
+    <span class="nd">@__getitem__</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">town_id</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">town_id</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_towns</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">KeyError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Can't find town with such id: </span><span class="si">{</span><span class="n">town_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_towns</span><span class="p">[</span><span class="n">town_id</span><span class="p">]</span>
+
+    <span class="nd">@__getitem__</span><span class="o">.</span><span class="n">register</span><span class="p">(</span><span class="nb">tuple</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">towns</span><span class="p">):</span>
+        <span class="p">(</span><span class="n">town_a</span><span class="p">,</span> <span class="n">town_b</span><span class="p">)</span> <span class="o">=</span> <span class="n">towns</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">town_a</span><span class="p">,</span> <span class="n">Town</span><span class="p">):</span>
+            <span class="n">town_a</span> <span class="o">=</span> <span class="n">town_a</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">town_b</span><span class="p">,</span> <span class="n">Town</span><span class="p">):</span>
+            <span class="n">town_b</span> <span class="o">=</span> <span class="n">town_b</span><span class="o">.</span><span class="n">id</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">accessibility_matrix</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">town_a</span><span class="p">,</span> <span class="n">town_b</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Region.from_pickle"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.from_pickle">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">from_pickle</span><span class="p">(</span><span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Load a trusted Region pickle, including pre-pandas-2 numeric indexes.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path : str</span>
+<span class="sd">            Path to the .pickle file.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        Region</span>
+<span class="sd">            The loaded Region object.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"rb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">_RegionUnpickler</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">load</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Region.to_pickle"><a class="viewcode-back" href="../../../api/_autosummary/popframe.models.region.Region.html#popframe.models.region.Region.to_pickle">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">to_pickle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Save the Region object to a .pickle file.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        file_path : str</span>
+<span class="sd">            Path to the .pickle file.</span>
+<span class="sd">        """</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">file_path</span><span class="p">,</span> <span class="s2">"wb"</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">pickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.preprocessing.adjacency_calculator &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">popframe.preprocessing.adjacency_calculator</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for popframe.preprocessing.adjacency_calculator</h1><div class="highlight"><pre>
+<span></span><span class="sd">"""</span>
+<span class="sd">This module provides all necessary tools to get accesibility matrix from transport graph</span>
+<span class="sd">"""</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Any</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">networkit</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nk</span>  <span class="c1"># type: ignore</span>
+<span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>  <span class="c1"># pragma: no cover</span>
+    <span class="n">nk</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># will be validated at runtime</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">networkx</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">nx</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pydantic</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseModel</span><span class="p">,</span> <span class="n">InstanceOf</span><span class="p">,</span> <span class="n">field_validator</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely</span><span class="w"> </span><span class="kn">import</span> <span class="n">Polygon</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">..models.geodataframe</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseRow</span><span class="p">,</span> <span class="n">GeoDataFrame</span>
+
+<span class="c1"># from ..graph_generator import GraphGenerator</span>
+
+
+<div class="viewcode-block" id="BlockRow"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.adjacency_calculator.html#popframe.preprocessing.adjacency_calculator.BlockRow">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">BlockRow</span><span class="p">(</span><span class="n">BaseRow</span><span class="p">):</span>
+    <span class="n">geometry</span><span class="p">:</span> <span class="n">Polygon</span></div>
+
+
+<div class="viewcode-block" id="AdjacencyCalculator"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.adjacency_calculator.html#popframe.preprocessing.adjacency_calculator.AdjacencyCalculator">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">AdjacencyCalculator</span><span class="p">(</span><span class="n">BaseModel</span><span class="p">):</span>  <span class="c1"># pylint: disable=too-few-public-methods</span>
+<span class="w">    </span><span class="sd">"""</span>
+<span class="sd">    Class Accessibility calculates accessibility matrix between city blocks.</span>
+<span class="sd">    It takes a lot of RAM to calculate one since we have thousands of city blocks.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    get_matrix</span>
+<span class="sd">    """</span>
+
+    <span class="n">blocks</span><span class="p">:</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">BlockRow</span><span class="p">]</span>
+    <span class="n">graph</span><span class="p">:</span> <span class="n">InstanceOf</span><span class="p">[</span><span class="n">nx</span><span class="o">.</span><span class="n">MultiDiGraph</span><span class="p">]</span>
+
+<div class="viewcode-block" id="AdjacencyCalculator.validate_blocks"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.adjacency_calculator.html#popframe.preprocessing.adjacency_calculator.AdjacencyCalculator.validate_blocks">[docs]</a>    <span class="nd">@field_validator</span><span class="p">(</span><span class="s2">"blocks"</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s2">"before"</span><span class="p">)</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">validate_blocks</span><span class="p">(</span><span class="n">gdf</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">gdf</span><span class="p">,</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">BlockRow</span><span class="p">]):</span>
+            <span class="n">gdf</span> <span class="o">=</span> <span class="n">GeoDataFrame</span><span class="p">[</span><span class="n">BlockRow</span><span class="p">](</span><span class="n">gdf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span></div>
+
+    <span class="c1"># @field_validator("graph", mode="before")</span>
+    <span class="c1"># def validate_graph(graph):</span>
+    <span class="c1">#     assert "crs" in graph.graph, 'Graph should contain "crs" property similar to GeoDataFrame'</span>
+    <span class="c1">#     return GraphGenerator.validate_graph(graph)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">model_post_init</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">__context</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">crs</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">graph</span><span class="p">[</span><span class="s2">"crs"</span><span class="p">],</span> <span class="s2">"Blocks CRS should match graph CRS"</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">model_post_init</span><span class="p">(</span><span class="n">__context</span><span class="p">)</span>
+
+<div class="viewcode-block" id="AdjacencyCalculator._get_nx2nk_idmap"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.adjacency_calculator.html#popframe.preprocessing.adjacency_calculator.AdjacencyCalculator._get_nx2nk_idmap">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_nx2nk_idmap</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>  <span class="c1"># TODO: add typing for the dict</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        This method gets ids from nx graph to place as attribute in nk graph</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        graph: networkx graph</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        idmap: dict</span>
+<span class="sd">            map of old and new ids</span>
+<span class="sd">        """</span>
+
+        <span class="n">idmap</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="nb">id</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="nb">id</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">(),</span> <span class="nb">range</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">())))</span>
+        <span class="k">return</span> <span class="n">idmap</span></div>
+
+<div class="viewcode-block" id="AdjacencyCalculator._get_nk_attrs"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.adjacency_calculator.html#popframe.preprocessing.adjacency_calculator.AdjacencyCalculator._get_nk_attrs">[docs]</a>    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_get_nk_attrs</span><span class="p">(</span><span class="n">graph</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">Graph</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>  <span class="c1"># TODO: add typing for the dict</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        This method gets attributes from nx graph to set as attributes in nk graph</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        graph: networkx graph</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        idmap: dict</span>
+<span class="sd">            map of old and new attributes</span>
+<span class="sd">        """</span>
+
+        <span class="n">attrs</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="p">{</span><span class="s2">"x"</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"x"</span><span class="p">],</span> <span class="s2">"y"</span><span class="p">:</span> <span class="n">d</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="s2">"y"</span><span class="p">]})</span>
+            <span class="k">for</span> <span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">u</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span> <span class="nb">range</span><span class="p">(</span><span class="n">graph</span><span class="o">.</span><span class="n">number_of_nodes</span><span class="p">()))</span>
+        <span class="p">)</span>
+        <span class="k">return</span> <span class="n">attrs</span></div>
+
+<div class="viewcode-block" id="AdjacencyCalculator._convert_nx2nk"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.adjacency_calculator.html#popframe.preprocessing.adjacency_calculator.AdjacencyCalculator._convert_nx2nk">[docs]</a>    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_nx2nk</span><span class="p">(</span>  <span class="c1"># pylint: disable=too-many-locals,invalid-name</span>
+        <span class="bp">cls</span><span class="p">,</span> <span class="n">graph_nx</span><span class="p">:</span> <span class="n">nx</span><span class="o">.</span><span class="n">MultiDiGraph</span><span class="p">,</span> <span class="n">idmap</span><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">weight</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"time_min"</span>
+    <span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        This method converts `networkx` graph to `networkit` graph to fasten calculations.</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        graph_nx: networkx graph</span>
+<span class="sd">        idmap: dict</span>
+<span class="sd">            map of ids in old nx and new nk graphs</span>
+<span class="sd">        weight: str</span>
+<span class="sd">            value to be used as a edge's weight</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        graph_nk: nk.Graph</span>
+<span class="sd">            the same graph but now presented in is `networkit` package Graph class.</span>
+
+<span class="sd">        """</span>
+
+        <span class="k">if</span> <span class="n">nk</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ImportError</span><span class="p">(</span>
+                <span class="s2">"networkit is required for fast accessibility calculations. "</span>
+                <span class="s2">"Install optional extra: pip install 'popframe[speed]'"</span>
+            <span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">idmap</span><span class="p">:</span>
+            <span class="n">idmap</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_get_nx2nk_idmap</span><span class="p">(</span><span class="n">graph_nx</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">idmap</span><span class="o">.</span><span class="n">values</span><span class="p">())</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">edges</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">graph_nx</span><span class="o">.</span><span class="n">edges</span><span class="p">())</span>
+
+        <span class="n">graph_nk</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">Graph</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">directed</span><span class="o">=</span><span class="n">graph_nx</span><span class="o">.</span><span class="n">is_directed</span><span class="p">(),</span> <span class="n">weighted</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">u_</span><span class="p">,</span> <span class="n">v_</span> <span class="ow">in</span> <span class="n">edges</span><span class="p">:</span>
+            <span class="n">u</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">idmap</span><span class="p">[</span><span class="n">u_</span><span class="p">],</span> <span class="n">idmap</span><span class="p">[</span><span class="n">v_</span><span class="p">]</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">graph_nx</span><span class="p">[</span><span class="n">u_</span><span class="p">][</span><span class="n">v_</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">d_</span> <span class="ow">in</span> <span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+                    <span class="n">v__</span> <span class="o">=</span> <span class="n">graph_nk</span><span class="o">.</span><span class="n">addNodes</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+                    <span class="n">u__</span> <span class="o">=</span> <span class="n">v__</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">w</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">weight</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">d</span> <span class="k">else</span> <span class="mi">1</span>
+                    <span class="n">graph_nk</span><span class="o">.</span><span class="n">addEdge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+                    <span class="n">graph_nk</span><span class="o">.</span><span class="n">addEdge</span><span class="p">(</span><span class="n">u_</span><span class="p">,</span> <span class="n">u__</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+                    <span class="n">graph_nk</span><span class="o">.</span><span class="n">addEdge</span><span class="p">(</span><span class="n">v_</span><span class="p">,</span> <span class="n">v__</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">d_</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">values</span><span class="p">())[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">d_</span><span class="p">[</span><span class="n">weight</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span> <span class="k">if</span> <span class="n">weight</span> <span class="ow">in</span> <span class="n">d_</span> <span class="k">else</span> <span class="mi">1</span>
+                <span class="n">graph_nk</span><span class="o">.</span><span class="n">addEdge</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">w</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">graph_nk</span></div>
+
+<div class="viewcode-block" id="AdjacencyCalculator._get_nk_distances"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.adjacency_calculator.html#popframe.preprocessing.adjacency_calculator.AdjacencyCalculator._get_nk_distances">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_get_nk_distances</span><span class="p">(</span>
+        <span class="bp">self</span><span class="p">,</span> <span class="n">nk_dists</span><span class="p">,</span> <span class="n">loc</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">from_blocks</span>  <span class="c1"># pylint: disable=c-extension-no-member</span>
+    <span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        This method calculates distances between blocks using nk SPSP algorithm.</span>
+<span class="sd">        The function is called inside apply function.</span>
+
+<span class="sd">        Attributes</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nk_dists: nk.base.Algorithm</span>
+<span class="sd">            Compressed nk graph to compute distances between nodes using SPSP algorithm</span>
+<span class="sd">        loc: pd.Series</span>
+<span class="sd">            Row in the df</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pd.Series with computed distances</span>
+<span class="sd">        """</span>
+
+        <span class="n">target_blocks</span> <span class="o">=</span> <span class="n">loc</span><span class="o">.</span><span class="n">index</span>
+        <span class="n">source_block</span> <span class="o">=</span> <span class="n">loc</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">target_nodes</span> <span class="o">=</span> <span class="p">[</span><span class="n">from_blocks</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="s2">"index_left"</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">target_blocks</span><span class="p">]</span>
+        <span class="n">source_node</span> <span class="o">=</span> <span class="n">from_blocks</span><span class="o">.</span><span class="n">loc</span><span class="p">[</span><span class="n">source_block</span><span class="p">,</span> <span class="s2">"index_left"</span><span class="p">]</span>
+        <span class="n">distances</span> <span class="o">=</span> <span class="p">[</span><span class="n">nk_dists</span><span class="o">.</span><span class="n">getDistance</span><span class="p">(</span><span class="n">source_node</span><span class="p">,</span> <span class="n">node</span><span class="p">)</span> <span class="k">for</span> <span class="n">node</span> <span class="ow">in</span> <span class="n">target_nodes</span><span class="p">]</span>
+
+        <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">distances</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">target_blocks</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdjacencyCalculator.get_dataframe"><a class="viewcode-back" href="../../../api/_autosummary/popframe.preprocessing.adjacency_calculator.html#popframe.preprocessing.adjacency_calculator.AdjacencyCalculator.get_dataframe">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">get_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        This methods runs graph to matrix calculations</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        accs_matrix: pd.DataFrame</span>
+<span class="sd">            An accessibility matrix that contains time between all blocks in the city</span>
+<span class="sd">        """</span>
+
+        <span class="n">graph_nx</span> <span class="o">=</span> <span class="n">nx</span><span class="o">.</span><span class="n">convert_node_labels_to_integers</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+        <span class="n">graph_nk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_nx2nk</span><span class="p">(</span><span class="n">graph_nx</span><span class="p">)</span>
+
+        <span class="n">graph_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">graph_nx</span><span class="o">.</span><span class="n">nodes</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="kc">True</span><span class="p">)),</span> <span class="n">orient</span><span class="o">=</span><span class="s2">"index"</span><span class="p">)</span>
+        <span class="n">graph_gdf</span> <span class="o">=</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">(</span>
+            <span class="n">graph_df</span><span class="p">,</span> <span class="n">geometry</span><span class="o">=</span><span class="n">gpd</span><span class="o">.</span><span class="n">points_from_xy</span><span class="p">(</span><span class="n">graph_df</span><span class="p">[</span><span class="s2">"x"</span><span class="p">],</span> <span class="n">graph_df</span><span class="p">[</span><span class="s2">"y"</span><span class="p">]),</span> <span class="n">crs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">crs</span><span class="o">.</span><span class="n">to_epsg</span><span class="p">()</span>
+        <span class="p">)</span>
+
+        <span class="n">blocks</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">blocks</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="n">blocks</span><span class="o">.</span><span class="n">geometry</span> <span class="o">=</span> <span class="n">blocks</span><span class="o">.</span><span class="n">geometry</span><span class="o">.</span><span class="n">representative_point</span><span class="p">()</span>
+        <span class="n">from_blocks</span> <span class="o">=</span> <span class="n">graph_gdf</span><span class="o">.</span><span class="n">sjoin_nearest</span><span class="p">(</span><span class="n">blocks</span><span class="p">,</span> <span class="n">how</span><span class="o">=</span><span class="s2">"right"</span><span class="p">)</span>
+
+        <span class="n">accs_matrix</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">from_blocks</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">from_blocks</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="n">nk_dists</span> <span class="o">=</span> <span class="n">nk</span><span class="o">.</span><span class="n">distance</span><span class="o">.</span><span class="n">SPSP</span><span class="p">(</span>  <span class="c1"># pylint: disable=c-extension-no-member</span>
+            <span class="n">graph_nk</span><span class="p">,</span> <span class="n">sources</span><span class="o">=</span><span class="nb">list</span><span class="p">(</span><span class="n">from_blocks</span><span class="p">[</span><span class="s2">"index_left"</span><span class="p">])</span>
+        <span class="p">)</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="n">accs_matrix</span> <span class="o">=</span> <span class="n">accs_matrix</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_nk_distances</span><span class="p">(</span><span class="n">nk_dists</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">from_blocks</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="c1"># accs_matrix.index = blocks.index</span>
+        <span class="c1"># accs_matrix.columns = blocks.index</span>
+
+        <span class="c1"># bug fix in city block's closest node is no connecte to actual transport infrastructure</span>
+        <span class="n">accs_matrix</span><span class="p">[</span><span class="n">accs_matrix</span> <span class="o">&gt;</span> <span class="mi">10000</span><span class="p">]</span> <span class="o">=</span> <span class="n">accs_matrix</span><span class="p">[</span><span class="n">accs_matrix</span> <span class="o">&lt;</span> <span class="mi">10000</span><span class="p">]</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">accs_matrix</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

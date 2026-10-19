@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="generator" content="Docutils 0.18.1: http://docutils.sourceforge.net/" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.territory_evaluation &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="popframe.utils" href="popframe.utils.html" />
+    <link rel="prev" title="popframe.method.spatial_inequality" href="popframe.method.spatial_inequality.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../examples/index.html">Examples</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">API documentation / Документация по API</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="popframe.preprocessing.html">popframe.preprocessing</a></li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.models.html">popframe.models</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="popframe.method.html">popframe.method</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.agglomeration.html">popframe.method.agglomeration</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.anchor_settlement.html">popframe.method.anchor_settlement</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.base_method.html">popframe.method.base_method</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.city_evaluation.html">popframe.method.city_evaluation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.engineer.html">popframe.method.engineer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.landuse_assessment.html">popframe.method.landuse_assessment</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.popuation_frame.html">popframe.method.popuation_frame</a></li>
+<li class="toctree-l3"><a class="reference internal" href="popframe.method.spatial_inequality.html">popframe.method.spatial_inequality</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">popframe.method.territory_evaluation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#popframe.method.territory_evaluation.TerritoryEvaluation"><code class="docutils literal notranslate"><span class="pre">TerritoryEvaluation</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="popframe.utils.html">popframe.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">API documentation / Документация по API</a></li>
+          <li class="breadcrumb-item"><a href="popframe.method.html">popframe.method</a></li>
+      <li class="breadcrumb-item active">popframe.method.territory_evaluation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../../_sources/api/_autosummary/popframe.method.territory_evaluation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-popframe.method.territory_evaluation">
+<span id="popframe-method-territory-evaluation"></span><h1>popframe.method.territory_evaluation<a class="headerlink" href="#module-popframe.method.territory_evaluation" title="Permalink to this heading"></a></h1>
+<p class="rubric">Classes</p>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#popframe.method.territory_evaluation.TerritoryEvaluation" title="popframe.method.territory_evaluation.TerritoryEvaluation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">TerritoryEvaluation</span></code></a>(*, region)</p></td>
+<td><p></p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py class">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">popframe.method.territory_evaluation.</span></span><span class="sig-name descname"><span class="pre">TerritoryEvaluation</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">region</span></span><span class="p"><span class="pre">:</span></span><span class="w"> </span><span class="n"><a class="reference internal" href="popframe.models.region.Region.html#popframe.models.region.Region" title="popframe.models.region.Region"><span class="pre">Region</span></a></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation" title="Permalink to this definition"></a></dt>
+<dd><p>Bases: <a class="reference internal" href="popframe.method.base_method.html#popframe.method.base_method.BaseMethod" title="popframe.method.base_method.BaseMethod"><code class="xref py py-class docutils literal notranslate"><span class="pre">BaseMethod</span></code></a></p>
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._is_criterion_satisfied">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_is_criterion_satisfied</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._is_criterion_satisfied"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._is_criterion_satisfied" title="Permalink to this definition"></a></dt>
+<dd><p>Check if the criterion is satisfied for a given profile value.</p>
+<section id="parameters">
+<h2>Parameters<a class="headerlink" href="#parameters" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>profile_value<span class="classifier">int or tuple</span></dt><dd><p>The value or range of values for the profile criterion.</p>
+</dd>
+<dt>criterion_value<span class="classifier">int or float</span></dt><dd><p>The value to check against the profile criterion.</p>
+</dd>
+</dl>
+</section>
+<section id="returns">
+<h2>Returns<a class="headerlink" href="#returns" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>bool</dt><dd><p>True if the criterion is satisfied, False otherwise.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._calculate_exceedance">
+<em class="property"><span class="pre">classmethod</span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">_calculate_exceedance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">profile_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">criterion_value</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._calculate_exceedance"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._calculate_exceedance" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the exceedance of the criterion value over the profile value.</p>
+<section id="id1">
+<h2>Parameters<a class="headerlink" href="#id1" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>profile_value<span class="classifier">int or tuple</span></dt><dd><p>The value or range of values for the profile criterion.</p>
+</dd>
+<dt>criterion_value<span class="classifier">int or float</span></dt><dd><p>The value to check against the profile criterion.</p>
+</dd>
+</dl>
+</section>
+<section id="id2">
+<h2>Returns<a class="headerlink" href="#id2" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>float</dt><dd><p>The amount by which the criterion value exceeds the profile value.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation.calculate_potential">
+<span class="sig-name descname"><span class="pre">calculate_potential</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">criteria_values</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">*</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">detailed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation.calculate_potential"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation.calculate_potential" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate the potential scores for different profiles based on criteria values.</p>
+<section id="id3">
+<h2>Parameters<a class="headerlink" href="#id3" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>criteria_values<span class="classifier">dict</span></dt><dd><p>Dictionary of criterion names and their values.</p>
+</dd>
+<dt>detailed<span class="classifier">bool, default False</span></dt><dd><p>Return an explained ranking using all five named criteria. Profiles
+are ordered by more satisfied criteria, then fewer missing points.
+Equal results share a rank; no profile receives special priority.</p>
+</dd>
+</dl>
+</section>
+<section id="id4">
+<h2>Returns<a class="headerlink" href="#id4" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>list of tuple or list of dict</dt><dd><p>By default, the existing profile names and score tuples. With
+<code class="docutils literal notranslate"><span class="pre">detailed=True</span></code>, each result includes <code class="docutils literal notranslate"><span class="pre">rank</span></code>, <code class="docutils literal notranslate"><span class="pre">profile</span></code>,
+<code class="docutils literal notranslate"><span class="pre">satisfied_criteria</span></code>, <code class="docutils literal notranslate"><span class="pre">total_criteria</span></code>, <code class="docutils literal notranslate"><span class="pre">missing_criteria</span></code>
+(criterion names mapped to missing points), and <code class="docutils literal notranslate"><span class="pre">total_deficit</span></code>.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation.evaluate_territory_location">
+<span class="sig-name descname"><span class="pre">evaluate_territory_location</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">territories_gdf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation.evaluate_territory_location"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation.evaluate_territory_location" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate the location of each territory relative to settlements.</p>
+<section id="id5">
+<h2>Parameters<a class="headerlink" href="#id5" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>territories_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>Geospatial data with territories.</p>
+</dd>
+</dl>
+</section>
+<section id="id6">
+<h2>Returns<a class="headerlink" href="#id6" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>list of dict</dt><dd><p>List of evaluation results for each territory. Nearby results include
+<code class="docutils literal notranslate"><span class="pre">closest_settlement</span></code>; results between two centers include
+<code class="docutils literal notranslate"><span class="pre">closest_settlement1</span></code> and <code class="docutils literal notranslate"><span class="pre">closest_settlement2</span></code>. Settlement fields
+are omitted when no relevant settlements are found.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._get_level_scores">
+<span class="sig-name descname"><span class="pre">_get_level_scores</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._get_level_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._get_level_scores" title="Permalink to this definition"></a></dt>
+<dd><p>Get the scores for different levels of settlements.</p>
+<section id="id7">
+<h2>Returns<a class="headerlink" href="#id7" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>dict</dt><dd><p>Dictionary where the key is the settlement level and the value is the score.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._evaluate_single_territory">
+<span class="sig-name descname"><span class="pre">_evaluate_single_territory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">territory_geom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">territory_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlements_gdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level_scores</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._evaluate_single_territory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._evaluate_single_territory" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate a single territory, determining its nearest settlements and interpretation.</p>
+<section id="id8">
+<h2>Parameters<a class="headerlink" href="#id8" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>territory_geom<span class="classifier">shapely.geometry.base.BaseGeometry</span></dt><dd><p>The geometry of the territory.</p>
+</dd>
+<dt>territory_name<span class="classifier">str</span></dt><dd><p>The name of the territory.</p>
+</dd>
+<dt>settlements_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>Geospatial data with settlements.</p>
+</dd>
+<dt>level_scores<span class="classifier">dict</span></dt><dd><p>Dictionary with settlement level scores.</p>
+</dd>
+</dl>
+</section>
+<section id="id9">
+<h2>Returns<a class="headerlink" href="#id9" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>dict</dt><dd><p>The results of the territory evaluation.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._evaluate_nearby_settlement">
+<span class="sig-name descname"><span class="pre">_evaluate_nearby_settlement</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">territory_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlements_in_buffer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">level_scores</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._evaluate_nearby_settlement"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._evaluate_nearby_settlement" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate the territory if it is near settlements.</p>
+<section id="id10">
+<h2>Parameters<a class="headerlink" href="#id10" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>territory_name<span class="classifier">str</span></dt><dd><p>The name of the territory.</p>
+</dd>
+<dt>settlements_in_buffer<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>The settlements within the buffer.</p>
+</dd>
+<dt>level_scores<span class="classifier">dict</span></dt><dd><p>Dictionary with settlement level scores.</p>
+</dd>
+</dl>
+</section>
+<section id="id11">
+<h2>Returns<a class="headerlink" href="#id11" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>dict</dt><dd><p>The results of the territory evaluation.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._evaluate_between_settlements">
+<span class="sig-name descname"><span class="pre">_evaluate_between_settlements</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">territory_geom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">territory_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">settlements_gdf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._evaluate_between_settlements"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._evaluate_between_settlements" title="Permalink to this definition"></a></dt>
+<dd><p>Evaluate the territory if it is located between settlements.</p>
+<section id="id12">
+<h2>Parameters<a class="headerlink" href="#id12" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>territory_geom<span class="classifier">shapely.geometry.base.BaseGeometry</span></dt><dd><p>The geometry of the territory.</p>
+</dd>
+<dt>territory_name<span class="classifier">str</span></dt><dd><p>The name of the territory.</p>
+</dd>
+<dt>settlements_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>Geospatial data with settlements.</p>
+</dd>
+</dl>
+</section>
+<section id="id13">
+<h2>Returns<a class="headerlink" href="#id13" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>dict</dt><dd><p>The results of the territory evaluation.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._find_closest_settlement_pair">
+<span class="sig-name descname"><span class="pre">_find_closest_settlement_pair</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">territory_geom</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nearby_settlements</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._find_closest_settlement_pair"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._find_closest_settlement_pair" title="Permalink to this definition"></a></dt>
+<dd><p>Find the pair of nearest settlements around the territory.</p>
+<section id="id14">
+<h2>Parameters<a class="headerlink" href="#id14" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>territory_geom<span class="classifier">shapely.geometry.base.BaseGeometry</span></dt><dd><p>The geometry of the territory.</p>
+</dd>
+<dt>nearby_settlements<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>The nearby settlements.</p>
+</dd>
+</dl>
+</section>
+<section id="id15">
+<h2>Returns<a class="headerlink" href="#id15" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>tuple</dt><dd><p>The pair of nearest settlements and the minimum distance.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation.population_criterion">
+<span class="sig-name descname"><span class="pre">population_criterion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">territories_gdf</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation.population_criterion"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation.population_criterion" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate population density and assess territories based on demographic characteristics.</p>
+<section id="id16">
+<h2>Parameters<a class="headerlink" href="#id16" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>territories_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of territories.</p>
+</dd>
+</dl>
+</section>
+<section id="id17">
+<h2>Returns<a class="headerlink" href="#id17" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>list of dict</dt><dd><p>List of dictionaries containing the assessment results for each territory.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._calculate_density_population">
+<span class="sig-name descname"><span class="pre">_calculate_density_population</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gdf_territory</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">towns_gdf</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">radius_m</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20000</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._calculate_density_population"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._calculate_density_population" title="Permalink to this definition"></a></dt>
+<dd><p>Calculate population density within a specified buffer radius for each territory.</p>
+<section id="id18">
+<h2>Parameters<a class="headerlink" href="#id18" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>gdf_territory<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of territories.</p>
+</dd>
+<dt>towns_gdf<span class="classifier">geopandas.GeoDataFrame</span></dt><dd><p>GeoDataFrame of towns with population data.</p>
+</dd>
+<dt>radius_m<span class="classifier">int, optional</span></dt><dd><p>Radius in meters for the buffer around each territory. Default is 20000.</p>
+</dd>
+</dl>
+</section>
+<section id="id19">
+<h2>Returns<a class="headerlink" href="#id19" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>list of dict</dt><dd><p>List of dictionaries containing population density and total population for each territory.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._assess_territory">
+<span class="sig-name descname"><span class="pre">_assess_territory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">density</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">population</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._assess_territory"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._assess_territory" title="Permalink to this definition"></a></dt>
+<dd><p>Assess the territory based on population density and total population.</p>
+<section id="id20">
+<h2>Parameters<a class="headerlink" href="#id20" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>density<span class="classifier">float</span></dt><dd><p>The average population density of the territory.</p>
+</dd>
+<dt>population<span class="classifier">int</span></dt><dd><p>The total population of the territory.</p>
+</dd>
+</dl>
+</section>
+<section id="id21">
+<h2>Returns<a class="headerlink" href="#id21" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>int</dt><dd><p>The score representing the assessment of the territory.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="popframe.method.territory_evaluation.TerritoryEvaluation._interpret_score">
+<span class="sig-name descname"><span class="pre">_interpret_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">score</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/popframe/method/territory_evaluation.html#TerritoryEvaluation._interpret_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#popframe.method.territory_evaluation.TerritoryEvaluation._interpret_score" title="Permalink to this definition"></a></dt>
+<dd><p>Interpret the score assigned to a territory.</p>
+<section id="id22">
+<h2>Parameters<a class="headerlink" href="#id22" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>score<span class="classifier">int</span></dt><dd><p>The score representing the assessment of the territory.</p>
+</dd>
+</dl>
+</section>
+<section id="id23">
+<h2>Returns<a class="headerlink" href="#id23" title="Permalink to this heading"></a></h2>
+<dl class="simple">
+<dt>str</dt><dd><p>The interpretation of the score.</p>
+</dd>
+</dl>
+</section>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="popframe.method.spatial_inequality.html" class="btn btn-neutral float-left" title="popframe.method.spatial_inequality" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="popframe.utils.html" class="btn btn-neutral float-right" title="popframe.utils" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

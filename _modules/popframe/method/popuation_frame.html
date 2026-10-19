@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>popframe.method.popuation_frame &mdash; PopFrame 0.0.1 documentation</title>
+      <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+      <link rel="stylesheet" href="../../../_static/graphviz.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+        <script data-url_root="../../../" id="documentation_options" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/sphinx_highlight.js"></script>
+        <script crossorigin="anonymous" integrity="sha256-Ae2Vz/4ePdIu6ZyI/5ZGsYnb+m0JlOmKPjt6XZ9JJkA=" src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.4/require.min.js"></script>
+    <script src="../../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../../index.html" class="icon icon-home">
+            PopFrame
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/contributing.html">Contributing / Вклад в проект</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../popframe/faq.html">FAQ / Часто задаваемые вопросы</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../examples/index.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../api/index.html">API documentation / Документация по API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../about_us.html">About us / О нас</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">PopFrame</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">popframe.method.popuation_frame</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for popframe.method.popuation_frame</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">geopandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">gpd</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">..utils.const</span><span class="w"> </span><span class="kn">import</span> <span class="n">METERS_PER_DEGREE</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">shapely.geometry</span><span class="w"> </span><span class="kn">import</span> <span class="n">Point</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">pandas</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pd</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.base_method</span><span class="w"> </span><span class="kn">import</span> <span class="n">BaseMethod</span>
+
+
+<div class="viewcode-block" id="PopulationFrame"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.popuation_frame.html#popframe.method.popuation_frame.PopulationFrame">[docs]</a><span class="k">class</span><span class="w"> </span><span class="nc">PopulationFrame</span><span class="p">(</span><span class="n">BaseMethod</span><span class="p">):</span>
+<div class="viewcode-block" id="PopulationFrame._create_circle"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.popuation_frame.html#popframe.method.popuation_frame.PopulationFrame._create_circle">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_create_circle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">center</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Create a circular buffer around a point.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        center : shapely.geometry.Point</span>
+<span class="sd">            The center point of the circle.</span>
+<span class="sd">        size : float</span>
+<span class="sd">            The radius of the circle.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        shapely.geometry.Polygon</span>
+<span class="sd">            The resulting circular polygon.</span>
+<span class="sd">        """</span>
+        <span class="k">return</span> <span class="n">center</span><span class="o">.</span><span class="n">buffer</span><span class="p">(</span><span class="n">size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PopulationFrame._size_from_population"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.popuation_frame.html#popframe.method.popuation_frame.PopulationFrame._size_from_population">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_size_from_population</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">population</span><span class="p">,</span> <span class="n">level</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Calculate the size of the circle based on population and settlement level.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        population : int or float</span>
+<span class="sd">            The population of the settlement.</span>
+<span class="sd">        level : str</span>
+<span class="sd">            The level of the settlement.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        float</span>
+<span class="sd">            The calculated size for the circle.</span>
+<span class="sd">        """</span>
+        <span class="k">if</span> <span class="n">level</span> <span class="ow">in</span> <span class="p">[</span><span class="s2">"Малое сельское поселение"</span><span class="p">,</span> <span class="s2">"Среднее сельское поселение"</span><span class="p">,</span> <span class="s2">"Большое сельское поселение"</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="mf">0.0001</span> <span class="o">*</span> <span class="p">(</span><span class="n">population</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Logarithmic scale for small settlements</span>
+        <span class="k">elif</span> <span class="n">level</span> <span class="o">==</span> <span class="s2">"Сверхкрупный город"</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mf">6e-5</span> <span class="o">*</span> <span class="p">(</span><span class="n">population</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Reduced linear scale for very large cities</span>
+        <span class="k">return</span> <span class="mf">0.0001</span> <span class="o">*</span> <span class="p">(</span><span class="n">population</span><span class="o">**</span><span class="mf">0.5</span><span class="p">)</span>  <span class="c1"># Linear scale for large settlements</span></div>
+
+<div class="viewcode-block" id="PopulationFrame._convert_points_to_circles"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.popuation_frame.html#popframe.method.popuation_frame.PopulationFrame._convert_points_to_circles">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">_convert_points_to_circles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gdf</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Convert point geometries to circles based on population and level.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        gdf : geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with point geometries and population data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with circular geometries.</span>
+<span class="sd">        """</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_size_from_population</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"population"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"level"</span><span class="p">]),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">"size_in_meters"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="p">[</span><span class="s2">"size"</span><span class="p">]</span> <span class="o">*</span> <span class="n">METERS_PER_DEGREE</span>
+        <span class="n">gdf</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">]</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span>
+            <span class="k">lambda</span> <span class="n">row</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_create_circle</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">],</span> <span class="n">row</span><span class="p">[</span><span class="s2">"size_in_meters"</span><span class="p">])</span>
+            <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">],</span> <span class="n">Point</span><span class="p">)</span>
+            <span class="k">else</span> <span class="n">row</span><span class="p">[</span><span class="s2">"geometry"</span><span class="p">],</span>
+            <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="n">gdf</span><span class="o">.</span><span class="n">drop</span><span class="p">(</span><span class="n">columns</span><span class="o">=</span><span class="p">[</span><span class="s2">"size"</span><span class="p">,</span> <span class="s2">"size_in_meters"</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">gdf</span></div>
+
+<div class="viewcode-block" id="PopulationFrame.build_circle_frame"><a class="viewcode-back" href="../../../api/_autosummary/popframe.method.popuation_frame.html#popframe.method.popuation_frame.PopulationFrame.build_circle_frame">[docs]</a>    <span class="k">def</span><span class="w"> </span><span class="nf">build_circle_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">update_df</span><span class="p">:</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">gpd</span><span class="o">.</span><span class="n">GeoDataFrame</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">"""</span>
+<span class="sd">        Build a GeoDataFrame of circles representing settlements based on population and level.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        update_df : pandas.DataFrame or None, optional</span>
+<span class="sd">            Optional DataFrame to update the towns data.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        geopandas.GeoDataFrame</span>
+<span class="sd">            GeoDataFrame with circular geometries for settlements.</span>
+<span class="sd">        """</span>
+        <span class="n">towns</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">get_update_towns_gdf</span><span class="p">(</span><span class="n">update_df</span><span class="p">)</span>
+        <span class="n">gdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_convert_points_to_circles</span><span class="p">(</span><span class="n">towns</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">gdf</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024-2026, IDU.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
